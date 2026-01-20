@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using Wpf.Ui;
 using Wpf.Ui.Appearance;
 
 namespace DataGateWin.Pages;

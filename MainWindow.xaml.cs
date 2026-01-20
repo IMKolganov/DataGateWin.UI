@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using DataGateWin.Pages;
 using DataGateWin.Services;
+using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 
 namespace DataGateWin;
@@ -12,6 +13,9 @@ public partial class MainWindow : FluentWindow
     public MainWindow(AuthStateStore authState)
     {
         InitializeComponent();
+        
+        var current = ApplicationThemeManager.GetAppTheme();
+        ApplicationThemeManager.Apply(ApplicationTheme.Dark);
 
         _authState = authState;
 

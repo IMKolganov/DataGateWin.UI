@@ -106,7 +106,7 @@
                           HorizontalAlignment="Center"
                           Opacity="0.55"
                           Margin="0,18,0,0"
-                          Text="A browser window will open for Google authentication."/>
+                          Text="A browser window will open to sign in. After that, the app will authorize via DataGate API."/>
         </Grid>
     </Grid>
 </ui:FluentWindow>

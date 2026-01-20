@@ -352,3 +352,4 @@ MigrationBackup/
 
 #my
 appsettings.json
+client_secret.json

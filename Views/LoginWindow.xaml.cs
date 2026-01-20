@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using DataGateWin.Configuration;
 using DataGateWin.Services;
 using DataGateWin.ViewModels;
@@ -16,20 +15,23 @@ public partial class LoginWindow : FluentWindow
     {
         InitializeComponent();
 
-        _authState = authState;
+        _authState = authState ?? throw new ArgumentNullException(nameof(authState));
 
-        var settings = App.AppConfiguration
-                           .GetSection("GoogleAuth")
-                           .Get<GoogleAuthSettings>()
-                       ?? throw new InvalidOperationException("GoogleAuth settings are missing.");
+        var googleSettings = App.AppConfiguration
+                                 .GetSection("GoogleAuth")
+                                 .Get<GoogleAuthSettings>()
+                             ?? throw new InvalidOperationException("GoogleAuth settings are missing.");
 
-        var loopback = new GoogleAuthLoopback();
-        var authService = new GoogleAuthService(loopback);
+        var apiSettings = App.AppConfiguration
+                              .GetSection("Api")
+                              .Get<ApiSettings>()
+                          ?? throw new InvalidOperationException("Api settings are missing.");
 
-        var vm = new LoginViewModel(authService, settings);
-        vm.SignedIn += (_, code) =>
+        var vm = new LoginViewModel(App.GoogleAuth, App.Session, googleSettings, apiSettings);
+
+        vm.SignedIn += (_, accessToken) =>
         {
-            _authState.SetAuthorized(code);
+            _authState.SetAuthorized(accessToken);
 
             var main = new MainWindow(_authState);
             Application.Current.MainWindow = main;
