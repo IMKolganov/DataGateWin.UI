@@ -16,7 +16,7 @@
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
     </ui:FluentWindow.Resources>
 
-    <Grid>
+    <Grid Background="{DynamicResource ApplicationBackgroundBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>

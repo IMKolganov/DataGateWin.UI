@@ -9,32 +9,20 @@ public partial class MainWindow : FluentWindow
 {
     private readonly AuthStateStore _authState;
 
-    private const double MenuExpandedWidth = 280;
-    private const double MenuCollapsedWidth = 56;
-
     public MainWindow(AuthStateStore authState)
     {
         InitializeComponent();
 
         _authState = authState;
 
-        ApplyMenuState(NavView.IsPaneOpen);
-
-        ContentFrame.Navigate(new HomePage());
+        Loaded += OnLoaded;
     }
 
-    private void ApplyMenuState(bool isOpen)
+    private void OnLoaded(object sender, RoutedEventArgs e)
     {
-        MenuColumn.Width = new GridLength(isOpen ? MenuExpandedWidth : MenuCollapsedWidth);
-
-        MenuHost.Padding = isOpen
-            ? new Thickness(12, 12, 8, 12)
-            : new Thickness(8, 12, 8, 12);
+        // Start page
+        NavView.Navigate(typeof(HomePage));
     }
-
-    private void NavView_OnPaneOpened(object sender, RoutedEventArgs e) => ApplyMenuState(true);
-
-    private void NavView_OnPaneClosed(object sender, RoutedEventArgs e) => ApplyMenuState(false);
 
     private void NavView_OnSelectionChanged(object sender, RoutedEventArgs e)
     {
@@ -44,22 +32,31 @@ public partial class MainWindow : FluentWindow
         if (nav.SelectedItem is not NavigationViewItem item)
             return;
 
+        // If TargetPageType is set in XAML, NavigationView can navigate itself.
+        // This call ensures navigation happens even if selection changed was triggered externally.
+        if (item.TargetPageType is not null)
+        {
+            nav.Navigate(item.TargetPageType);
+            return;
+        }
+
+        // Fallback (if you ever remove TargetPageType)
         switch (item.Tag?.ToString())
         {
             case "home":
-                ContentFrame.Navigate(new HomePage());
+                nav.Navigate(typeof(HomePage));
                 break;
 
             case "access":
-                ContentFrame.Navigate(new Access());
+                nav.Navigate(typeof(Access));
                 break;
 
             case "statistics":
-                ContentFrame.Navigate(new Statistics());
+                nav.Navigate(typeof(Statistics));
                 break;
 
             case "settings":
-                ContentFrame.Navigate(new SettingsPage());
+                nav.Navigate(typeof(SettingsPage));
                 break;
         }
     }
