@@ -2,9 +2,9 @@
 
 namespace DataGateWin.Pages;
 
-public partial class ConnectionPage : Page
+public partial class Statistics : Page
 {
-    public ConnectionPage()
+    public Statistics()
     {
         InitializeComponent();
     }

@@ -33,11 +33,11 @@ public partial class MainWindow : FluentWindow
                 break;
 
             case "connection":
-                ContentFrame.Navigate(new ConnectionPage());
+                ContentFrame.Navigate(new Statistics());
                 break;
 
             case "certs":
-                ContentFrame.Navigate(new CertificatesPage());
+                ContentFrame.Navigate(new Access());
                 break;
 
             case "settings":
