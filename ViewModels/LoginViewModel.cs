@@ -24,6 +24,8 @@ public sealed partial class LoginViewModel : ObservableObject
         _session = session ?? throw new ArgumentNullException(nameof(session));
 
         ClientId = googleSettings.ClientId;
+        ClientSecret = googleSettings.ClientSecret ?? 
+                       throw new InvalidOperationException("GoogleAuth:ClientSecret is missing.");
         Port = googleSettings.RedirectPort;
         _apiBaseUrl = apiSettings.BaseUrl;
 
@@ -38,6 +40,8 @@ public sealed partial class LoginViewModel : ObservableObject
     }
 
     public string ClientId { get; }
+    public string ClientSecret { get; }
+
     public int Port { get; }
 
     [ObservableProperty]
@@ -63,9 +67,11 @@ public sealed partial class LoginViewModel : ObservableObject
         {
             StatusText = "Waiting for Google sign-in...";
 
-            var apiResponse = await _googleAuthService
-                .SignInAndLoginAsync(ClientId, Port, _apiBaseUrl, _cts.Token)
-                .ConfigureAwait(false);
+            var apiResponse = await _googleAuthService.SignInAndLoginAsync(
+                ClientId,
+                Port,
+                _apiBaseUrl,
+                _cts.Token);
 
             if (!apiResponse.Success || apiResponse.Data == null)
             {

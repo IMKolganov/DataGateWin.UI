@@ -2,6 +2,7 @@
 
 public sealed class GoogleAuthSettings
 {
-    public string ClientId { get; init; } = string.Empty;
-    public int RedirectPort { get; init; }
+    public string ClientId { get; set; } = string.Empty;
+    public string? ClientSecret { get; set; }
+    public int RedirectPort { get; set; }
 }

@@ -15,7 +15,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="10.0.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.2" />
-    <PackageReference Include="OpenVPNGateMonitor.SharedModels" Version="1.0.79" />
+    <PackageReference Include="OpenVPNGateMonitor.SharedModels" Version="1.0.80" />
     <PackageReference Include="WPF-UI" Version="4.2.0" />
   </ItemGroup>
 
