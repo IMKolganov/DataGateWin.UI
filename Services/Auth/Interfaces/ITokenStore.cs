@@ -4,7 +4,7 @@ namespace DataGateWin.Services.Auth.Interfaces;
 
 public interface ITokenStore
 {
-    AuthTokensResponse? Current { get; }
-    void Set(AuthTokensResponse tokens);
-    void Clear();
+    Task<AuthTokensResponse?> LoadAsync(CancellationToken ct);
+    Task SaveAsync(AuthTokensResponse tokens, CancellationToken ct);
+    Task ClearAsync(CancellationToken ct);
 }

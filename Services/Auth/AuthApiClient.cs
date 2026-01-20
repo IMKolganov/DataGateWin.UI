@@ -1,29 +1,47 @@
 ﻿using System.Net.Http;
-using System.Net.Http.Json;
+using System.Text;
+using Newtonsoft.Json;
 using OpenVPNGateMonitor.SharedModels.DataGateMonitorBackend.Auth.Requests;
 using OpenVPNGateMonitor.SharedModels.DataGateMonitorBackend.Auth.Responses;
 using OpenVPNGateMonitor.SharedModels.Responses;
 
-public sealed class AuthApiClient
+public sealed class AuthApiClient(HttpClient http)
 {
-    private readonly HttpClient _http;
+    private readonly HttpClient _http = http ?? throw new ArgumentNullException(nameof(http));
 
-    public AuthApiClient(HttpClient http)
+    public async Task<ApiResponse<GoogleLoginResponse>> GoogleLoginAsync(
+        GoogleLoginRequest request,
+        CancellationToken ct)
     {
-        _http = http ?? throw new ArgumentNullException(nameof(http));
+        var content = new StringContent(
+            JsonConvert.SerializeObject(request),
+            Encoding.UTF8,
+            "application/json");
+
+        using var resp = await _http.PostAsync("/api/auth/google-login", content, ct)
+            .ConfigureAwait(false);
+
+        resp.EnsureSuccessStatusCode();
+
+        var json = await resp.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
+        return JsonConvert.DeserializeObject<ApiResponse<GoogleLoginResponse>>(json)!;
     }
 
-    public async Task<ApiResponse<GoogleLoginResponse>> GoogleLoginAsync(GoogleLoginRequest request, CancellationToken ct)
+    public async Task<ApiResponse<RefreshResponse>> RefreshAsync(
+        RefreshRequest request,
+        CancellationToken ct)
     {
-        var resp = await _http.PostAsJsonAsync("/api/auth/google-login", request, ct).ConfigureAwait(false);
-        resp.EnsureSuccessStatusCode();
-        return (await resp.Content.ReadFromJsonAsync<ApiResponse<GoogleLoginResponse>>(cancellationToken: ct).ConfigureAwait(false))!;
-    }
+        var content = new StringContent(
+            JsonConvert.SerializeObject(request),
+            Encoding.UTF8,
+            "application/json");
 
-    public async Task<ApiResponse<RefreshResponse>> RefreshAsync(RefreshRequest request, CancellationToken ct)
-    {
-        var resp = await _http.PostAsJsonAsync("/api/auth/refresh", request, ct).ConfigureAwait(false);
+        using var resp = await _http.PostAsync("/api/auth/refresh", content, ct)
+            .ConfigureAwait(false);
+
         resp.EnsureSuccessStatusCode();
-        return (await resp.Content.ReadFromJsonAsync<ApiResponse<RefreshResponse>>(cancellationToken: ct).ConfigureAwait(false))!;
+
+        var json = await resp.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
+        return JsonConvert.DeserializeObject<ApiResponse<RefreshResponse>>(json)!;
     }
 }

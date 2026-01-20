@@ -12,14 +12,30 @@ public sealed class AuthSession(
 {
     private readonly SemaphoreSlim _refreshLock = new(1, 1);
 
-    public AuthTokensResponse? Current => store.Current;
+    private AuthTokensResponse? _current;
 
-    public void SetFromLogin(GoogleLoginResponse login)
-        => store.Set(login);
+    public AuthTokensResponse? Current => _current;
+
+    public async Task InitializeAsync(CancellationToken ct)
+    {
+        _current = await store.LoadAsync(ct).ConfigureAwait(false);
+    }
+
+    public async Task SetFromLoginAsync(GoogleLoginResponse login, CancellationToken ct)
+    {
+        _current = login;
+        await store.SaveAsync(login, ct).ConfigureAwait(false);
+    }
+
+    public async Task LogoutAsync(CancellationToken ct)
+    {
+        _current = null;
+        await store.ClearAsync(ct).ConfigureAwait(false);
+    }
 
     public async Task<string?> GetValidAccessTokenAsync(CancellationToken ct)
     {
-        var current = store.Current;
+        var current = _current;
         if (current == null)
             return null;
 
@@ -27,7 +43,7 @@ public sealed class AuthSession(
             return current.Token;
 
         var refreshed = await RefreshAsync(ct).ConfigureAwait(false);
-        return refreshed ? store.Current?.Token : null;
+        return refreshed ? _current?.Token : null;
     }
 
     public async Task<bool> RefreshAsync(CancellationToken ct)
@@ -35,7 +51,7 @@ public sealed class AuthSession(
         await _refreshLock.WaitAsync(ct).ConfigureAwait(false);
         try
         {
-            var current = store.Current;
+            var current = _current;
             if (current == null)
                 return false;
 
@@ -59,7 +75,8 @@ public sealed class AuthSession(
             if (!response.Success || response.Data == null)
                 return false;
 
-            store.Set(response.Data);
+            _current = response.Data;
+            await store.SaveAsync(_current, ct).ConfigureAwait(false);
             return true;
         }
         finally

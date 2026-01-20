@@ -1,6 +1,12 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Net.Http;
 using System.Security.Principal;
+using System.Threading;
 using System.Windows;
+using DataGateWin.Configuration;
+using DataGateWin.Services;
+using DataGateWin.Services.Auth;
 using DataGateWin.Views;
 using Microsoft.Extensions.Configuration;
 
@@ -11,6 +17,11 @@ public partial class App : Application
     public static IConfiguration AppConfiguration { get; private set; } = null!;
 
     protected override void OnStartup(StartupEventArgs e)
+    {
+        _ = RunStartupAsync(e);
+    }
+
+    private async Task RunStartupAsync(StartupEventArgs e)
     {
         try
         {
@@ -51,9 +62,51 @@ public partial class App : Application
 
             base.OnStartup(e);
 
+            var apiSettings = AppConfiguration
+                .GetSection("Api")
+                .Get<ApiSettings>()
+                ?? throw new InvalidOperationException("Api settings are missing.");
+
+            if (string.IsNullOrWhiteSpace(apiSettings.BaseUrl))
+                throw new InvalidOperationException("Api:BaseUrl is missing.");
+
+            var googleSettings = AppConfiguration
+                .GetSection("GoogleAuth")
+                .Get<GoogleAuthSettings>()
+                ?? throw new InvalidOperationException("GoogleAuth settings are missing.");
+
+            if (string.IsNullOrWhiteSpace(googleSettings.ClientId))
+                throw new InvalidOperationException("GoogleAuth:ClientId is missing.");
+
+            if (googleSettings.RedirectPort <= 0 || googleSettings.RedirectPort > 65535)
+                throw new InvalidOperationException("GoogleAuth:RedirectPort is invalid.");
+
+            var deviceId = DeviceInfo.GetOrCreateDeviceId();
+            var userAgent = DeviceInfo.GetUserAgent();
+
+            var authHttp = new HttpClient
+            {
+                BaseAddress = new Uri(apiSettings.BaseUrl, UriKind.Absolute)
+            };
+            var authApi = new AuthApiClient(authHttp);
+
+            var tokenStore = new FileTokenStore("DataGateWin");
+            var session = new AuthSession(authApi, tokenStore, deviceId, userAgent);
+            await session.InitializeAsync(CancellationToken.None);
+
             var authState = new Services.AuthStateStore();
 
-            // MVP: always show login first
+            var token = await session.GetValidAccessTokenAsync(CancellationToken.None);
+            if (!string.IsNullOrWhiteSpace(token))
+            {
+                authState.SetAuthorized(token);
+
+                var main = new MainWindow(authState);
+                MainWindow = main;
+                main.Show();
+                return;
+            }
+
             var login = new LoginWindow(authState);
             MainWindow = login;
             login.Show();

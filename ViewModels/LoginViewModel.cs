@@ -24,8 +24,6 @@ public sealed partial class LoginViewModel : ObservableObject
         _session = session ?? throw new ArgumentNullException(nameof(session));
 
         ClientId = googleSettings.ClientId;
-        ClientSecret = googleSettings.ClientSecret ?? 
-                       throw new InvalidOperationException("GoogleAuth:ClientSecret is missing.");
         Port = googleSettings.RedirectPort;
         _apiBaseUrl = apiSettings.BaseUrl;
 
@@ -40,8 +38,6 @@ public sealed partial class LoginViewModel : ObservableObject
     }
 
     public string ClientId { get; }
-    public string ClientSecret { get; }
-
     public int Port { get; }
 
     [ObservableProperty]
@@ -79,7 +75,7 @@ public sealed partial class LoginViewModel : ObservableObject
                 return;
             }
 
-            _session.SetFromLogin(apiResponse.Data);
+            await _session.SetFromLoginAsync(apiResponse.Data, _cts.Token);
 
             StatusText = $"Signed in as {apiResponse.Data.DisplayName}.";
             SignedIn?.Invoke(this, apiResponse.Data.Token);

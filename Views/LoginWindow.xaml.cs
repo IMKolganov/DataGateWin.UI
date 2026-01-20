@@ -42,7 +42,7 @@ public partial class LoginWindow : FluentWindow
 
         var authApi = new AuthApiClient(http);
 
-        var tokenStore = new InMemoryTokenStore();
+        var tokenStore = new FileTokenStore("DataGateWin");
         var session = new AuthSession(authApi, tokenStore, deviceId, userAgent);
 
         var googleAuthService = new GoogleAuthService(http);

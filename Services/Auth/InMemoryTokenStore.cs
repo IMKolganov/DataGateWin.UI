@@ -7,18 +7,18 @@ public sealed class InMemoryTokenStore : ITokenStore
 {
     private AuthTokensResponse? _current;
 
-    public AuthTokensResponse? Current => _current;
+    public Task<AuthTokensResponse?> LoadAsync(CancellationToken ct)
+        => Task.FromResult(_current);
 
-    public void Set(AuthTokensResponse tokens)
-        => _current = tokens;
-
-    AuthTokensResponse? ITokenStore.Current => Current;
-
-    void ITokenStore.Set(AuthTokensResponse tokens)
+    public Task SaveAsync(AuthTokensResponse tokens, CancellationToken ct)
     {
-        Set(tokens);
+        _current = tokens;
+        return Task.CompletedTask;
     }
 
-    public void Clear()
-        => _current = null;
+    public Task ClearAsync(CancellationToken ct)
+    {
+        _current = null;
+        return Task.CompletedTask;
+    }
 }
