@@ -1,45 +1,53 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DataGateWin.Configuration;
-using DataGateWin.Services;
+using DataGateWin.Services.Auth;
 
 namespace DataGateWin.ViewModels;
 
 public sealed partial class LoginViewModel : ObservableObject
 {
     private readonly GoogleAuthService _googleAuthService;
+    private readonly AuthSession _session;
+    private readonly string _apiBaseUrl;
     private CancellationTokenSource? _cts;
 
     public event EventHandler<string>? SignedIn;
 
-    public LoginViewModel(GoogleAuthService googleAuthService, GoogleAuthSettings settings)
+    public LoginViewModel(
+        GoogleAuthService googleAuthService,
+        AuthSession session,
+        GoogleAuthSettings googleSettings,
+        ApiSettings apiSettings)
     {
-        _googleAuthService = googleAuthService;
+        _googleAuthService = googleAuthService ?? throw new ArgumentNullException(nameof(googleAuthService));
+        _session = session ?? throw new ArgumentNullException(nameof(session));
 
-        ClientId = settings.ClientId;
-        Port = settings.RedirectPort;
+        ClientId = googleSettings.ClientId;
+        Port = googleSettings.RedirectPort;
+        _apiBaseUrl = apiSettings.BaseUrl;
 
         if (string.IsNullOrWhiteSpace(ClientId))
-            throw new InvalidOperationException("GoogleAuth:ClientId is missing in appsettings.json.");
+            throw new InvalidOperationException("GoogleAuth:ClientId is missing.");
 
         if (Port <= 0 || Port > 65535)
-            throw new InvalidOperationException("GoogleAuth:RedirectPort is invalid in appsettings.json.");
+            throw new InvalidOperationException("GoogleAuth:RedirectPort is invalid.");
+
+        if (string.IsNullOrWhiteSpace(_apiBaseUrl))
+            throw new InvalidOperationException("Api:BaseUrl is missing.");
     }
 
     public string ClientId { get; }
     public int Port { get; }
 
     [ObservableProperty]
-    private string statusText = "Not signed in.";
+    private string _statusText = "Not signed in.";
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsNotBusy))]
     [NotifyCanExecuteChangedFor(nameof(SignInCommand))]
     [NotifyCanExecuteChangedFor(nameof(CancelCommand))]
-    private bool isBusy;
+    private bool _isBusy;
 
     public bool IsNotBusy => !IsBusy;
 
@@ -53,17 +61,22 @@ public sealed partial class LoginViewModel : ObservableObject
 
         try
         {
-            var result = await _googleAuthService.SignInAsync(ClientId, Port, _cts.Token);
+            StatusText = "Waiting for Google sign-in...";
 
-            if (result.IsSuccess)
+            var apiResponse = await _googleAuthService
+                .SignInAndLoginAsync(ClientId, Port, _apiBaseUrl, _cts.Token)
+                .ConfigureAwait(false);
+
+            if (!apiResponse.Success || apiResponse.Data == null)
             {
-                StatusText = "Signed in successfully.";
-                SignedIn?.Invoke(this, result.AuthorizationCode ?? "");
+                StatusText = "Sign-in failed.";
                 return;
             }
 
-            var desc = string.IsNullOrWhiteSpace(result.ErrorDescription) ? "" : $" ({result.ErrorDescription})";
-            StatusText = $"Sign-in failed: {result.Error}{desc}";
+            _session.SetFromLogin(apiResponse.Data);
+
+            StatusText = $"Signed in as {apiResponse.Data.DisplayName}.";
+            SignedIn?.Invoke(this, apiResponse.Data.Token);
         }
         catch (OperationCanceledException)
         {
