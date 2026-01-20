@@ -1,8 +1,6 @@
-﻿using System.Net.Http;
-using System.Windows;
+﻿using System.Windows;
 using DataGateWin.Configuration;
 using DataGateWin.Services;
-using DataGateWin.Services.Auth;
 using DataGateWin.ViewModels;
 using Microsoft.Extensions.Configuration;
 using Wpf.Ui.Controls;
@@ -29,25 +27,7 @@ public partial class LoginWindow : FluentWindow
                               .Get<ApiSettings>()
                           ?? throw new InvalidOperationException("Api settings are missing.");
 
-        if (string.IsNullOrWhiteSpace(apiSettings.BaseUrl))
-            throw new InvalidOperationException("Api:BaseUrl is missing.");
-
-        var deviceId = DeviceInfo.GetOrCreateDeviceId();
-        var userAgent = DeviceInfo.GetUserAgent();
-
-        var http = new HttpClient
-        {
-            BaseAddress = new Uri(apiSettings.BaseUrl, UriKind.Absolute)
-        };
-
-        var authApi = new AuthApiClient(http);
-
-        var tokenStore = new FileTokenStore("DataGateWin");
-        var session = new AuthSession(authApi, tokenStore, deviceId, userAgent);
-
-        var googleAuthService = new GoogleAuthService(http);
-
-        var vm = new LoginViewModel(googleAuthService, session, googleSettings, apiSettings);
+        var vm = new LoginViewModel(App.GoogleAuth, App.Session, googleSettings, apiSettings);
 
         vm.SignedIn += (_, accessToken) =>
         {

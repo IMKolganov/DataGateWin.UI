@@ -1,8 +1,6 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Net.Http;
 using System.Security.Principal;
-using System.Threading;
 using System.Windows;
 using DataGateWin.Configuration;
 using DataGateWin.Services;
@@ -16,9 +14,14 @@ public partial class App : Application
 {
     public static IConfiguration AppConfiguration { get; private set; } = null!;
 
-    protected override void OnStartup(StartupEventArgs e)
+    public static AuthApiClient AuthApi { get; private set; } = null!;
+    public static AuthSession Session { get; private set; } = null!;
+    public static HttpClient AuthedApiHttp { get; private set; } = null!;
+    public static GoogleAuthService GoogleAuth { get; private set; } = null!;
+
+    protected override async void OnStartup(StartupEventArgs e)
     {
-        _ = RunStartupAsync(e);
+        await RunStartupAsync(e);
     }
 
     private async Task RunStartupAsync(StartupEventArgs e)
@@ -84,19 +87,25 @@ public partial class App : Application
             var deviceId = DeviceInfo.GetOrCreateDeviceId();
             var userAgent = DeviceInfo.GetUserAgent();
 
-            var authHttp = new HttpClient
-            {
-                BaseAddress = new Uri(apiSettings.BaseUrl, UriKind.Absolute)
-            };
-            var authApi = new AuthApiClient(authHttp);
+            var baseUri = new Uri(apiSettings.BaseUrl, UriKind.Absolute);
+
+            var authHttp = new HttpClient { BaseAddress = baseUri };
+            AuthApi = new AuthApiClient(authHttp);
 
             var tokenStore = new FileTokenStore("DataGateWin");
-            var session = new AuthSession(authApi, tokenStore, deviceId, userAgent);
-            await session.InitializeAsync(CancellationToken.None);
+            Session = new AuthSession(AuthApi, tokenStore, deviceId, userAgent);
+            await Session.InitializeAsync(CancellationToken.None);
 
-            var authState = new Services.AuthStateStore();
+            AuthedApiHttp = new HttpClient(new AuthenticatedHttpHandler(Session, new HttpClientHandler()))
+            {
+                BaseAddress = baseUri
+            };
 
-            var token = await session.GetValidAccessTokenAsync(CancellationToken.None);
+            GoogleAuth = new GoogleAuthService(new HttpClient());
+
+            var authState = new AuthStateStore();
+
+            var token = await Session.GetValidAccessTokenAsync(CancellationToken.None);
             if (!string.IsNullOrWhiteSpace(token))
             {
                 authState.SetAuthorized(token);
