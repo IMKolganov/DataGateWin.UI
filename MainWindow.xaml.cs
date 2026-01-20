@@ -15,7 +15,13 @@ public partial class MainWindow : FluentWindow
 
         _authState = authState;
 
-        ContentFrame.Navigate(new HomePage());
+        Loaded += OnLoaded;
+    }
+
+    private void OnLoaded(object sender, RoutedEventArgs e)
+    {
+        // Start page
+        NavView.Navigate(typeof(HomePage));
     }
 
     private void NavView_OnSelectionChanged(object sender, RoutedEventArgs e)
@@ -26,22 +32,31 @@ public partial class MainWindow : FluentWindow
         if (nav.SelectedItem is not NavigationViewItem item)
             return;
 
+        // If TargetPageType is set in XAML, NavigationView can navigate itself.
+        // This call ensures navigation happens even if selection changed was triggered externally.
+        if (item.TargetPageType is not null)
+        {
+            nav.Navigate(item.TargetPageType);
+            return;
+        }
+
+        // Fallback (if you ever remove TargetPageType)
         switch (item.Tag?.ToString())
         {
             case "home":
-                ContentFrame.Navigate(new HomePage());
+                nav.Navigate(typeof(HomePage));
                 break;
 
-            case "connection":
-                ContentFrame.Navigate(new ConnectionPage());
+            case "access":
+                nav.Navigate(typeof(Access));
                 break;
 
-            case "certs":
-                ContentFrame.Navigate(new CertificatesPage());
+            case "statistics":
+                nav.Navigate(typeof(Statistics));
                 break;
 
             case "settings":
-                ContentFrame.Navigate(new SettingsPage());
+                nav.Navigate(typeof(SettingsPage));
                 break;
         }
     }

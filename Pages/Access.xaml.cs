@@ -2,9 +2,9 @@
 
 namespace DataGateWin.Pages;
 
-public partial class CertificatesPage : Page
+public partial class Access : Page
 {
-    public CertificatesPage()
+    public Access()
     {
         InitializeComponent();
     }
