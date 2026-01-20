@@ -9,14 +9,32 @@ public partial class MainWindow : FluentWindow
 {
     private readonly AuthStateStore _authState;
 
+    private const double MenuExpandedWidth = 280;
+    private const double MenuCollapsedWidth = 56;
+
     public MainWindow(AuthStateStore authState)
     {
         InitializeComponent();
 
         _authState = authState;
 
+        ApplyMenuState(NavView.IsPaneOpen);
+
         ContentFrame.Navigate(new HomePage());
     }
+
+    private void ApplyMenuState(bool isOpen)
+    {
+        MenuColumn.Width = new GridLength(isOpen ? MenuExpandedWidth : MenuCollapsedWidth);
+
+        MenuHost.Padding = isOpen
+            ? new Thickness(12, 12, 8, 12)
+            : new Thickness(8, 12, 8, 12);
+    }
+
+    private void NavView_OnPaneOpened(object sender, RoutedEventArgs e) => ApplyMenuState(true);
+
+    private void NavView_OnPaneClosed(object sender, RoutedEventArgs e) => ApplyMenuState(false);
 
     private void NavView_OnSelectionChanged(object sender, RoutedEventArgs e)
     {
@@ -32,12 +50,12 @@ public partial class MainWindow : FluentWindow
                 ContentFrame.Navigate(new HomePage());
                 break;
 
-            case "connection":
-                ContentFrame.Navigate(new Statistics());
+            case "access":
+                ContentFrame.Navigate(new Access());
                 break;
 
-            case "certs":
-                ContentFrame.Navigate(new Access());
+            case "statistics":
+                ContentFrame.Navigate(new Statistics());
                 break;
 
             case "settings":
