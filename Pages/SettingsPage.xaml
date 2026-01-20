@@ -1,7 +1,75 @@
 ﻿<Page x:Class="DataGateWin.Pages.SettingsPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      Title="Settings">
+
     <Grid Margin="20">
-        <TextBlock Text="SettingsPage" FontSize="20" FontWeight="SemiBold"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="12"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <ui:TextBlock Grid.Row="0"
+                      Text="Settings"
+                      FontTypography="Title"
+                      FontWeight="SemiBold"/>
+
+        <ui:Card Grid.Row="2" Padding="18">
+            <StackPanel>
+                <ui:TextBlock Text="Appearance"
+                              FontTypography="Subtitle"
+                              FontWeight="SemiBold"/>
+
+                <ui:TextBlock Text="Choose the application theme."
+                              Opacity="0.75"
+                              Margin="0,4,0,12"/>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <ui:TextBlock Text="Theme"
+                                      FontWeight="SemiBold"/>
+                        <ui:TextBlock Text="Light or Dark"
+                                      Opacity="0.75"
+                                      Margin="0,2,0,0"/>
+                    </StackPanel>
+
+                    <ui:ToggleSwitch Grid.Column="1"
+                                     x:Name="ThemeToggle"
+                                     Width="140"
+                                     Content="Dark mode"
+                                     VerticalAlignment="Center"
+                                     Checked="ThemeToggle_OnChecked"
+                                     Unchecked="ThemeToggle_OnUnchecked"/>
+                </Grid>
+
+                <Separator Margin="0,16,0,16"/>
+
+                <ui:TextBlock Text="Account"
+                              FontTypography="Subtitle"
+                              FontWeight="SemiBold"/>
+
+                <ui:TextBlock Text="Sign out from the application."
+                              Opacity="0.75"
+                              Margin="0,4,0,12"/>
+
+                <ui:Button Height="42"
+                           Appearance="Secondary"
+                           Click="LogoutButton_OnClick">
+                    <ui:Button.Icon>
+                        <ui:SymbolIcon Symbol="SignOut24"/>
+                    </ui:Button.Icon>
+                    <ui:Button.Content>
+                        <TextBlock Text="Logout"/>
+                    </ui:Button.Content>
+                </ui:Button>
+            </StackPanel>
+        </ui:Card>
     </Grid>
 </Page>
