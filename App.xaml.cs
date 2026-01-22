@@ -5,8 +5,10 @@ using System.Windows;
 using DataGateWin.Configuration;
 using DataGateWin.Services;
 using DataGateWin.Services.Auth;
+using DataGateWin.Services.Tray;
 using DataGateWin.Views;
 using Microsoft.Extensions.Configuration;
+using Wpf.Ui.Appearance;
 
 namespace DataGateWin;
 
@@ -19,9 +21,21 @@ public partial class App : Application
     public static HttpClient AuthedApiHttp { get; private set; } = null!;
     public static GoogleAuthService GoogleAuth { get; private set; } = null!;
 
+    private TrayService? _tray;
+
     protected override async void OnStartup(StartupEventArgs e)
     {
+        base.OnStartup(e);
+
+        ApplicationThemeManager.Apply(ApplicationTheme.Dark);
+
         await RunStartupAsync(e);
+    }
+
+    protected override void OnExit(ExitEventArgs e)
+    {
+        try { _tray?.Unregister(); } catch { }
+        base.OnExit(e);
     }
 
     private async Task RunStartupAsync(StartupEventArgs e)
@@ -62,8 +76,6 @@ public partial class App : Application
                 .SetBasePath(AppContext.BaseDirectory)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
-
-            base.OnStartup(e);
 
             var apiSettings = AppConfiguration
                 .GetSection("Api")
@@ -112,6 +124,13 @@ public partial class App : Application
 
                 var main = new MainWindow(authState);
                 MainWindow = main;
+
+                // Tray (Wpf.Ui.Tray) - no WinForms required
+                _tray = new TrayService();
+                _tray.AttachMainWindow(main);
+                _tray.EnableDefaultClickBehavior();
+                _tray.Register();
+
                 main.Show();
                 return;
             }
