@@ -1,8 +1,5 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using DataGateWin.Ipc;
@@ -63,7 +60,9 @@ public partial class HomePage : Page
 
         try
         {
-            var sessionId = $"ui-{Guid.NewGuid():N}".Substring(0, 12);
+            // var sessionId = $"ui-{Guid.NewGuid():N}".Substring(0, 12);
+            //for dev
+            var sessionId = "dev";
 
             var engineExePath = ResolveEngineExePath();
             if (!File.Exists(engineExePath))
@@ -94,7 +93,7 @@ public partial class HomePage : Page
                 Dispatcher.InvokeAsync(() => HandleEngineEvent(ev));
             };
 
-            await _client.StartAndConnectAsync(_cts.Token);
+            await _client.StartOrAttachAsync(_cts.Token);
 
             AppendLog("Engine connected.");
             _reconnectAttempt = 0;
@@ -351,7 +350,7 @@ public partial class HomePage : Page
             ["sni"] = "dev-s1.datagateapp.com",
             ["listenIp"] = "127.0.0.1",
             ["listenPort"] = 18080,
-            ["verifyServerCert"] = true,
+            ["verifyServerCert"] = false,
 
             // If you need auth for WSS:
             // ["authorizationHeader"] = "Bearer ..."
