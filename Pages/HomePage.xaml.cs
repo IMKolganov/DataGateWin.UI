@@ -17,20 +17,52 @@ public partial class HomePage : Page
         Disconnecting = 3
     }
 
+    private readonly object _gate = new();
+    private readonly SemaphoreSlim _opLock = new(1, 1);
+
     private EngineIpcClient? _client;
-    private CancellationTokenSource? _cts;
+    private CancellationTokenSource? _lifetimeCts;
 
     private UiState _state = UiState.Idle;
-
     private bool _desiredConnected;
     private int _reconnectAttempt;
-    private readonly object _gate = new();
+    private bool _handlersAttached;
+
+    private const string SessionId = "dev";
 
     public HomePage()
     {
         InitializeComponent();
-        ApplyState(UiState.Idle, "Idle");
-        AppendLog("UI ready.");
+        ApplyStateSafe(UiState.Idle, "Idle");
+        AppendLogSafe("UI ready.");
+    }
+
+    private async void HomePage_OnLoaded(object sender, RoutedEventArgs e)
+    {
+        _lifetimeCts?.Cancel();
+        _lifetimeCts = new CancellationTokenSource();
+
+        _desiredConnected = false;
+
+        try
+        {
+            ApplyStateSafe(UiState.Connecting, "Attaching...");
+            await AttachOrReportAsync(_lifetimeCts.Token);
+        }
+        catch (Exception ex)
+        {
+            AppendLogSafe($"ERROR: {ex}");
+            ApplyStateSafe(UiState.Idle, $"Idle (attach failed: {ex.Message})");
+        }
+    }
+
+    private void HomePage_OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        try { _lifetimeCts?.Cancel(); } catch { }
+        _lifetimeCts = null;
+
+        _client = null;
+        _handlersAttached = false;
     }
 
     private async void ConnectButton_OnClick(object sender, RoutedEventArgs e)
@@ -45,149 +77,240 @@ public partial class HomePage : Page
         await EnsureDisconnectedAsync(userInitiated: true);
     }
 
+    private async Task AttachOrReportAsync(CancellationToken ct)
+    {
+        var engineExePath = ResolveEngineExePath();
+        if (!File.Exists(engineExePath))
+            throw new FileNotFoundException("Engine executable not found.", engineExePath);
+
+        _client ??= new EngineIpcClient(engineExePath, SessionId);
+        AttachHandlersOnce(_client);
+
+        if (_client.IsConnected)
+        {
+            AppendLogSafe("Engine already attached.");
+            await RefreshStatusFromEngineAsync(ct).ConfigureAwait(false);
+            return;
+        }
+
+        using var attachCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        attachCts.CancelAfter(TimeSpan.FromSeconds(8));
+
+        var attached = await _client.TryConnectExistingAsync(totalTimeoutMs: 8000, attachCts.Token).ConfigureAwait(false);
+        if (!attached)
+        {
+            var reason = _client.LastAttachError ?? "unknown";
+            AppendLogSafe($"Attach failed: {reason}");
+            ApplyStateSafe(UiState.Idle, "Idle");
+            return;
+        }
+
+        AppendLogSafe("Engine attached.");
+        await RefreshStatusFromEngineAsync(ct).ConfigureAwait(false);
+    }
+
     private async Task EnsureConnectedAsync()
     {
-        UiState current;
-        lock (_gate) current = _state;
+        var ct = _lifetimeCts?.Token ?? CancellationToken.None;
 
-        if (current is UiState.Connecting or UiState.Connected)
-            return;
-
-        ApplyState(UiState.Connecting, "Connecting...");
-
-        _cts?.Cancel();
-        _cts = new CancellationTokenSource();
-
+        await _opLock.WaitAsync(ct);
         try
         {
-            // var sessionId = $"ui-{Guid.NewGuid():N}".Substring(0, 12);
-            //for dev
-            var sessionId = "dev";
+            UiState current;
+            lock (_gate) current = _state;
+
+            if (current is UiState.Connecting or UiState.Connected)
+                return;
+
+            ApplyStateSafe(UiState.Connecting, "Connecting...");
 
             var engineExePath = ResolveEngineExePath();
             if (!File.Exists(engineExePath))
                 throw new FileNotFoundException("Engine executable not found.", engineExePath);
 
-            _client?.Dispose();
-            _client = new EngineIpcClient(engineExePath, sessionId);
+            _client ??= new EngineIpcClient(engineExePath, SessionId);
+            AttachHandlersOnce(_client);
 
-            _client.EngineLogReceived += (_, line) =>
+            // IMPORTANT: do NOT re-attach if we already have pipes connected
+            if (!_client.IsConnected)
             {
-                Dispatcher.InvokeAsync(() => AppendLog(line));
-            };
+                using var attachCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+                attachCts.CancelAfter(TimeSpan.FromSeconds(10));
 
-            _client.EngineExited += (_, code) =>
-            {
-                Dispatcher.InvokeAsync(async () =>
+                var attached = await _client.TryConnectExistingAsync(totalTimeoutMs: 10000, attachCts.Token).ConfigureAwait(false);
+                if (!attached)
                 {
-                    AppendLog($"Engine exited with code: {code}");
-                    ApplyState(UiState.Idle, $"Idle (engine exited: {code})");
+                    AppendLogSafe($"Attach failed: {_client.LastAttachError ?? "unknown"}. Starting/attaching engine process...");
 
-                    if (_desiredConnected)
-                        await ScheduleReconnectAsync();
-                });
-            };
+                    // IMPORTANT: StartOrAttachAsync throws if client was already started before.
+                    // Reset the client connection/lifetime before trying to start.
+                    _client.ResetConnection();
 
-            _client.EventReceived += (_, ev) =>
+                    using var startCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+                    startCts.CancelAfter(TimeSpan.FromSeconds(12));
+                    await _client.StartOrAttachAsync(startCts.Token).ConfigureAwait(false);
+
+                    AppendLogSafe("Engine connected.");
+                }
+                else
+                {
+                    AppendLogSafe("Engine attached (existing).");
+                }
+            }
+            else
             {
-                Dispatcher.InvokeAsync(() => HandleEngineEvent(ev));
-            };
+                AppendLogSafe("Engine already attached.");
+            }
 
-            await _client.StartOrAttachAsync(_cts.Token);
-
-            AppendLog("Engine connected.");
             _reconnectAttempt = 0;
 
-            // --- Start VPN session ---
-            // You MUST provide correct payload for StartSession.
-            // Example below reads ovpn content from a local file and sends StartSession.
-
-            var startPayload = await BuildStartSessionPayloadAsync(_cts.Token);
-            if (startPayload == null)
+            var st0 = await GetEngineStateAsync(_client, ct).ConfigureAwait(false);
+            if (!IsIdleState(st0))
             {
-                ApplyState(UiState.Idle, "Idle (missing StartSession config)");
-                if (_desiredConnected)
-                    await ScheduleReconnectAsync();
+                ApplyStateSafe(UiState.Connected, $"Connected ({st0 ?? "unknown"})");
                 return;
             }
 
-            using (var startCts = CancellationTokenSource.CreateLinkedTokenSource(_cts.Token))
+            var startPayload = await BuildStartSessionPayloadAsync(ct).ConfigureAwait(false);
+            if (startPayload == null)
             {
-                startCts.CancelAfter(TimeSpan.FromSeconds(15));
+                ApplyStateSafe(UiState.Idle, "Idle (missing StartSession config)");
+                return;
+            }
+
+            using (var startCts = CancellationTokenSource.CreateLinkedTokenSource(ct))
+            {
+                startCts.CancelAfter(TimeSpan.FromSeconds(20));
 
                 var startReply = await _client.SendCommandAsync(
                     type: "StartSession",
                     payloadJson: startPayload.ToString(Newtonsoft.Json.Formatting.None),
-                    startCts.Token);
+                    startCts.Token).ConfigureAwait(false);
 
                 if (!startReply.Ok)
                 {
-                    ApplyState(UiState.Idle, $"Idle (start failed: {startReply.Code ?? "?"})");
-                    AppendLog($"StartSession failed: {startReply.Code ?? "?"} - {startReply.Message ?? "?"}");
+                    ApplyStateSafe(UiState.Idle, $"Idle (start failed: {startReply.Code ?? "?"})");
+                    AppendLogSafe($"StartSession failed: {startReply.Code ?? "?"} - {startReply.Message ?? "?"}");
 
                     if (_desiredConnected)
-                        await ScheduleReconnectAsync();
+                        _ = ScheduleReconnectAsync();
+
                     return;
                 }
             }
 
-            ApplyState(UiState.Connected, "Connected");
+            ApplyStateSafe(UiState.Connecting, "Connecting (waiting for events)...");
         }
         catch (Exception ex)
         {
-            ApplyState(UiState.Idle, $"Idle (error: {ex.Message})");
-            AppendLog($"ERROR: {ex}");
+            ApplyStateSafe(UiState.Idle, $"Idle (error: {ex.Message})");
+            AppendLogSafe($"ERROR: {ex}");
 
             if (_desiredConnected)
-                await ScheduleReconnectAsync();
+                _ = ScheduleReconnectAsync();
+        }
+        finally
+        {
+            _opLock.Release();
         }
     }
 
     private async Task EnsureDisconnectedAsync(bool userInitiated)
     {
-        UiState current;
-        lock (_gate) current = _state;
+        var ct = _lifetimeCts?.Token ?? CancellationToken.None;
 
-        if (current is UiState.Idle or UiState.Disconnecting)
-        {
-            ApplyState(UiState.Idle, "Idle");
-            return;
-        }
-
-        ApplyState(UiState.Disconnecting, "Disconnecting...");
-
+        await _opLock.WaitAsync(ct);
         try
         {
+            UiState current;
+            lock (_gate) current = _state;
+
+            if (current is UiState.Idle or UiState.Disconnecting)
+            {
+                ApplyStateSafe(UiState.Idle, "Idle");
+                return;
+            }
+
+            ApplyStateSafe(UiState.Disconnecting, "Disconnecting...");
+
             if (_client != null)
             {
-                using var stopCts = CancellationTokenSource.CreateLinkedTokenSource(_cts?.Token ?? CancellationToken.None);
-                stopCts.CancelAfter(TimeSpan.FromSeconds(10));
+                try
+                {
+                    using var stopCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+                    stopCts.CancelAfter(TimeSpan.FromSeconds(20));
 
-                var reply = await _client.SendCommandAsync(
-                    type: "StopSession",
-                    payloadJson: "{}",
-                    stopCts.Token);
+                    var reply = await _client.SendCommandAsync(
+                        type: "StopSession",
+                        payloadJson: "{}",
+                        stopCts.Token).ConfigureAwait(false);
 
-                if (!reply.Ok)
-                    AppendLog($"StopSession failed: {reply.Code ?? "?"} - {reply.Message ?? "?"}");
+                    if (!reply.Ok)
+                        AppendLogSafe($"StopSession failed: {reply.Code ?? "?"} - {reply.Message ?? "?"}");
+                }
+                catch (Exception ex)
+                {
+                    AppendLogSafe($"Disconnect error: {ex}");
+                }
             }
-        }
-        catch (Exception ex)
-        {
-            AppendLog($"Disconnect error: {ex}");
+
+            ApplyStateSafe(UiState.Idle, userInitiated ? "Idle" : "Idle (disconnected)");
         }
         finally
         {
-            try { _cts?.Cancel(); } catch { }
-            try { _client?.Dispose(); } catch { }
-            _client = null;
-
-            ApplyState(UiState.Idle, userInitiated ? "Idle" : "Idle (disconnected)");
+            _opLock.Release();
         }
+    }
+
+    private async Task RefreshStatusFromEngineAsync(CancellationToken ct)
+    {
+        if (_client == null)
+        {
+            ApplyStateSafe(UiState.Idle, "Idle");
+            return;
+        }
+
+        if (!_client.IsConnected)
+        {
+            ApplyStateSafe(UiState.Idle, "Idle (not attached)");
+            return;
+        }
+
+        var state = await GetEngineStateAsync(_client, ct).ConfigureAwait(false);
+        if (IsIdleState(state))
+            ApplyStateSafe(UiState.Idle, "Idle");
+        else
+            ApplyStateSafe(UiState.Connected, $"Connected ({state ?? "unknown"})");
+    }
+
+    private static bool IsIdleState(string? state)
+    {
+        if (string.IsNullOrWhiteSpace(state))
+            return true;
+
+        return state.Trim().Equals("idle", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static async Task<string?> GetEngineStateAsync(EngineIpcClient client, CancellationToken ct)
+    {
+        using var statusCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        statusCts.CancelAfter(TimeSpan.FromSeconds(5));
+
+        var reply = await client.SendCommandAsync(
+            type: "GetStatus",
+            payloadJson: "{}",
+            statusCts.Token).ConfigureAwait(false);
+
+        if (!reply.Ok)
+            return null;
+
+        return reply.Payload?["state"]?.ToString();
     }
 
     private async Task ScheduleReconnectAsync()
     {
+        var ct = _lifetimeCts?.Token ?? CancellationToken.None;
+
         UiState current;
         lock (_gate) current = _state;
 
@@ -200,16 +323,16 @@ public partial class HomePage : Page
         _reconnectAttempt++;
 
         var delay = GetReconnectDelay(_reconnectAttempt);
-        ApplyState(UiState.Connecting, $"Reconnecting in {delay.TotalSeconds:0}s...");
-        AppendLog($"Reconnect scheduled. Attempt={_reconnectAttempt}, Delay={delay.TotalSeconds:0}s");
+        ApplyStateSafe(UiState.Connecting, $"Reconnecting in {delay.TotalSeconds:0}s...");
+        AppendLogSafe($"Reconnect scheduled. Attempt={_reconnectAttempt}, Delay={delay.TotalSeconds:0}s");
 
         try
         {
-            await Task.Delay(delay);
+            await Task.Delay(delay, ct);
         }
         catch
         {
-            ApplyState(UiState.Idle, "Idle");
+            ApplyStateSafe(UiState.Idle, "Idle");
             return;
         }
 
@@ -219,7 +342,6 @@ public partial class HomePage : Page
 
     private static TimeSpan GetReconnectDelay(int attempt)
     {
-        // Simple capped exponential backoff: 2, 4, 8, 15, 15, ...
         var seconds = attempt switch
         {
             <= 1 => 2,
@@ -230,19 +352,46 @@ public partial class HomePage : Page
         return TimeSpan.FromSeconds(seconds);
     }
 
+    private void AttachHandlersOnce(EngineIpcClient client)
+    {
+        if (_handlersAttached)
+            return;
+
+        _handlersAttached = true;
+
+        client.EngineLogReceived += (_, line) =>
+        {
+            AppendLogSafe(line);
+        };
+
+        client.EngineExited += (_, code) =>
+        {
+            Dispatcher.InvokeAsync(async () =>
+            {
+                AppendLogSafe($"Engine exited with code: {code}");
+                ApplyStateSafe(UiState.Idle, $"Idle (engine exited: {code})");
+
+                if (_desiredConnected)
+                    await ScheduleReconnectAsync();
+            });
+        };
+
+        client.EventReceived += (_, ev) =>
+        {
+            Dispatcher.InvokeAsync(() => HandleEngineEvent(ev));
+        };
+    }
+
     private void HandleEngineEvent(Models.Ipc.IpcEvent ev)
     {
         if (string.IsNullOrWhiteSpace(ev.Type))
             return;
 
-        // Typical events from your engine:
-        // EngineReady, StateChanged, Log, Error, Connected, Disconnected
-
         if (ev.Type.Equals("Log", StringComparison.OrdinalIgnoreCase))
         {
             var line = ev.Payload?["line"]?.ToString();
             if (!string.IsNullOrWhiteSpace(line))
-                AppendLog(line);
+                AppendLogSafe(line);
             return;
         }
 
@@ -250,7 +399,13 @@ public partial class HomePage : Page
         {
             var state = ev.Payload?["state"]?.ToString();
             if (!string.IsNullOrWhiteSpace(state))
+            {
                 StatusText.Text = $"State: {state}";
+                if (IsIdleState(state))
+                    ApplyStateSafe(UiState.Idle, "Idle");
+                else
+                    ApplyStateSafe(UiState.Connected, $"Connected ({state})");
+            }
             return;
         }
 
@@ -258,25 +413,28 @@ public partial class HomePage : Page
         {
             var code = ev.Payload?["code"]?.ToString() ?? "?";
             var message = ev.Payload?["message"]?.ToString() ?? "?";
-            AppendLog($"ENGINE ERROR: {code} - {message}");
+            AppendLogSafe($"ENGINE ERROR: {code} - {message}");
             return;
         }
 
         if (ev.Type.Equals("Connected", StringComparison.OrdinalIgnoreCase))
         {
+            _reconnectAttempt = 0;
+
             var ip = ev.Payload?["vpnIpv4"]?.ToString();
             if (!string.IsNullOrWhiteSpace(ip))
-                ApplyState(UiState.Connected, $"Connected ({ip})");
+                ApplyStateSafe(UiState.Connected, $"Connected ({ip})");
             else
-                ApplyState(UiState.Connected, "Connected");
+                ApplyStateSafe(UiState.Connected, "Connected");
+
             return;
         }
 
         if (ev.Type.Equals("Disconnected", StringComparison.OrdinalIgnoreCase))
         {
             var reason = ev.Payload?["reason"]?.ToString() ?? "Unknown";
-            AppendLog($"Disconnected: {reason}");
-            ApplyState(UiState.Idle, $"Idle (disconnected: {reason})");
+            AppendLogSafe($"Disconnected: {reason}");
+            ApplyStateSafe(UiState.Idle, $"Idle (disconnected: {reason})");
 
             if (_desiredConnected)
                 _ = ScheduleReconnectAsync();
@@ -287,25 +445,34 @@ public partial class HomePage : Page
         StatusText.Text = $"Event: {ev.Type}";
     }
 
-    private void ApplyState(UiState newState, string statusText)
+    private void ApplyStateSafe(UiState newState, string statusText)
     {
         lock (_gate) _state = newState;
 
-        Dispatcher.InvokeAsync(() =>
+        if (!Dispatcher.CheckAccess())
         {
-            StatusText.Text = statusText;
+            Dispatcher.InvokeAsync(() => ApplyStateSafe(newState, statusText));
+            return;
+        }
 
-            var isBusy = newState is UiState.Connecting or UiState.Disconnecting;
+        StatusText.Text = statusText;
 
-            ConnectButton.IsEnabled = !isBusy && newState != UiState.Connected;
-            DisconnectButton.IsEnabled = !isBusy && newState == UiState.Connected;
-        });
+        var isBusy = newState is UiState.Connecting or UiState.Disconnecting;
+
+        ConnectButton.IsEnabled = !isBusy && newState == UiState.Idle;
+        DisconnectButton.IsEnabled = !isBusy && newState == UiState.Connected;
     }
 
-    private void AppendLog(string line)
+    private void AppendLogSafe(string line)
     {
         if (string.IsNullOrWhiteSpace(line))
             return;
+
+        if (!Dispatcher.CheckAccess())
+        {
+            Dispatcher.InvokeAsync(() => AppendLogSafe(line));
+            return;
+        }
 
         var sb = new StringBuilder();
         sb.Append('[').Append(DateTime.Now.ToString("HH:mm:ss")).Append("] ");
@@ -323,14 +490,6 @@ public partial class HomePage : Page
 
     private static async Task<JObject?> BuildStartSessionPayloadAsync(CancellationToken ct)
     {
-        // TODO: Replace with your real config source (appsettings / UI inputs).
-        // Minimal fields required by your engine:
-        // - ovpnContent
-        // - host, port, path, listenIp, listenPort
-        //
-        // Optional:
-        // - sni, verifyServerCert, authorizationHeader
-
         var baseDir = AppDomain.CurrentDomain.BaseDirectory;
 
         var ovpnPath = Path.Combine(baseDir, "ovpnfiles", "test-win-wss.ovpn");
@@ -342,18 +501,13 @@ public partial class HomePage : Page
         var payload = new JObject
         {
             ["ovpnContent"] = ovpnContent,
-
-            // Example bridge settings (replace with your real values):
             ["host"] = "dev-s1.datagateapp.com",
             ["port"] = "443",
             ["path"] = "/api/proxy",
             ["sni"] = "dev-s1.datagateapp.com",
             ["listenIp"] = "127.0.0.1",
             ["listenPort"] = 18080,
-            ["verifyServerCert"] = false,
-
-            // If you need auth for WSS:
-            // ["authorizationHeader"] = "Bearer ..."
+            ["verifyServerCert"] = false
         };
 
         return payload;

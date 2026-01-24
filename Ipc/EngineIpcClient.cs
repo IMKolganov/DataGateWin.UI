@@ -30,30 +30,34 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
 
     private string? _lastOut;
     private string? _lastErr;
+    public bool IsConnected => _controlPipe?.IsConnected == true && _eventsPipe?.IsConnected == true;
 
     public event EventHandler<IpcEvent>? EventReceived;
     public event EventHandler<int>? EngineExited;
     public event EventHandler<string>? EngineLogReceived;
+
+    public string? LastAttachError { get; private set; }
+
+    private void EnsureInternalLifetime(CancellationToken ct)
+    {
+        _internalCts ??= CancellationTokenSource.CreateLinkedTokenSource(ct);
+    }
 
     public async Task StartOrAttachAsync(CancellationToken ct)
     {
         if (_internalCts != null)
             throw new InvalidOperationException("Already started/connected.");
 
-        _internalCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        EnsureInternalLifetime(ct);
 
-        // Try attach for up to 3 seconds
-        if (await TryConnectExistingAsync(totalTimeoutMs: 3000, ct).ConfigureAwait(false))
+        if (await TryConnectExistingAsync(totalTimeoutMs: 8000, ct).ConfigureAwait(false))
         {
             _ownsProcess = false;
             return;
         }
 
-
-        // Start engine and connect
         await StartEngineProcessAsync(ct).ConfigureAwait(false);
 
-        // Small delay to detect instant exit and avoid misleading pipe timeout.
         await Task.Delay(150, ct).ConfigureAwait(false);
         if (_process!.HasExited)
         {
@@ -61,19 +65,23 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
                 $"Engine exited early. ExitCode={_process.ExitCode}. LastOut={_lastOut ?? "<null>"}. LastErr={_lastErr ?? "<null>"}");
         }
 
-        await ConnectAsync(timeoutMs: 5000, ct).ConfigureAwait(false);
+        await ConnectAsync(timeoutMs: 8000, ct).ConfigureAwait(false);
         _ownsProcess = true;
     }
 
     public async Task<bool> TryConnectExistingAsync(int totalTimeoutMs, CancellationToken ct)
     {
-        var deadline = Environment.TickCount + totalTimeoutMs;
+        EnsureInternalLifetime(ct);
+
+        LastAttachError = null;
+
+        var deadline = Environment.TickCount64 + totalTimeoutMs;
 
         while (true)
         {
             ct.ThrowIfCancellationRequested();
 
-            CleanupPipesOnly(); // important: new client objects for each attempt
+            CleanupPipesOnly();
 
             var controlName = $"datagate.engine.{sessionId}.control";
             var eventsName = $"datagate.engine.{sessionId}.events";
@@ -81,50 +89,82 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
             _controlPipe = new NamedPipeClientStream(".", controlName, PipeDirection.InOut, PipeOptions.Asynchronous);
             _eventsPipe = new NamedPipeClientStream(".", eventsName, PipeDirection.In, PipeOptions.Asynchronous);
 
-            var remaining = unchecked(deadline - Environment.TickCount);
+            var remaining = (int)Math.Max(0, deadline - Environment.TickCount64);
             if (remaining <= 0)
+            {
+                LastAttachError ??= "timeout";
                 return false;
-
-            // small slices to allow looping
-            var slice = Math.Min(300, remaining);
+            }
 
             try
             {
-                // Try control first
-                await _controlPipe.ConnectAsync(slice, ct).ConfigureAwait(false);
+                await _controlPipe.ConnectAsync(remaining, ct).ConfigureAwait(false);
 
-                remaining = unchecked(deadline - Environment.TickCount);
-                if (remaining <= 0) return false;
+                remaining = (int)Math.Max(0, deadline - Environment.TickCount64);
+                if (remaining <= 0)
+                {
+                    LastAttachError = "timeout_after_control";
+                    CleanupPipesOnly();
+                    return false;
+                }
 
-                slice = Math.Min(300, remaining);
+                await _eventsPipe.ConnectAsync(remaining, ct).ConfigureAwait(false);
 
-                // Then events
-                await _eventsPipe.ConnectAsync(slice, ct).ConfigureAwait(false);
-
-                // Connected to both -> init streams and loops
-                _controlReader = new StreamReader(_controlPipe, Encoding.UTF8, false, 4096, leaveOpen: true);
-                _controlWriter = new StreamWriter(_controlPipe, new UTF8Encoding(false), 4096, leaveOpen: true)
-                    { AutoFlush = true };
-                _eventsReader = new StreamReader(_eventsPipe, Encoding.UTF8, false, 4096, leaveOpen: true);
-
-                _controlReadLoop = Task.Run(() => ControlReadLoopAsync(_internalCts!.Token), _internalCts!.Token);
-                _eventsReadLoop = Task.Run(() => EventsReadLoopAsync(_internalCts!.Token), _internalCts!.Token);
-
+                InitStreamsAndLoops();
                 return true;
+            }
+            catch (OperationCanceledException)
+            {
+                LastAttachError = "canceled";
+                CleanupPipesOnly();
+                throw;
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                LastAttachError = $"access_denied: {ex.Message}";
+                CleanupPipesOnly();
+                return false;
             }
             catch (TimeoutException)
             {
-                // retry until total timeout
+                LastAttachError = "timeout";
+                CleanupPipesOnly();
+                return false;
             }
-            catch (IOException)
+            catch (IOException ex)
             {
-                // pipe not ready / server not created instance yet
+                LastAttachError = $"io: {ex.Message}";
+                CleanupPipesOnly();
+
+                await Task.Delay(120, ct).ConfigureAwait(false);
+
+                remaining = (int)Math.Max(0, deadline - Environment.TickCount64);
+                if (remaining <= 0)
+                    return false;
             }
         }
     }
 
+    private void InitStreamsAndLoops()
+    {
+        if (_internalCts == null)
+            throw new InvalidOperationException("Internal lifetime is not initialized.");
+
+        _controlReader = new StreamReader(_controlPipe!, Encoding.UTF8, false, 4096, leaveOpen: true);
+        _controlWriter = new StreamWriter(_controlPipe!, new UTF8Encoding(false), 4096, leaveOpen: true)
+        {
+            AutoFlush = true
+        };
+        _eventsReader = new StreamReader(_eventsPipe!, Encoding.UTF8, false, 4096, leaveOpen: true);
+
+        _controlReadLoop = Task.Run(() => ControlReadLoopAsync(_internalCts.Token), _internalCts.Token);
+        _eventsReadLoop = Task.Run(() => EventsReadLoopAsync(_internalCts.Token), _internalCts.Token);
+    }
+
     private async Task ConnectAsync(int timeoutMs, CancellationToken ct)
     {
+        EnsureInternalLifetime(ct);
+
         var controlName = $"datagate.engine.{sessionId}.control";
         var eventsName = $"datagate.engine.{sessionId}.events";
 
@@ -134,12 +174,7 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
         await ConnectOrFailFastAsync(_controlPipe, controlName, timeoutMs, ct).ConfigureAwait(false);
         await ConnectOrFailFastAsync(_eventsPipe, eventsName, timeoutMs, ct).ConfigureAwait(false);
 
-        _controlReader = new StreamReader(_controlPipe, Encoding.UTF8, detectEncodingFromByteOrderMarks: false, bufferSize: 4096, leaveOpen: true);
-        _controlWriter = new StreamWriter(_controlPipe, new UTF8Encoding(false), bufferSize: 4096, leaveOpen: true) { AutoFlush = true };
-        _eventsReader = new StreamReader(_eventsPipe, Encoding.UTF8, detectEncodingFromByteOrderMarks: false, bufferSize: 4096, leaveOpen: true);
-
-        _controlReadLoop = Task.Run(() => ControlReadLoopAsync(_internalCts!.Token), _internalCts!.Token);
-        _eventsReadLoop = Task.Run(() => EventsReadLoopAsync(_internalCts!.Token), _internalCts!.Token);
+        InitStreamsAndLoops();
     }
 
     private async Task StartEngineProcessAsync(CancellationToken ct)
@@ -203,7 +238,7 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
         int timeoutMs,
         CancellationToken ct)
     {
-        var start = Environment.TickCount;
+        var start = Environment.TickCount64;
 
         while (true)
         {
@@ -215,11 +250,12 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
                     $"Engine exited while connecting pipes. ExitCode={_process.ExitCode}. LastOut={_lastOut ?? "<null>"}. LastErr={_lastErr ?? "<null>"}");
             }
 
-            var elapsed = unchecked(Environment.TickCount - start);
+            var elapsed = (int)Math.Max(0, Environment.TickCount64 - start);
             if (elapsed >= timeoutMs)
                 throw new TimeoutException($"Pipe connect timed out: {pipeName}");
 
-            var slice = Math.Min(250, timeoutMs - elapsed);
+            var slice = Math.Min(800, timeoutMs - elapsed);
+
             try
             {
                 await pipe.ConnectAsync(slice, ct).ConfigureAwait(false);
@@ -227,7 +263,10 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
             }
             catch (TimeoutException)
             {
-                // retry
+            }
+            catch (IOException)
+            {
+                await Task.Delay(120, ct).ConfigureAwait(false);
             }
         }
     }
@@ -326,6 +365,9 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
         catch { }
 
         try { _process?.Dispose(); } catch { }
+
+        try { _internalCts?.Dispose(); } catch { }
+        _internalCts = null;
     }
 
     private static readonly JsonSerializerSettings JsonSettings = new()
@@ -333,4 +375,14 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
         ContractResolver = new CamelCasePropertyNamesContractResolver(),
         StringEscapeHandling = StringEscapeHandling.Default
     };
+    
+    public void ResetConnection()
+    {
+        try { _internalCts?.Cancel(); } catch { }
+
+        CleanupPipesOnly();
+
+        try { _internalCts?.Dispose(); } catch { }
+        _internalCts = null;
+    }
 }
