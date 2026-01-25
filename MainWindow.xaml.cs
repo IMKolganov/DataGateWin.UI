@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Input;
 using DataGateWin.Pages;
 using DataGateWin.Services;
 using Wpf.Ui.Appearance;
@@ -26,6 +27,22 @@ public partial class MainWindow : FluentWindow
     {
         // Start page
         NavView.Navigate(typeof(HomePage));
+    }
+    
+    private void Header_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        if (e.ChangedButton != MouseButton.Left)
+            return;
+
+        if (e.ClickCount == 2)
+        {
+            WindowState = WindowState == WindowState.Maximized
+                ? WindowState.Normal
+                : WindowState.Maximized;
+            return;
+        }
+
+        DragMove();
     }
 
     private void NavView_OnSelectionChanged(object sender, RoutedEventArgs e)

@@ -14,6 +14,7 @@
             Text="Access"
             FontTypography="Title"
             FontSize="20"
+            Foreground="{DynamicResource TextFillColorPrimaryBrush}"
             FontWeight="SemiBold"/>
 
         <!-- Loading / Error -->

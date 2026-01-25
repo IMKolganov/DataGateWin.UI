@@ -1,0 +1,65 @@
+﻿<ui:FluentWindow x:Class="DataGateWin.Pages.AboutWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 Title="About"
+                 Width="420"
+                 SizeToContent="Height"
+                 WindowStartupLocation="CenterOwner"
+                 ResizeMode="NoResize">
+
+    <Grid Margin="20">
+        <ui:Card Padding="18">
+            <StackPanel>
+
+                <ui:TextBlock Text="DataGate Windows Client"
+                              FontTypography="Title"
+                              FontWeight="SemiBold"
+                              Margin="0,0,0,6"/>
+
+                <ui:TextBlock x:Name="VersionText"
+                              Opacity="0.75"
+                              Margin="0,0,0,12"/>
+
+                <ui:TextBlock Text="Secure VPN client for the DataGate platform."
+                              TextWrapping="Wrap"
+                              Opacity="0.75"
+                              Margin="0,0,0,16"/>
+
+                <!-- Website row -->
+                <Grid Margin="0,0,0,16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="8"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <ui:SymbolIcon Grid.Column="0"
+                                   Symbol="Globe24"
+                                   Opacity="0.75"
+                                   VerticalAlignment="Center"/>
+
+                    <TextBlock Grid.Column="2"
+                               Text="https://datagateapp.com"
+                               Cursor="Hand"
+                               TextDecorations="Underline"
+                               Foreground="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"
+                               VerticalAlignment="Center"
+                               MouseLeftButtonUp="Website_OnClick"/>
+                </Grid>
+
+                <Separator Margin="0,0,0,12"/>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <ui:Button Height="36"
+                               MinWidth="90"
+                               Appearance="Secondary"
+                               Click="Close_OnClick">
+                        <TextBlock Text="Close"/>
+                    </ui:Button>
+                </StackPanel>
+
+            </StackPanel>
+        </ui:Card>
+    </Grid>
+</ui:FluentWindow>

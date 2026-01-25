@@ -7,6 +7,7 @@
           Text="Statistics"
           FontSize="20"
           FontTypography="Title"
+          Foreground="{DynamicResource TextFillColorPrimaryBrush}"
           FontWeight="SemiBold"/>
     </Grid>
 </Page>
