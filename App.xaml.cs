@@ -15,7 +15,6 @@ namespace DataGateWin;
 public partial class App : Application
 {
     public static IConfiguration AppConfiguration { get; private set; } = null!;
-
     public static AuthApiClient AuthApi { get; private set; } = null!;
     public static AuthSession Session { get; private set; } = null!;
     public static HttpClient AuthedApiHttp { get; private set; } = null!;
@@ -23,22 +22,22 @@ public partial class App : Application
 
     private TrayService? _tray;
 
-    protected override async void OnStartup(StartupEventArgs e)
+    protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
 
         ApplicationThemeManager.Apply(ApplicationTheme.Dark);
 
-        await RunStartupAsync(e);
+        _ = RunStartupAsync();
     }
 
     protected override void OnExit(ExitEventArgs e)
     {
-        try { _tray?.Unregister(); } catch { }
+        _tray?.Unregister();
         base.OnExit(e);
     }
 
-    private async Task RunStartupAsync(StartupEventArgs e)
+    private async Task RunStartupAsync()
     {
         try
         {
@@ -49,8 +48,7 @@ public partial class App : Application
                     "Please restart the application as an administrator.",
                     "Administrator privileges required",
                     MessageBoxButton.OK,
-                    MessageBoxImage.Error
-                );
+                    MessageBoxImage.Error);
 
                 Shutdown();
                 return;
@@ -60,13 +58,10 @@ public partial class App : Application
             if (!File.Exists(configPath))
             {
                 MessageBox.Show(
-                    "Configuration file was not found.\n\n" +
-                    $"Expected path:\n{configPath}\n\n" +
-                    "Please place appsettings.json next to the application executable and restart.",
-                    "Configuration file missing",
+                    $"Configuration file was not found:\n{configPath}",
+                    "Configuration missing",
                     MessageBoxButton.OK,
-                    MessageBoxImage.Error
-                );
+                    MessageBoxImage.Error);
 
                 Shutdown();
                 return;
@@ -77,17 +72,13 @@ public partial class App : Application
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
 
-            var apiSettings = AppConfiguration
-                .GetSection("Api")
-                .Get<ApiSettings>()
+            var apiSettings = AppConfiguration.GetSection("Api").Get<ApiSettings>()
                 ?? throw new InvalidOperationException("Api settings are missing.");
 
             if (string.IsNullOrWhiteSpace(apiSettings.BaseUrl))
                 throw new InvalidOperationException("Api:BaseUrl is missing.");
 
-            var googleSettings = AppConfiguration
-                .GetSection("GoogleAuth")
-                .Get<GoogleAuthSettings>()
+            var googleSettings = AppConfiguration.GetSection("GoogleAuth").Get<GoogleAuthSettings>()
                 ?? throw new InvalidOperationException("GoogleAuth settings are missing.");
 
             if (string.IsNullOrWhiteSpace(googleSettings.ClientId))
@@ -101,14 +92,18 @@ public partial class App : Application
 
             var baseUri = new Uri(apiSettings.BaseUrl, UriKind.Absolute);
 
-            var authHttp = new HttpClient { BaseAddress = baseUri };
-            AuthApi = new AuthApiClient(authHttp);
+            AuthApi = new AuthApiClient(new HttpClient { BaseAddress = baseUri });
 
-            var tokenStore = new FileTokenStore("DataGateWin");
-            Session = new AuthSession(AuthApi, tokenStore, deviceId, userAgent);
+            Session = new AuthSession(
+                AuthApi,
+                new FileTokenStore("DataGateWin"),
+                deviceId,
+                userAgent);
+
             await Session.InitializeAsync(CancellationToken.None);
 
-            AuthedApiHttp = new HttpClient(new AuthenticatedHttpHandler(Session, new HttpClientHandler()))
+            AuthedApiHttp = new HttpClient(
+                new AuthenticatedHttpHandler(Session, new HttpClientHandler()))
             {
                 BaseAddress = baseUri
             };
@@ -116,8 +111,8 @@ public partial class App : Application
             GoogleAuth = new GoogleAuthService(new HttpClient());
 
             var authState = new AuthStateStore();
-
             var token = await Session.GetValidAccessTokenAsync(CancellationToken.None);
+
             if (!string.IsNullOrWhiteSpace(token))
             {
                 authState.SetAuthorized(token);
@@ -125,13 +120,12 @@ public partial class App : Application
                 var main = new MainWindow(authState);
                 MainWindow = main;
 
-                // Tray (Wpf.Ui.Tray) - no WinForms required
+                main.Show();
+
                 _tray = new TrayService();
                 _tray.AttachMainWindow(main);
-                _tray.EnableDefaultClickBehavior();
                 _tray.Register();
 
-                main.Show();
                 return;
             }
 
@@ -145,8 +139,7 @@ public partial class App : Application
                 $"Startup failed:\n{ex.Message}",
                 "Error",
                 MessageBoxButton.OK,
-                MessageBoxImage.Error
-            );
+                MessageBoxImage.Error);
 
             Shutdown();
         }
@@ -157,5 +150,21 @@ public partial class App : Application
         using var identity = WindowsIdentity.GetCurrent();
         var principal = new WindowsPrincipal(identity);
         return principal.IsInRole(WindowsBuiltInRole.Administrator);
+    }
+
+    private void Tray_Open_Click(object sender, RoutedEventArgs e)
+    {
+        if (MainWindow == null)
+            return;
+
+        MainWindow.Show();
+        MainWindow.WindowState = WindowState.Normal;
+        MainWindow.Activate();
+    }
+
+    private void Tray_Exit_Click(object sender, RoutedEventArgs e)
+    {
+        _tray?.Unregister();
+        Shutdown();
     }
 }

@@ -12,10 +12,11 @@ public partial class HomePage : Page
     public HomePage()
     {
         InitializeComponent();
+
         _controller = new HomeController(
-            statusTextSetter: s => Dispatcher.BeginInvoke(() => StatusText.Text = s),
-            uiStateApplier: (state, status) => Dispatcher.BeginInvoke(() => ApplyUiState(state, status)),
-            logAppender: line => Dispatcher.BeginInvoke(() => AppendLog(line))
+            statusTextSetter: s => DispatchUi(() => StatusText.Text = s),
+            uiStateApplier: (state, status) => DispatchUi(() => ApplyUiState(state, status)),
+            logAppender: line => DispatchUi(() => AppendLog(line))
         );
     }
 
@@ -36,8 +37,9 @@ public partial class HomePage : Page
         StatusText.Text = statusText;
 
         var isBusy = state is UiState.Connecting or UiState.Disconnecting;
+
         ConnectButton.IsEnabled = !isBusy && state == UiState.Idle;
-        DisconnectButton.IsEnabled = !isBusy && state == UiState.Connected;
+        DisconnectButton.IsEnabled = !isBusy && state is UiState.Connected or UiState.Connecting;
     }
 
     private void AppendLog(string line)
@@ -48,5 +50,13 @@ public partial class HomePage : Page
         var ts = DateTime.Now.ToString("HH:mm:ss");
         LogTextBox.AppendText($"[{ts}] {line}{Environment.NewLine}");
         LogTextBox.ScrollToEnd();
+    }
+
+    private void DispatchUi(Action action)
+    {
+        if (Dispatcher.CheckAccess())
+            action();
+        else
+            Dispatcher.BeginInvoke(action);
     }
 }

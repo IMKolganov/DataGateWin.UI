@@ -3,6 +3,7 @@
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
                  xmlns:pages="clr-namespace:DataGateWin.Pages"
+                 Icon="Images/favicon.ico"
                  Title="DataGate OpenVPN 3"
                  Width="980"
                  Height="620"
@@ -16,13 +17,43 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <ui:TitleBar Grid.Row="0"
-                     Title="DataGate OpenVPN 3"
-                     ShowClose="True"
-                     ShowMinimize="True"
-                     ShowMaximize="True"/>
+        <!-- Top bar -->
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
 
-        <!-- NavigationView is the ROOT layout now -->
+            <!-- Drag surface (covers ALL empty space like a normal window title bar) -->
+            <Border Grid.ColumnSpan="2"
+                    Background="Transparent"
+                    MouseLeftButtonDown="Header_OnMouseLeftButtonDown" />
+
+            <!-- Left content -->
+            <DockPanel Grid.Column="0"
+                       LastChildFill="True"
+                       Margin="12,0,0,0"
+                       VerticalAlignment="Center">
+                <Image Width="16"
+                       Height="16"
+                       Margin="0,0,8,0"
+                       Source="pack://application:,,,/Images/favicon.ico"/>
+
+                <TextBlock Text="DataGate OpenVPN 3"
+                           VerticalAlignment="Center"
+                           FontWeight="SemiBold"
+                           Opacity="0.95" />
+            </DockPanel>
+
+            <!-- Right: system buttons -->
+            <ui:TitleBar Grid.Column="1"
+                         Title="{x:Null}"
+                         ShowClose="True"
+                         ShowMinimize="True"
+                         ShowMaximize="True" />
+        </Grid>
+
+        <!-- NavigationView -->
         <ui:NavigationView x:Name="NavView"
                            Grid.Row="1"
                            PaneDisplayMode="Left"
@@ -69,7 +100,6 @@
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
             </ui:NavigationView.MenuItems>
-
         </ui:NavigationView>
     </Grid>
 </ui:FluentWindow>
