@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
 using DataGateWin.Ipc;
 using DataGateWin.Models.Ipc;
 
@@ -116,20 +117,46 @@ public sealed class EngineSessionService(
     public async Task StopSessionSafeAsync(CancellationToken ct)
     {
         if (_client == null)
+        {
+            log("[ui][disconnect] StopSession skipped: client is null");
             return;
+        }
+
+        log($"[ui][disconnect] StopSession START isConnected={_client.IsConnected}");
 
         try
         {
             using var stopCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
             stopCts.CancelAfter(TimeSpan.FromSeconds(20));
 
+            var startedAt = DateTime.UtcNow;
+            log("[ui][disconnect] StopSession sending command... timeout=20s");
+
             var reply = await _client.SendCommandAsync("StopSession", "{}", stopCts.Token).ConfigureAwait(false);
+
+            var ms = (DateTime.UtcNow - startedAt).TotalMilliseconds;
+            log($"[ui][disconnect] StopSession reply received in {ms:0}ms ok={reply.Ok} code={reply.Code ?? "<null>"} message={reply.Message ?? "<null>"}");
+
             if (!reply.Ok)
-                log($"StopSession failed: {reply.Code ?? "?"} - {reply.Message ?? "?"}");
+                log($"[ui][disconnect] StopSession FAILED code={reply.Code ?? "?"} message={reply.Message ?? "?"}");
+            else
+                log("[ui][disconnect] StopSession OK");
+        }
+        catch (OperationCanceledException oce) when (ct.IsCancellationRequested)
+        {
+            log($"[ui][disconnect] StopSession CANCELED by outer token: {oce.Message}");
+        }
+        catch (OperationCanceledException oce)
+        {
+            log($"[ui][disconnect] StopSession TIMEOUT/CANCELED by internal token: {oce.Message}");
         }
         catch (Exception ex)
         {
-            log($"Disconnect error: {ex}");
+            log($"[ui][disconnect] StopSession ERROR: {ex}");
+        }
+        finally
+        {
+            log("[ui][disconnect] StopSession END");
         }
     }
 
@@ -176,7 +203,6 @@ public sealed class EngineSessionService(
                 if (mapped == null)
                     return;
 
-                // If it's a log event, we can also log it here (optional)
                 if (mapped.Kind == EngineEventKind.Log && !string.IsNullOrWhiteSpace(mapped.Message))
                     log(mapped.Message);
 
