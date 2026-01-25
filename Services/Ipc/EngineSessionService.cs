@@ -1,36 +1,24 @@
 ﻿using System.IO;
-using System.Windows.Threading;
 using DataGateWin.Ipc;
 using DataGateWin.Models.Ipc;
 
 namespace DataGateWin.Services.Ipc;
 
-public sealed class EngineSessionService : IDisposable
+public sealed class EngineSessionService(
+    EnginePathResolver enginePathResolver,
+    StartSessionPayloadBuilder payloadBuilder,
+    Action<string> log,
+    Action<EngineEvent> onEngineEvent)
+    : IDisposable
 {
-    private readonly EnginePathResolver _pathResolver;
-    private readonly StartSessionPayloadBuilder _payloadBuilder;
-    private readonly Action<string> _log;
-    private readonly Action<EngineEvent> _onEngineEvent;
-
     private EngineIpcClient? _client;
     private bool _handlersAttached;
 
     private const string SessionId = "dev";
 
-    public EngineSessionService(
-        EnginePathResolver enginePathResolver,
-        StartSessionPayloadBuilder payloadBuilder,
-        Action<string> log,
-        Action<EngineEvent> onEngineEvent)
-    {
-        _pathResolver = enginePathResolver;
-        _payloadBuilder = payloadBuilder;
-        _log = log;
-        _onEngineEvent = onEngineEvent;
-    }
-
     public void Dispose()
     {
+        try { _client?.Dispose(); } catch { }
         _client = null;
         _handlersAttached = false;
     }
@@ -65,11 +53,11 @@ public sealed class EngineSessionService : IDisposable
         var attached = await _client.TryConnectExistingAsync(10000, attachCts.Token).ConfigureAwait(false);
         if (attached)
         {
-            _log("Engine attached (existing).");
+            log("Engine attached (existing).");
             return;
         }
 
-        _log($"Attach failed: {_client.LastAttachError ?? "unknown"}. Starting/attaching engine process...");
+        log($"Attach failed: {_client.LastAttachError ?? "unknown"}. Starting/attaching engine process...");
 
         _client.ResetConnection();
 
@@ -77,7 +65,7 @@ public sealed class EngineSessionService : IDisposable
         startCts.CancelAfter(TimeSpan.FromSeconds(12));
         await _client.StartOrAttachAsync(startCts.Token).ConfigureAwait(false);
 
-        _log("Engine connected.");
+        log("Engine connected.");
     }
 
     public async Task<bool> IsAttachedAsync(CancellationToken ct)
@@ -104,7 +92,7 @@ public sealed class EngineSessionService : IDisposable
     {
         EnsureClientCreated();
 
-        var payload = await _payloadBuilder.BuildAsync(ct).ConfigureAwait(false);
+        var payload = await payloadBuilder.BuildAsync(ct).ConfigureAwait(false);
         if (payload == null)
             return false;
 
@@ -118,7 +106,7 @@ public sealed class EngineSessionService : IDisposable
 
         if (!reply.Ok)
         {
-            _log($"StartSession failed: {reply.Code ?? "?"} - {reply.Message ?? "?"}");
+            log($"StartSession failed: {reply.Code ?? "?"} - {reply.Message ?? "?"}");
             return false;
         }
 
@@ -137,11 +125,11 @@ public sealed class EngineSessionService : IDisposable
 
             var reply = await _client.SendCommandAsync("StopSession", "{}", stopCts.Token).ConfigureAwait(false);
             if (!reply.Ok)
-                _log($"StopSession failed: {reply.Code ?? "?"} - {reply.Message ?? "?"}");
+                log($"StopSession failed: {reply.Code ?? "?"} - {reply.Message ?? "?"}");
         }
         catch (Exception ex)
         {
-            _log($"Disconnect error: {ex}");
+            log($"Disconnect error: {ex}");
         }
     }
 
@@ -150,7 +138,7 @@ public sealed class EngineSessionService : IDisposable
         if (_client != null)
             return;
 
-        var engineExePath = _pathResolver.ResolveEngineExePath();
+        var engineExePath = enginePathResolver.ResolveEngineExePath();
         if (!File.Exists(engineExePath))
             throw new FileNotFoundException("Engine executable not found.", engineExePath);
 
@@ -167,13 +155,13 @@ public sealed class EngineSessionService : IDisposable
         _client.EngineLogReceived += (_, line) =>
         {
             if (!string.IsNullOrWhiteSpace(line))
-                _log(line);
+                log(line);
         };
 
         _client.EngineExited += (_, code) =>
         {
-            _log($"Engine exited with code: {code}");
-            _onEngineEvent(new EngineEvent
+            log($"Engine exited with code: {code}");
+            onEngineEvent(new EngineEvent
             {
                 Kind = EngineEventKind.EngineExited,
                 ExitCode = code
@@ -190,13 +178,13 @@ public sealed class EngineSessionService : IDisposable
 
                 // If it's a log event, we can also log it here (optional)
                 if (mapped.Kind == EngineEventKind.Log && !string.IsNullOrWhiteSpace(mapped.Message))
-                    _log(mapped.Message);
+                    log(mapped.Message);
 
-                _onEngineEvent(mapped);
+                onEngineEvent(mapped);
             }
             catch (Exception ex)
             {
-                _log($"Event handler error: {ex}");
+                log($"Event handler error: {ex}");
             }
         };
     }

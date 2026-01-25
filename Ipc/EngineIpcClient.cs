@@ -30,6 +30,7 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
 
     private string? _lastOut;
     private string? _lastErr;
+
     public bool IsConnected => _controlPipe?.IsConnected == true && _eventsPipe?.IsConnected == true;
 
     public event EventHandler<IpcEvent>? EventReceived;
@@ -38,9 +39,9 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
 
     public string? LastAttachError { get; private set; }
 
-    private void EnsureInternalLifetime(CancellationToken ct)
+    private void EnsureInternalLifetime()
     {
-        _internalCts ??= CancellationTokenSource.CreateLinkedTokenSource(ct);
+        _internalCts ??= new CancellationTokenSource();
     }
 
     public async Task StartOrAttachAsync(CancellationToken ct)
@@ -48,7 +49,7 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
         if (_internalCts != null)
             throw new InvalidOperationException("Already started/connected.");
 
-        EnsureInternalLifetime(ct);
+        EnsureInternalLifetime();
 
         if (await TryConnectExistingAsync(totalTimeoutMs: 8000, ct).ConfigureAwait(false))
         {
@@ -71,7 +72,7 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
 
     public async Task<bool> TryConnectExistingAsync(int totalTimeoutMs, CancellationToken ct)
     {
-        EnsureInternalLifetime(ct);
+        EnsureInternalLifetime();
 
         LastAttachError = null;
 
@@ -98,7 +99,9 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
 
             try
             {
+                EngineLogReceived?.Invoke(this, $"[ipc][ui] connect TRY control timeoutMs={remaining}");
                 await _controlPipe.ConnectAsync(remaining, ct).ConfigureAwait(false);
+                EngineLogReceived?.Invoke(this, "[ipc][ui] connect OK control");
 
                 remaining = (int)Math.Max(0, deadline - Environment.TickCount64);
                 if (remaining <= 0)
@@ -108,7 +111,9 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
                     return false;
                 }
 
+                EngineLogReceived?.Invoke(this, $"[ipc][ui] connect TRY events timeoutMs={remaining}");
                 await _eventsPipe.ConnectAsync(remaining, ct).ConfigureAwait(false);
+                EngineLogReceived?.Invoke(this, "[ipc][ui] connect OK events");
 
                 InitStreamsAndLoops();
                 return true;
@@ -157,13 +162,15 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
         };
         _eventsReader = new StreamReader(_eventsPipe!, Encoding.UTF8, false, 4096, leaveOpen: true);
 
-        _controlReadLoop = Task.Run(() => ControlReadLoopAsync(_internalCts.Token), _internalCts.Token);
-        _eventsReadLoop = Task.Run(() => EventsReadLoopAsync(_internalCts.Token), _internalCts.Token);
+        EngineLogReceived?.Invoke(this, "[ipc][ui] loops starting");
+
+        _controlReadLoop = Task.Run(() => ControlReadLoopAsync(_internalCts.Token));
+        _eventsReadLoop = Task.Run(() => EventsReadLoopAsync(_internalCts.Token));
     }
 
     private async Task ConnectAsync(int timeoutMs, CancellationToken ct)
     {
-        EnsureInternalLifetime(ct);
+        EnsureInternalLifetime();
 
         var controlName = $"datagate.engine.{sessionId}.control";
         var eventsName = $"datagate.engine.{sessionId}.events";
@@ -171,8 +178,8 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
         _controlPipe = new NamedPipeClientStream(".", controlName, PipeDirection.InOut, PipeOptions.Asynchronous);
         _eventsPipe = new NamedPipeClientStream(".", eventsName, PipeDirection.In, PipeOptions.Asynchronous);
 
-        await ConnectOrFailFastAsync(_controlPipe, controlName, timeoutMs, ct).ConfigureAwait(false);
-        await ConnectOrFailFastAsync(_eventsPipe, eventsName, timeoutMs, ct).ConfigureAwait(false);
+        await ConnectOrFailFastAsync(_controlPipe, "control", timeoutMs, ct).ConfigureAwait(false);
+        await ConnectOrFailFastAsync(_eventsPipe, "events", timeoutMs, ct).ConfigureAwait(false);
 
         InitStreamsAndLoops();
     }
@@ -220,7 +227,9 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
         _process.Exited += (_, _) =>
         {
             EngineExited?.Invoke(this, _process?.ExitCode ?? -1);
-            _internalCts?.Cancel();
+
+            FailAllPending(new IOException("Engine process exited."));
+            try { _internalCts?.Cancel(); } catch { }
         };
 
         if (!_process.Start())
@@ -234,7 +243,7 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
 
     private async Task ConnectOrFailFastAsync(
         NamedPipeClientStream pipe,
-        string pipeName,
+        string label,
         int timeoutMs,
         CancellationToken ct)
     {
@@ -252,13 +261,15 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
 
             var elapsed = (int)Math.Max(0, Environment.TickCount64 - start);
             if (elapsed >= timeoutMs)
-                throw new TimeoutException($"Pipe connect timed out: {pipeName}");
+                throw new TimeoutException($"Pipe connect timed out: {label}");
 
             var slice = Math.Min(800, timeoutMs - elapsed);
 
             try
             {
+                EngineLogReceived?.Invoke(this, $"[ipc][ui] connect TRY {label} timeoutMs={timeoutMs}");
                 await pipe.ConnectAsync(slice, ct).ConfigureAwait(false);
+                EngineLogReceived?.Invoke(this, $"[ipc][ui] connect OK {label}");
                 return;
             }
             catch (TimeoutException)
@@ -276,6 +287,9 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
         if (_controlWriter == null)
             throw new InvalidOperationException("Not connected.");
 
+        if (_internalCts?.IsCancellationRequested == true)
+            throw new InvalidOperationException("Client lifetime is canceled.");
+
         var id = Guid.NewGuid().ToString("N");
 
         var tcs = new TaskCompletionSource<IpcReply>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -290,12 +304,27 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
         };
 
         var line = JsonConvert.SerializeObject(cmd, JsonSettings);
-        await _controlWriter.WriteLineAsync(line).ConfigureAwait(false);
+
+        EngineLogReceived?.Invoke(this, $"[ipc][ui] control send id={id} type={type} bytes={line.Length}");
+
+        try
+        {
+            await _controlWriter.WriteLineAsync(line).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            if (_pending.TryRemove(id, out var pendingTcs))
+                pendingTcs.TrySetException(ex);
+            throw;
+        }
 
         using var reg = ct.Register(() =>
         {
             if (_pending.TryRemove(id, out var pendingTcs))
+            {
+                EngineLogReceived?.Invoke(this, $"[ipc][ui] pending canceled id={id} type={type}");
                 pendingTcs.TrySetCanceled(ct);
+            }
         });
 
         return await tcs.Task.ConfigureAwait(false);
@@ -305,19 +334,113 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
     {
         if (_controlReader == null) return;
 
-        while (!ct.IsCancellationRequested)
+        EngineLogReceived?.Invoke(this, "[ipc][ui] control loop started");
+
+        try
         {
-            var line = await _controlReader.ReadLineAsync().ConfigureAwait(false);
-            if (line == null) break;
+            while (!ct.IsCancellationRequested)
+            {
+                string? line;
 
-            IpcReply? reply;
-            try { reply = JsonConvert.DeserializeObject<IpcReply>(line, JsonSettings); }
-            catch { continue; }
+                try
+                {
+                    line = await _controlReader.ReadLineAsync().ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    EngineLogReceived?.Invoke(this, $"[ipc][ui] control read failed: {ex.GetType().Name}: {ex.Message}");
+                    break;
+                }
 
-            if (reply?.Id == null) continue;
+                if (line == null)
+                {
+                    EngineLogReceived?.Invoke(this, "[ipc][ui] control loop EOF");
+                    break;
+                }
 
-            if (_pending.TryRemove(reply.Id, out var tcs))
-                tcs.TrySetResult(reply);
+                var preview = line.Length <= 200 ? line : line[..200];
+                EngineLogReceived?.Invoke(this, $"[ipc][ui] control recv bytes={line.Length} preview={preview}");
+
+                // 1) Try typed deserialize
+                IpcReply? reply = null;
+                try
+                {
+                    reply = JsonConvert.DeserializeObject<IpcReply>(line, JsonSettings);
+                }
+                catch (Exception ex)
+                {
+                    EngineLogReceived?.Invoke(this, $"[ipc][ui] control recv typed parse failed: {ex.GetType().Name}: {ex.Message}");
+                }
+
+                // 2) Fallback: parse as JObject and extract id
+                if (reply?.Id == null)
+                {
+                    try
+                    {
+                        var jo = JObject.Parse(line);
+                        var id = jo["id"]?.Value<string>();
+
+                        EngineLogReceived?.Invoke(this, $"[ipc][ui] control recv fallback id={(id ?? "<null>")}");
+
+                        if (id != null && _pending.TryRemove(id, out var tcs))
+                        {
+                            // Build minimal IpcReply from raw json so caller gets data.
+                            reply ??= new IpcReply();
+                            reply.Id = id;
+
+                            // If your IpcReply has these properties, fill them from JSON as well
+                            // (safe even if some are absent)
+                            reply.Ok = jo["ok"]?.Value<bool>() ?? false;
+                            reply.Payload = jo["payload"];
+
+                            var errObj = jo["error"] as JObject;
+                            if (errObj == null || errObj.Type == JTokenType.Null)
+                            {
+                                reply.Error = null;
+                            }
+                            else
+                            {
+                                reply.Error = new IpcError
+                                {
+                                    Code = errObj["code"]?.Value<string>(),
+                                    Message = errObj["message"]?.Value<string>()
+                                };
+                            }
+
+                            EngineLogReceived?.Invoke(this, $"[ipc][ui] pending HIT id={id} (fallback)");
+                            tcs.TrySetResult(reply);
+                        }
+                        else
+                        {
+                            EngineLogReceived?.Invoke(this, $"[ipc][ui] pending MISS id={(id ?? "<null>")}");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        EngineLogReceived?.Invoke(this, $"[ipc][ui] control recv fallback parse failed: {ex.GetType().Name}: {ex.Message}");
+                    }
+
+                    continue;
+                }
+
+                var rid = reply.Id;
+                EngineLogReceived?.Invoke(this, $"[ipc][ui] control recv parsed id={rid} ok={reply.Ok}");
+
+                if (_pending.TryRemove(rid, out var tcs2))
+                {
+                    EngineLogReceived?.Invoke(this, $"[ipc][ui] pending HIT id={rid}");
+                    tcs2.TrySetResult(reply);
+                }
+                else
+                {
+                    EngineLogReceived?.Invoke(this, $"[ipc][ui] pending MISS id={rid}");
+                }
+            }
+        }
+        finally
+        {
+            EngineLogReceived?.Invoke(this, "[ipc][ui] control loop stopped");
+            FailAllPending(new IOException("Control pipe read loop stopped."));
         }
     }
 
@@ -325,17 +448,54 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
     {
         if (_eventsReader == null) return;
 
-        while (!ct.IsCancellationRequested)
+        EngineLogReceived?.Invoke(this, "[ipc][ui] events loop started");
+
+        try
         {
-            var line = await _eventsReader.ReadLineAsync().ConfigureAwait(false);
-            if (line == null) break;
+            while (!ct.IsCancellationRequested)
+            {
+                string? line;
 
-            IpcEvent? ev;
-            try { ev = JsonConvert.DeserializeObject<IpcEvent>(line, JsonSettings); }
-            catch { continue; }
+                try
+                {
+                    line = await _eventsReader.ReadLineAsync().ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    EngineLogReceived?.Invoke(this, $"[ipc][ui] events read failed: {ex.GetType().Name}: {ex.Message}");
+                    break;
+                }
 
-            if (ev?.Type == null) continue;
-            EventReceived?.Invoke(this, ev);
+                if (line == null)
+                {
+                    EngineLogReceived?.Invoke(this, "[ipc][ui] events loop EOF");
+                    break;
+                }
+
+                IpcEvent? ev;
+                try { ev = JsonConvert.DeserializeObject<IpcEvent>(line, JsonSettings); }
+                catch
+                {
+                    EngineLogReceived?.Invoke(this, "[ipc][ui] events recv parse failed");
+                    continue;
+                }
+
+                if (ev?.Type == null) continue;
+                EventReceived?.Invoke(this, ev);
+            }
+        }
+        finally
+        {
+            EngineLogReceived?.Invoke(this, "[ipc][ui] events loop stopped");
+        }
+    }
+
+    private void FailAllPending(Exception ex)
+    {
+        foreach (var kv in _pending.ToArray())
+        {
+            if (_pending.TryRemove(kv.Key, out var tcs))
+                tcs.TrySetException(ex);
         }
     }
 
@@ -351,9 +511,26 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
         _eventsReader = null;
     }
 
+    public void ResetConnection()
+    {
+        try { _internalCts?.Cancel(); } catch { }
+
+        FailAllPending(new IOException("Connection reset."));
+
+        CleanupPipesOnly();
+
+        try { _internalCts?.Dispose(); } catch { }
+        _internalCts = null;
+
+        _controlReadLoop = null;
+        _eventsReadLoop = null;
+    }
+
     public void Dispose()
     {
         try { _internalCts?.Cancel(); } catch { }
+
+        FailAllPending(new ObjectDisposedException(nameof(EngineIpcClient)));
 
         CleanupPipesOnly();
 
@@ -375,14 +552,4 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
         ContractResolver = new CamelCasePropertyNamesContractResolver(),
         StringEscapeHandling = StringEscapeHandling.Default
     };
-    
-    public void ResetConnection()
-    {
-        try { _internalCts?.Cancel(); } catch { }
-
-        CleanupPipesOnly();
-
-        try { _internalCts?.Dispose(); } catch { }
-        _internalCts = null;
-    }
 }
