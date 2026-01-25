@@ -9,6 +9,7 @@ using DataGateWin.Services.Tray;
 using DataGateWin.Views;
 using Microsoft.Extensions.Configuration;
 using Wpf.Ui.Appearance;
+using Wpf.Ui.Markup;
 
 namespace DataGateWin;
 
@@ -19,24 +20,56 @@ public partial class App : Application
     public static AuthSession Session { get; private set; } = null!;
     public static HttpClient AuthedApiHttp { get; private set; } = null!;
     public static GoogleAuthService GoogleAuth { get; private set; } = null!;
+    public static AppSettings Settings { get; private set; } = new();
 
     private TrayService? _tray;
 
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+        
+        Settings = AppSettingsStore.LoadSafe();
 
-        ApplicationThemeManager.Apply(ApplicationTheme.Dark);
+        var themeName = Settings.Theme;
+        if (!string.Equals(themeName, "Light", StringComparison.OrdinalIgnoreCase)
+            && !string.Equals(themeName, "Dark", StringComparison.OrdinalIgnoreCase))
+        {
+            themeName = "Dark";
+            Settings.Theme = themeName;
+            AppSettingsStore.SaveSafe(Settings);
+        }
 
+        var theme = string.Equals(themeName, "Light", StringComparison.OrdinalIgnoreCase)
+            ? ApplicationTheme.Light
+            : ApplicationTheme.Dark;
+
+        EnsureThemesDictionary(theme);
+
+        ApplicationThemeManager.Apply(theme);
         _ = RunStartupAsync();
+    }
+    
+    
+    private void EnsureThemesDictionary(ApplicationTheme theme)
+    {
+        var dictionaries = Resources.MergedDictionaries;
+
+        var existing = dictionaries
+            .FirstOrDefault(d => d is ThemesDictionary);
+
+        if (existing is not null)
+            dictionaries.Remove(existing);
+
+        dictionaries.Insert(0, new ThemesDictionary { Theme = theme });
     }
 
     protected override void OnExit(ExitEventArgs e)
     {
+        AppSettingsStore.SaveSafe(Settings);
         _tray?.Unregister();
         base.OnExit(e);
     }
-
+    
     private async Task RunStartupAsync()
     {
         try

@@ -10,13 +10,13 @@
     <Grid Margin="20" RowDefinitions="Auto,Auto,*">
 
         <!-- Header -->
-        <ui:TextBlock
-            Text="Access"
-            FontTypography="Title"
-            FontSize="20"
-            Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-            FontWeight="SemiBold"/>
-
+        <ui:TextBlock Grid.Row="0"
+                      Text="Access"
+                      FontTypography="Title"
+                      FontSize="20"
+                      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                      FontWeight="SemiBold"/>
+        
         <!-- Loading / Error -->
         <Grid Grid.Row="1" Margin="0,12,0,12">
             <ui:ProgressRing

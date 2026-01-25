@@ -1,5 +1,5 @@
 ﻿<!-- HomePage.xaml -->
-<Page x:Class="DataGateWin.Pages.HomePage"
+<Page x:Class="DataGateWin.Pages.Home.HomePage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
@@ -13,13 +13,15 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <ui:TextBlock
-            Text="Welcome to DataGate OpenVPN 3"
-            FontTypography="Title"
-            FontSize="20"
-            Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-            FontWeight="SemiBold"/>
+        <!-- Header -->
+        <ui:TextBlock Grid.Row="0"
+                      Text="Welcome to DataGate OpenVPN 3"
+                      FontTypography="Title"
+                      FontSize="20"
+                      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                      FontWeight="SemiBold"/>
 
+        <!-- Connection card -->
         <ui:Card Grid.Row="1" Margin="0,16,0,0">
             <Grid>
                 <Grid.RowDefinitions>
@@ -28,7 +30,9 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock Text="Connection status" FontWeight="SemiBold"/>
+                <TextBlock Grid.Row="0"
+                           Text="Connection status"
+                           FontWeight="SemiBold"/>
 
                 <TextBlock x:Name="StatusText"
                            Grid.Row="1"
@@ -36,7 +40,9 @@
                            Text="Idle"
                            Opacity="0.8"/>
 
-                <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,12,0,0">
+                <StackPanel Grid.Row="2"
+                            Orientation="Horizontal"
+                            Margin="0,12,0,0">
                     <ui:Button x:Name="ConnectButton"
                                Appearance="Primary"
                                Content="Connect"
@@ -55,6 +61,7 @@
             </Grid>
         </ui:Card>
 
+        <!-- Logs card -->
         <ui:Card Grid.Row="2" Margin="0,16,0,0">
             <Grid>
                 <Grid.RowDefinitions>
@@ -62,7 +69,9 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock Text="Engine logs" FontWeight="SemiBold"/>
+                <TextBlock Grid.Row="0"
+                           Text="Engine logs"
+                           FontWeight="SemiBold"/>
 
                 <TextBox x:Name="LogTextBox"
                          Grid.Row="1"

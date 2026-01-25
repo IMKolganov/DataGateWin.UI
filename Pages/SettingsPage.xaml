@@ -17,8 +17,11 @@
         <ui:TextBlock Grid.Row="0"
                       Text="Settings"
                       FontTypography="Title"
+                      FontSize="20"
+                      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                       FontWeight="SemiBold"/>
-
+        
+        
         <!-- Main card -->
         <ui:Card Grid.Row="2" Padding="18">
             <StackPanel>

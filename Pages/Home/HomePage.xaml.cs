@@ -3,34 +3,37 @@ using System.Windows.Controls;
 using DataGateWin.Controllers;
 using DataGateWin.Models.Ipc;
 
-namespace DataGateWin.Pages;
+namespace DataGateWin.Pages.Home;
 
 public partial class HomePage : Page
 {
-    private HomeController? _controller;
+    private readonly HomeController _controller;
 
-    public HomePage()
+    public HomePage(HomeController controller)
     {
         InitializeComponent();
+        _controller = controller;
+    }
 
-        _controller = new HomeController(
+    private async void HomePage_OnLoaded(object sender, RoutedEventArgs e)
+    {
+        _controller.AttachUi(
             statusTextSetter: s => DispatchUi(() => StatusText.Text = s),
             uiStateApplier: (state, status) => DispatchUi(() => ApplyUiState(state, status)),
             logAppender: line => DispatchUi(() => AppendLog(line))
         );
+
+        await _controller.OnLoadedAsync();
     }
 
-    private async void HomePage_OnLoaded(object sender, RoutedEventArgs e)
-        => await _controller!.OnLoadedAsync();
-
     private void HomePage_OnUnloaded(object sender, RoutedEventArgs e)
-        => _controller!.OnUnloaded();
+        => _controller.OnUnloaded();
 
     private async void ConnectButton_OnClick(object sender, RoutedEventArgs e)
-        => await _controller!.ConnectAsync();
+        => await _controller.ConnectAsync();
 
     private async void DisconnectButton_OnClick(object sender, RoutedEventArgs e)
-        => await _controller!.DisconnectAsync();
+        => await _controller.DisconnectAsync();
 
     private void ApplyUiState(UiState state, string statusText)
     {

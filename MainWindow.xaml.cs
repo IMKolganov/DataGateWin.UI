@@ -1,6 +1,9 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Input;
+using DataGateWin.Controllers;
 using DataGateWin.Pages;
+using DataGateWin.Pages.Home;
 using DataGateWin.Services;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
@@ -11,24 +14,100 @@ public partial class MainWindow : FluentWindow
 {
     private readonly AuthStateStore _authState;
 
+    private readonly HomeController _homeController = new();
+    private readonly HomePage _homePage;
+
+    private readonly Access _accessPage = new();
+    private readonly Statistics _statisticsPage = new();
+    private readonly SettingsPage _settingsPage = new();
+
     public MainWindow(AuthStateStore authState)
     {
         InitializeComponent();
-        
-        var current = ApplicationThemeManager.GetAppTheme();
-        ApplicationThemeManager.Apply(ApplicationTheme.Dark);
 
         _authState = authState;
 
+        _homePage = new HomePage(_homeController);
+
         Loaded += OnLoaded;
+
+        NavView.AddHandler(
+            UIElement.MouseLeftButtonUpEvent,
+            new MouseButtonEventHandler(NavView_OnMouseLeftButtonUp),
+            true
+        );
     }
 
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
-        // Start page
-        NavView.Navigate(typeof(HomePage));
+        NavigateTo("home");
     }
-    
+
+    protected override void OnClosed(EventArgs e)
+    {
+        base.OnClosed(e);
+        _homeController.Dispose();
+    }
+
+    // Keep this handler because your XAML is wired to it,
+    // but do not rely on it for navigation (it may not fire on repeated clicks).
+    private void NavView_OnSelectionChanged(object sender, RoutedEventArgs e)
+    {
+        if (sender is not NavigationView nav)
+            return;
+
+        if (nav.SelectedItem is not NavigationViewItem item)
+            return;
+
+        NavigateTo(item.Tag?.ToString());
+    }
+
+    private void NavView_OnMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+    {
+        var item = FindAncestor<NavigationViewItem>(e.OriginalSource as DependencyObject);
+        if (item is null)
+            return;
+
+        NavigateTo(item.Tag?.ToString());
+    }
+
+    private void NavigateTo(string? tag)
+    {
+        SetActive(tag);
+
+        switch (tag)
+        {
+            case "home":
+                MainFrame.Navigate(_homePage);
+                break;
+
+            case "access":
+                MainFrame.Navigate(_accessPage);
+                break;
+
+            case "statistics":
+                MainFrame.Navigate(_statisticsPage);
+                break;
+
+            case "settings":
+                MainFrame.Navigate(_settingsPage);
+                break;
+
+            default:
+                SetActive("home");
+                MainFrame.Navigate(_homePage);
+                break;
+        }
+    }
+
+    private void SetActive(string? tag)
+    {
+        NavHome.IsActive = tag == "home";
+        NavAccess.IsActive = tag == "access";
+        NavStatistics.IsActive = tag == "statistics";
+        NavSettings.IsActive = tag == "settings";
+    }
+
     private void Header_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
         if (e.ChangedButton != MouseButton.Left)
@@ -45,40 +124,16 @@ public partial class MainWindow : FluentWindow
         DragMove();
     }
 
-    private void NavView_OnSelectionChanged(object sender, RoutedEventArgs e)
+    private static T? FindAncestor<T>(DependencyObject? current) where T : DependencyObject
     {
-        if (sender is not NavigationView nav)
-            return;
-
-        if (nav.SelectedItem is not NavigationViewItem item)
-            return;
-
-        // If TargetPageType is set in XAML, NavigationView can navigate itself.
-        // This call ensures navigation happens even if selection changed was triggered externally.
-        if (item.TargetPageType is not null)
+        while (current is not null)
         {
-            nav.Navigate(item.TargetPageType);
-            return;
+            if (current is T match)
+                return match;
+
+            current = System.Windows.Media.VisualTreeHelper.GetParent(current);
         }
 
-        // Fallback (if you ever remove TargetPageType)
-        switch (item.Tag?.ToString())
-        {
-            case "home":
-                nav.Navigate(typeof(HomePage));
-                break;
-
-            case "access":
-                nav.Navigate(typeof(Access));
-                break;
-
-            case "statistics":
-                nav.Navigate(typeof(Statistics));
-                break;
-
-            case "settings":
-                nav.Navigate(typeof(SettingsPage));
-                break;
-        }
+        return null;
     }
 }

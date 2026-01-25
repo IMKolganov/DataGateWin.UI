@@ -3,11 +3,11 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
     <Grid Margin="20">
-        <ui:TextBlock
-          Text="Statistics"
-          FontSize="20"
-          FontTypography="Title"
-          Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-          FontWeight="SemiBold"/>
+        <ui:TextBlock Grid.Row="0"
+                      Text="Statistics"
+                      FontTypography="Title"
+                      FontSize="20"
+                      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                      FontWeight="SemiBold"/>
     </Grid>
 </Page>
