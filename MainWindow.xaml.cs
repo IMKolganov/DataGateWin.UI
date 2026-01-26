@@ -1,11 +1,9 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
 using DataGateWin.Controllers;
 using DataGateWin.Pages;
 using DataGateWin.Pages.Home;
 using DataGateWin.Services;
-using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 
 namespace DataGateWin;

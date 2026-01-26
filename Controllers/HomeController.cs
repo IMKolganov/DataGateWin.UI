@@ -1,5 +1,8 @@
 ﻿using DataGateWin.Models.Ipc;
+using DataGateWin.Services.Installation;
 using DataGateWin.Services.Ipc;
+using DataGateWin.Services.OpenVpnFiles;
+using DataGateWin.Services.VpnServers;
 
 namespace DataGateWin.Controllers;
 
@@ -24,9 +27,21 @@ public sealed class HomeController : IDisposable
 
     public HomeController()
     {
+        var serversApi = new OpenVpnServersApiClient(App.AuthedApiHttp);
+        var selector = new WssServerSelector(serversApi);
+
+        var installation = new InstallationIdService();
+        var filesApi = new OpenVpnFilesApiClient(App.AuthedApiHttp);
+
+        var payloadBuilder = new StartSessionPayloadBuilder(
+            wssServerSelector: selector,
+            installationIdService: installation,
+            filesApi: filesApi,
+            session: App.Session);
+
         _engine = new EngineSessionService(
             enginePathResolver: new EnginePathResolver(),
-            payloadBuilder: new StartSessionPayloadBuilder(),
+            payloadBuilder: payloadBuilder,
             log: Log,
             onEngineEvent: HandleEngineEvent
         );
@@ -68,7 +83,9 @@ public sealed class HomeController : IDisposable
         try
         {
             ApplyUiState(UiState.Connecting, "Attaching...");
-            await _engine.AttachAsync(_lifetimeCts.Token);
+
+            await _engine.AttachOrStartAsync(_lifetimeCts.Token);
+
             await RefreshStatusAsync(_lifetimeCts.Token);
         }
         catch (Exception ex)
@@ -80,8 +97,6 @@ public sealed class HomeController : IDisposable
 
     public void OnUnloaded()
     {
-        // IMPORTANT: Do not dispose engine here, otherwise navigation kills your session.
-        // Just detach UI and cancel operations if you want to stop ongoing UI updates.
         try { _lifetimeCts?.Cancel(); } catch { }
         _lifetimeCts = null;
 

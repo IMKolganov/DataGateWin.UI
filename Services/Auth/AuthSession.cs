@@ -1,4 +1,6 @@
-﻿using DataGateWin.Services.Auth.Interfaces;
+﻿using System.Net;
+using System.Net.Http;
+using DataGateWin.Services.Auth.Interfaces;
 using OpenVPNGateMonitor.SharedModels.DataGateMonitorBackend.Auth.Requests;
 using OpenVPNGateMonitor.SharedModels.DataGateMonitorBackend.Auth.Responses;
 
@@ -71,13 +73,27 @@ public sealed class AuthSession(
                 UserAgent = userAgent
             };
 
-            var response = await authApi.RefreshAsync(request, ct).ConfigureAwait(false);
-            if (!response.Success || response.Data == null)
-                return false;
+            try
+            {
+                var response = await authApi.RefreshAsync(request, ct).ConfigureAwait(false);
 
-            _current = response.Data;
-            await store.SaveAsync(_current, ct).ConfigureAwait(false);
-            return true;
+                if (!response.Success || response.Data == null)
+                    return false;
+
+                _current = response.Data;
+                await store.SaveAsync(_current, ct).ConfigureAwait(false);
+                return true;
+            }
+            catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                await LogoutAsync(ct).ConfigureAwait(false);
+                return false;
+            }
+            catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Forbidden)
+            {
+                await LogoutAsync(ct).ConfigureAwait(false);
+                return false;
+            }
         }
         finally
         {
