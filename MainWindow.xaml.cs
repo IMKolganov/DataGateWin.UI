@@ -1,11 +1,9 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
 using DataGateWin.Controllers;
 using DataGateWin.Pages;
 using DataGateWin.Pages.Home;
-using DataGateWin.Services;
-using Wpf.Ui.Appearance;
+using DataGateWin.Services.Auth;
 using Wpf.Ui.Controls;
 
 namespace DataGateWin;
@@ -19,7 +17,8 @@ public partial class MainWindow : FluentWindow
 
     private readonly Access _accessPage = new();
     private readonly Statistics _statisticsPage = new();
-    private readonly SettingsPage _settingsPage = new();
+
+    private readonly SettingsPage _settingsPage;
 
     public MainWindow(AuthStateStore authState)
     {
@@ -28,6 +27,7 @@ public partial class MainWindow : FluentWindow
         _authState = authState;
 
         _homePage = new HomePage(_homeController);
+        _settingsPage = new SettingsPage(_authState);
 
         Loaded += OnLoaded;
 
@@ -49,8 +49,6 @@ public partial class MainWindow : FluentWindow
         _homeController.Dispose();
     }
 
-    // Keep this handler because your XAML is wired to it,
-    // but do not rely on it for navigation (it may not fire on repeated clicks).
     private void NavView_OnSelectionChanged(object sender, RoutedEventArgs e)
     {
         if (sender is not NavigationView nav)

@@ -51,7 +51,7 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
 
         EnsureInternalLifetime();
 
-        if (await TryConnectExistingAsync(totalTimeoutMs: 8000, ct).ConfigureAwait(false))
+        if (await TryConnectExistingAsync(totalTimeoutMs: 1000, ct).ConfigureAwait(false))
         {
             _ownsProcess = false;
             return;
@@ -66,7 +66,7 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
                 $"Engine exited early. ExitCode={_process.ExitCode}. LastOut={_lastOut ?? "<null>"}. LastErr={_lastErr ?? "<null>"}");
         }
 
-        await ConnectAsync(timeoutMs: 8000, ct).ConfigureAwait(false);
+        await ConnectAsync(timeoutMs: 1000, ct).ConfigureAwait(false);
         _ownsProcess = true;
     }
 

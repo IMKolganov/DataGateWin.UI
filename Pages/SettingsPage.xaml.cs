@@ -4,14 +4,21 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using DataGateWin.Configuration;
+using DataGateWin.Services;
+using DataGateWin.Services.Auth;
+using DataGateWin.Views;
 using Wpf.Ui.Appearance;
 
 namespace DataGateWin.Pages;
 
 public partial class SettingsPage : Page
 {
-    public SettingsPage()
+    private readonly AuthStateStore _authState;
+
+    public SettingsPage(AuthStateStore authState)
     {
+        _authState = authState;
+
         InitializeComponent();
 
         ThemeToggle.IsChecked =
@@ -50,9 +57,39 @@ public partial class SettingsPage : Page
         AppSettingsStore.SaveSafe(App.Settings);
     }
 
-    private void LogoutButton_OnClick(object sender, RoutedEventArgs e)
+    private async void LogoutButton_OnClick(object sender, RoutedEventArgs e)
     {
-        MessageBox.Show("Logout clicked.");
+        var result = MessageBox.Show(
+            "Are you sure you want to log out?",
+            "Logout",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Question);
+
+        if (result != MessageBoxResult.Yes)
+            return;
+
+        try
+        {
+            await App.Session.LogoutAsync(CancellationToken.None);
+
+            _authState.Clear();
+
+            var login = new LoginWindow(_authState);
+
+            Application.Current.MainWindow = login;
+            login.Show();
+
+            var currentWindow = Window.GetWindow(this);
+            currentWindow?.Close();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(
+                $"Logout failed:\n{ex.Message}",
+                "Error",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+        }
     }
 
     private void AboutButton_OnClick(object sender, RoutedEventArgs e)

@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 using DataGateWin.Configuration;
-using DataGateWin.Services;
+using DataGateWin.Services.Auth;
 using DataGateWin.ViewModels;
 using Microsoft.Extensions.Configuration;
 using Wpf.Ui.Controls;

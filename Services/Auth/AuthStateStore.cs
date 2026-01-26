@@ -1,4 +1,4 @@
-﻿namespace DataGateWin.Services;
+﻿namespace DataGateWin.Services.Auth;
 
 public sealed class AuthStateStore
 {

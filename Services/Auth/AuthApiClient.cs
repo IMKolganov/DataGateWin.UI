@@ -5,6 +5,8 @@ using OpenVPNGateMonitor.SharedModels.DataGateMonitorBackend.Auth.Requests;
 using OpenVPNGateMonitor.SharedModels.DataGateMonitorBackend.Auth.Responses;
 using OpenVPNGateMonitor.SharedModels.Responses;
 
+namespace DataGateWin.Services.Auth;
+
 public sealed class AuthApiClient(HttpClient http)
 {
     private readonly HttpClient _http = http ?? throw new ArgumentNullException(nameof(http));

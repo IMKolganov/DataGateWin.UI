@@ -1,7 +1,9 @@
-﻿using System.Diagnostics;
+﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using DataGateWin.Ipc;
 using DataGateWin.Models.Ipc;
+using Newtonsoft.Json.Linq;
 
 namespace DataGateWin.Services.Ipc;
 
@@ -16,6 +18,9 @@ public sealed class EngineSessionService(
     private bool _handlersAttached;
 
     private const string SessionId = "dev";
+
+    // Guard so we don't kill repeatedly if service is used multiple times
+    private bool _startupKillDone;
 
     public void Dispose()
     {
@@ -51,7 +56,7 @@ public sealed class EngineSessionService(
         using var attachCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
         attachCts.CancelAfter(TimeSpan.FromSeconds(10));
 
-        var attached = await _client.TryConnectExistingAsync(10000, attachCts.Token).ConfigureAwait(false);
+        var attached = await _client.TryConnectExistingAsync(1000, attachCts.Token).ConfigureAwait(false);
         if (attached)
         {
             log("Engine attached (existing).");
@@ -93,7 +98,22 @@ public sealed class EngineSessionService(
     {
         EnsureClientCreated();
 
-        var payload = await payloadBuilder.BuildAsync(ct).ConfigureAwait(false);
+        JObject? payload;
+        try
+        {
+            payload = await payloadBuilder.BuildAsync(ct).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested)
+        {
+            log("StartSession skipped: canceled.");
+            return false;
+        }
+        catch (Exception ex)
+        {
+            log($"BuildAsync failed: {ex.Message}");
+            return false;
+        }
+
         if (payload == null)
             return false;
 
@@ -113,6 +133,7 @@ public sealed class EngineSessionService(
 
         return true;
     }
+
 
     public async Task StopSessionSafeAsync(CancellationToken ct)
     {
@@ -169,7 +190,78 @@ public sealed class EngineSessionService(
         if (!File.Exists(engineExePath))
             throw new FileNotFoundException("Engine executable not found.", engineExePath);
 
+        KillEngineProcessesByExactPathOnce(engineExePath);
+
         _client = new EngineIpcClient(engineExePath, SessionId);
+    }
+
+    private void KillEngineProcessesByExactPathOnce(string engineExePath)
+    {
+        if (_startupKillDone)
+            return;
+
+        _startupKillDone = true;
+
+        try
+        {
+            var fullTarget = Path.GetFullPath(engineExePath);
+
+            foreach (var p in Process.GetProcessesByName("engine"))
+            {
+                try
+                {
+                    string? procPath = null;
+
+                    try
+                    {
+                        procPath = p.MainModule?.FileName;
+                    }
+                    catch (Win32Exception)
+                    {
+                        // Access denied for some processes; ignore
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        // Process exited; ignore
+                    }
+
+                    if (procPath == null)
+                        continue;
+
+                    if (!Path.GetFullPath(procPath).Equals(fullTarget, StringComparison.OrdinalIgnoreCase))
+                        continue;
+
+                    log($"[ui][startup] Killing stale engine process pid={p.Id} path={procPath}");
+
+                    try
+                    {
+                        p.Kill(entireProcessTree: true);
+                    }
+                    catch
+                    {
+                        // Fallback
+                        p.Kill();
+                    }
+
+                    try
+                    {
+                        p.WaitForExit(2000);
+                    }
+                    catch
+                    {
+                        // Ignore
+                    }
+                }
+                finally
+                {
+                    try { p.Dispose(); } catch { }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            log($"[ui][startup] KillEngineProcesses failed (ignored): {ex.Message}");
+        }
     }
 
     private void AttachHandlersOnce()
