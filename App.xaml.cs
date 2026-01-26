@@ -1,10 +1,11 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
 using System.Net.Http;
 using System.Security.Principal;
 using System.Windows;
 using DataGateWin.Configuration;
-using DataGateWin.Services;
 using DataGateWin.Services.Auth;
+using DataGateWin.Services.Ipc;
 using DataGateWin.Services.Tray;
 using DataGateWin.Views;
 using Microsoft.Extensions.Configuration;
@@ -23,6 +24,9 @@ public partial class App : Application
     public static AppSettings Settings { get; private set; } = new();
 
     private TrayService? _tray;
+    
+    private readonly EnginePathResolver _enginePathResolver = new();
+    private string? _engineExePath;
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -65,8 +69,19 @@ public partial class App : Application
 
     protected override void OnExit(ExitEventArgs e)
     {
-        AppSettingsStore.SaveSafe(Settings);
-        _tray?.Unregister();
+        try
+        {
+            if (!string.IsNullOrWhiteSpace(_engineExePath) && File.Exists(_engineExePath))
+                KillEngineProcessesByExactPathOnce(_engineExePath);
+        }
+        catch
+        {
+            // Never throw on exit
+        }
+
+        try { AppSettingsStore.SaveSafe(Settings); } catch { }
+        try { _tray?.Unregister(); } catch { }
+
         base.OnExit(e);
     }
     
@@ -86,7 +101,8 @@ public partial class App : Application
                 Shutdown();
                 return;
             }
-
+            
+            _engineExePath = _enginePathResolver.ResolveEngineExePath();
             var configPath = Path.Combine(AppContext.BaseDirectory, "appsettings.json");
             if (!File.Exists(configPath))
             {
@@ -199,5 +215,50 @@ public partial class App : Application
     {
         _tray?.Unregister();
         Shutdown();
+    }
+    
+    private static void KillEngineProcessesByExactPathOnce(string engineExePath)
+    {
+        var targetPath = Path.GetFullPath(engineExePath).TrimEnd(Path.DirectorySeparatorChar);
+
+        foreach (var p in Process.GetProcessesByName(Path.GetFileNameWithoutExtension(targetPath)))
+        {
+            try
+            {
+                var procPath = p.MainModule?.FileName;
+                if (string.IsNullOrWhiteSpace(procPath))
+                    continue;
+
+                procPath = Path.GetFullPath(procPath).TrimEnd(Path.DirectorySeparatorChar);
+
+                if (!string.Equals(procPath, targetPath, StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                try
+                {
+                    // Best-effort graceful close (often does nothing for console/service-like processes)
+                    if (!p.HasExited)
+                    {
+                        p.CloseMainWindow();
+                        p.WaitForExit(500);
+                    }
+                }
+                catch { }
+
+                if (!p.HasExited)
+                {
+                    p.Kill(entireProcessTree: true);
+                    p.WaitForExit(1500);
+                }
+            }
+            catch
+            {
+                // ignore single-process failures
+            }
+            finally
+            {
+                try { p.Dispose(); } catch { }
+            }
+        }
     }
 }

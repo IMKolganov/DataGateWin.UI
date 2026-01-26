@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DataGateWin.Services;
+using DataGateWin.Services.Auth;
 
 namespace DataGateWin.ViewModels;
 
