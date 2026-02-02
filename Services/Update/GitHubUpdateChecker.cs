@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Reflection;
@@ -91,10 +92,20 @@ public sealed class GitHubUpdateChecker
     private static void StartUpdater()
     {
         var updaterPath = Path.Combine(AppContext.BaseDirectory, "updater.exe");
-        if (!File.Exists(updaterPath))
-            return;
 
-        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+        if (!File.Exists(updaterPath))
+        {
+            MessageBox.Show(
+                "A new update is available, but the update component could not be found.\n\n" +
+                "Please reinstall the application or contact support.",
+                "Update Error",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+
+            return;
+        }
+
+        Process.Start(new ProcessStartInfo
         {
             FileName = updaterPath,
             Arguments = "update",
