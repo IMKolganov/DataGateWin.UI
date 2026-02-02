@@ -91,7 +91,11 @@ public sealed class GitHubUpdateChecker
 
     private static void StartUpdater()
     {
-        var updaterPath = Path.Combine(AppContext.BaseDirectory, "updater.exe");
+        var updaterPath = Path.Combine(
+            AppContext.BaseDirectory,
+            "Installer",
+            "DataGateWin.Installer.exe"
+        );
 
         if (!File.Exists(updaterPath))
         {
