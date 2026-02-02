@@ -93,11 +93,7 @@ public sealed class GitHubUpdateChecker
     {
         void Run()
         {
-            var updaterPath = Path.Combine(
-                AppContext.BaseDirectory,
-                "Installer",
-                "DataGateWin.Installer.exe"
-            );
+            var updaterPath = ResolveUpdaterPath();
 
             var owner = Application.Current?.MainWindow;
             if (owner != null)
@@ -116,7 +112,7 @@ public sealed class GitHubUpdateChecker
                 if (decision != MessageBoxResult.Yes)
                     return;
 
-                if (!File.Exists(updaterPath))
+                if (string.IsNullOrWhiteSpace(updaterPath))
                 {
                     MessageBox.Show(
                         owner,
@@ -159,6 +155,26 @@ public sealed class GitHubUpdateChecker
         }
 
         dispatcher.Invoke(Run);
+    }
+
+    private static string? ResolveUpdaterPath()
+    {
+        var baseDir = AppContext.BaseDirectory;
+
+        var candidates = new[]
+        {
+            Path.Combine(baseDir, "Installer", "DataGateWin.Installer.exe"),
+            Path.Combine(baseDir, "installer", "DataGateWin.Installer.exe"),
+            Path.Combine(baseDir, "DataGateWin.Installer.exe")
+        };
+
+        foreach (var candidate in candidates)
+        {
+            if (File.Exists(candidate))
+                return candidate;
+        }
+
+        return null;
     }
 
     private static void KillEngineProcessesByExactPathOnce(string engineExePath)
