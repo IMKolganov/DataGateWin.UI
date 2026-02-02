@@ -1,0 +1,29 @@
+﻿<Application x:Class="DataGateWin.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:tray="http://schemas.lepo.co/wpfui/2022/xaml/tray"
+             ShutdownMode="OnExplicitShutdown">
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ui:ControlsDictionary />
+            </ResourceDictionary.MergedDictionaries>
+
+            <tray:NotifyIcon x:Key="TrayIcon"
+                             TooltipText="DataGate OpenVPN 3"
+                             MenuOnRightClick="True"
+                             FocusOnLeftClick="True"
+                             Icon="pack://application:,,,/Images/favicon.ico">
+                <tray:NotifyIcon.Menu>
+                    <ContextMenu>
+                        <MenuItem Header="Open" Click="Tray_Open_Click"/>
+                        <Separator/>
+                        <MenuItem Header="Exit" Click="Tray_Exit_Click"/>
+                    </ContextMenu>
+                </tray:NotifyIcon.Menu>
+            </tray:NotifyIcon>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

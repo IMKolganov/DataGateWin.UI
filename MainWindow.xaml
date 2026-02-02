@@ -1,0 +1,109 @@
+﻿<!-- MainWindow.xaml -->
+<ui:FluentWindow x:Class="DataGateWin.MainWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 xmlns:pages="clr-namespace:DataGateWin.Pages.Home"
+                 Icon="Images/favicon.ico"
+                 Title="DataGate OpenVPN 3"
+                 Width="980"
+                 Height="620"
+                 WindowStartupLocation="CenterScreen"
+                 WindowBackdropType="Mica"
+                 ExtendsContentIntoTitleBar="True">
+
+    <Grid Background="{DynamicResource ApplicationBackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Top bar -->
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.ColumnSpan="2"
+                    Background="Transparent"
+                    MouseLeftButtonDown="Header_OnMouseLeftButtonDown" />
+
+            <DockPanel Grid.Column="0"
+                       LastChildFill="True"
+                       Margin="12,0,0,0"
+                       VerticalAlignment="Center">
+                <Image Width="16"
+                       Height="16"
+                       Margin="0,0,8,0"
+                       Source="pack://application:,,,/Images/favicon.ico"/>
+
+                <TextBlock Text="DataGate OpenVPN 3"
+                           VerticalAlignment="Center"
+                           FontWeight="SemiBold"
+                           Opacity="0.95" />
+            </DockPanel>
+
+            <ui:TitleBar Grid.Column="1"
+                         Title="{x:Null}"
+                         ShowClose="True"
+                         ShowMinimize="True"
+                         ShowMaximize="True" />
+        </Grid>
+
+        <!-- Body: menu + content -->
+        <Grid Grid.Row="1"
+              Background="{DynamicResource ApplicationBackgroundBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Left menu -->
+            <ui:NavigationView x:Name="NavView"
+                               Grid.Column="0"
+                               PaneDisplayMode="Left"
+                               IsBackButtonVisible="Collapsed"
+                               IsPaneToggleVisible="True"
+                               OpenPaneLength="280"
+                               CompactPaneLength="56"
+                               SelectionChanged="NavView_OnSelectionChanged"
+                               Background="{DynamicResource ApplicationBackgroundBrush}">
+
+                <ui:NavigationView.MenuItems>
+                    <ui:NavigationViewItem x:Name="NavHome" Content="Home" Tag="home" IsActive="True">
+                        <ui:NavigationViewItem.Icon>
+                            <ui:SymbolIcon Symbol="Home24"/>
+                        </ui:NavigationViewItem.Icon>
+                    </ui:NavigationViewItem>
+
+                    <ui:NavigationViewItem x:Name="NavAccess" Content="Access" Tag="access">
+                        <ui:NavigationViewItem.Icon>
+                            <ui:SymbolIcon Symbol="PlugConnected24"/>
+                        </ui:NavigationViewItem.Icon>
+                    </ui:NavigationViewItem>
+
+                    <ui:NavigationViewItem x:Name="NavStatistics" Content="Statistics" Tag="statistics">
+                        <ui:NavigationViewItem.Icon>
+                            <ui:SymbolIcon Symbol="ShieldKeyhole24"/>
+                        </ui:NavigationViewItem.Icon>
+                    </ui:NavigationViewItem>
+
+                    <ui:NavigationViewItemSeparator/>
+
+                    <ui:NavigationViewItem x:Name="NavSettings" Content="Settings" Tag="settings">
+                        <ui:NavigationViewItem.Icon>
+                            <ui:SymbolIcon Symbol="Settings24"/>
+                        </ui:NavigationViewItem.Icon>
+                    </ui:NavigationViewItem>
+                </ui:NavigationView.MenuItems>
+            </ui:NavigationView>
+
+            <!-- Right content host -->
+            <Frame x:Name="MainFrame"
+                   Grid.Column="1"
+                   NavigationUIVisibility="Hidden"
+                   Background="{DynamicResource ApplicationBackgroundBrush}" />
+        </Grid>
+    </Grid>
+</ui:FluentWindow>
