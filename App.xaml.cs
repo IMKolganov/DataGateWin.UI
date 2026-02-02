@@ -7,6 +7,7 @@ using DataGateWin.Configuration;
 using DataGateWin.Services.Auth;
 using DataGateWin.Services.Ipc;
 using DataGateWin.Services.Tray;
+using DataGateWin.Services.Update;
 using DataGateWin.Views;
 using Microsoft.Extensions.Configuration;
 using Wpf.Ui.Appearance;
@@ -170,6 +171,17 @@ public partial class App : Application
                 MainWindow = main;
 
                 main.Show();
+                
+                _ = Task.Run(async () =>
+                {
+                    var checker = new GitHubUpdateChecker(
+                        new HttpClient(),
+                        "IMKolganov",
+                        "DataGateWin"
+                    );
+
+                    await checker.CheckForUpdateAsync(CancellationToken.None);
+                });
 
                 _tray = new TrayService();
                 _tray.AttachMainWindow(main);
