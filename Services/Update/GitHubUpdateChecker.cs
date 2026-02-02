@@ -91,26 +91,117 @@ public sealed class GitHubUpdateChecker
 
     private static void StartUpdater()
     {
-        var updaterPath = Path.Combine(AppContext.BaseDirectory, "updater.exe");
-
-        if (!File.Exists(updaterPath))
+        void Run()
         {
-            MessageBox.Show(
-                "A new update is available, but the update component could not be found.\n\n" +
-                "Please reinstall the application or contact support.",
-                "Update Error",
-                MessageBoxButton.OK,
-                MessageBoxImage.Error);
+            var updaterPath = Path.Combine(
+                AppContext.BaseDirectory,
+                "Installer",
+                "DataGateWin.Installer.exe"
+            );
 
+            var owner = Application.Current?.MainWindow;
+            if (owner != null)
+                owner.IsEnabled = false;
+
+            var shouldReenable = true;
+            try
+            {
+                var decision = MessageBox.Show(
+                    owner,
+                    "A new update is available. Do you want to install it now?",
+                    "Update available",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Information);
+
+                if (decision != MessageBoxResult.Yes)
+                    return;
+
+                if (!File.Exists(updaterPath))
+                {
+                    MessageBox.Show(
+                        owner,
+                        "A new update is available, but the update component could not be found.\n\n" +
+                        "Please reinstall the application or contact support.",
+                        "Update Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+
+                    return;
+                }
+
+                var enginePath = Path.Combine(AppContext.BaseDirectory, "engine", "engine.exe");
+                if (File.Exists(enginePath))
+                    KillEngineProcessesByExactPathOnce(enginePath);
+
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = updaterPath,
+                    Arguments = "update",
+                    UseShellExecute = true,
+                    WorkingDirectory = AppContext.BaseDirectory
+                });
+
+                shouldReenable = false;
+                Application.Current?.Shutdown();
+            }
+            finally
+            {
+                if (owner != null && shouldReenable)
+                    owner.IsEnabled = true;
+            }
+        }
+
+        var dispatcher = Application.Current?.Dispatcher;
+        if (dispatcher == null || dispatcher.CheckAccess())
+        {
+            Run();
             return;
         }
 
-        Process.Start(new ProcessStartInfo
+        dispatcher.Invoke(Run);
+    }
+
+    private static void KillEngineProcessesByExactPathOnce(string engineExePath)
+    {
+        var targetPath = Path.GetFullPath(engineExePath).TrimEnd(Path.DirectorySeparatorChar);
+
+        foreach (var p in Process.GetProcessesByName(Path.GetFileNameWithoutExtension(targetPath)))
         {
-            FileName = updaterPath,
-            Arguments = "update",
-            UseShellExecute = true,
-            WorkingDirectory = AppContext.BaseDirectory
-        });
+            try
+            {
+                var procPath = p.MainModule?.FileName;
+                if (string.IsNullOrWhiteSpace(procPath))
+                    continue;
+
+                procPath = Path.GetFullPath(procPath).TrimEnd(Path.DirectorySeparatorChar);
+
+                if (!string.Equals(procPath, targetPath, StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                try
+                {
+                    if (!p.HasExited)
+                    {
+                        p.CloseMainWindow();
+                        p.WaitForExit(500);
+                    }
+                }
+                catch { }
+
+                if (!p.HasExited)
+                {
+                    p.Kill(entireProcessTree: true);
+                    p.WaitForExit(1500);
+                }
+            }
+            catch
+            {
+                // ignore single-process failures
+            }
+            finally
+            {
+                try { p.Dispose(); } catch { }
+            }
+        }
     }
 }
