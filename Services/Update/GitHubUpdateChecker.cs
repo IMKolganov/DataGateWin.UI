@@ -9,6 +9,10 @@ namespace DataGateWin.Services.Update;
 
 public sealed class GitHubUpdateChecker
 {
+    private const string UpdateArgument = "update";
+    private const string InstallerExeName = "DataGateWin.Installer.exe";
+    private const string EngineExeRelativePath = "engine";
+
     private readonly HttpClient _http;
     private readonly string _owner;
     private readonly string _repo;
@@ -54,15 +58,12 @@ public sealed class GitHubUpdateChecker
         var root = doc.RootElement;
 
         var tag = root.GetProperty("tag_name").GetString();
-        var htmlUrl = root.GetProperty("html_url").GetString();
-
         if (string.IsNullOrWhiteSpace(tag))
             return null;
 
         return new GitHubRelease
         {
-            Version = ParseVersion(tag),
-            HtmlUrl = htmlUrl!
+            Version = ParseVersion(tag)
         };
     }
 
@@ -86,15 +87,12 @@ public sealed class GitHubUpdateChecker
     private sealed class GitHubRelease
     {
         public Version Version { get; init; } = null!;
-        public string HtmlUrl { get; init; } = null!;
     }
 
     private static void StartUpdater()
     {
-        void Run()
+        RunOnUiThread(() =>
         {
-            var updaterPath = ResolveUpdaterPath();
-
             var owner = Application.Current?.MainWindow;
             if (owner != null)
                 owner.IsEnabled = false;
@@ -102,40 +100,18 @@ public sealed class GitHubUpdateChecker
             var shouldReenable = true;
             try
             {
-                var decision = MessageBox.Show(
-                    owner,
-                    "A new update is available. Do you want to install it now?",
-                    "Update available",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Information);
-
-                if (decision != MessageBoxResult.Yes)
+                if (!ConfirmUpdate(owner))
                     return;
 
+                var updaterPath = ResolveUpdaterPath();
                 if (string.IsNullOrWhiteSpace(updaterPath))
                 {
-                    MessageBox.Show(
-                        owner,
-                        "A new update is available, but the update component could not be found.\n\n" +
-                        "Please reinstall the application or contact support.",
-                        "Update Error",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Error);
-
+                    ShowUpdaterMissing(owner);
                     return;
                 }
 
-                var enginePath = Path.Combine(AppContext.BaseDirectory, "engine", "engine.exe");
-                if (File.Exists(enginePath))
-                    KillEngineProcessesByExactPathOnce(enginePath);
-
-                Process.Start(new ProcessStartInfo
-                {
-                    FileName = updaterPath,
-                    Arguments = "update",
-                    UseShellExecute = true,
-                    WorkingDirectory = AppContext.BaseDirectory
-                });
+                StopEngineIfRunning();
+                LaunchUpdater(updaterPath);
 
                 shouldReenable = false;
                 Application.Current?.Shutdown();
@@ -145,16 +121,60 @@ public sealed class GitHubUpdateChecker
                 if (owner != null && shouldReenable)
                     owner.IsEnabled = true;
             }
-        }
+        });
+    }
 
+    private static bool ConfirmUpdate(Window? owner)
+    {
+        var decision = MessageBox.Show(
+            owner,
+            "A new update is available. Do you want to install it now?",
+            "Update available",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Information);
+
+        return decision == MessageBoxResult.Yes;
+    }
+
+    private static void ShowUpdaterMissing(Window? owner)
+    {
+        MessageBox.Show(
+            owner,
+            "A new update is available, but the update component could not be found.\n\n" +
+            "Please reinstall the application or contact support.",
+            "Update Error",
+            MessageBoxButton.OK,
+            MessageBoxImage.Error);
+    }
+
+    private static void StopEngineIfRunning()
+    {
+        var enginePath = Path.Combine(AppContext.BaseDirectory, EngineExeRelativePath, "engine.exe");
+        if (File.Exists(enginePath))
+            KillEngineProcessesByExactPathOnce(enginePath);
+    }
+
+    private static void LaunchUpdater(string updaterPath)
+    {
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = updaterPath,
+            Arguments = UpdateArgument,
+            UseShellExecute = true,
+            WorkingDirectory = AppContext.BaseDirectory
+        });
+    }
+
+    private static void RunOnUiThread(Action action)
+    {
         var dispatcher = Application.Current?.Dispatcher;
         if (dispatcher == null || dispatcher.CheckAccess())
         {
-            Run();
+            action();
             return;
         }
 
-        dispatcher.Invoke(Run);
+        dispatcher.Invoke(action);
     }
 
     private static string? ResolveUpdaterPath()
@@ -163,9 +183,9 @@ public sealed class GitHubUpdateChecker
 
         var candidates = new[]
         {
-            Path.Combine(baseDir, "Installer", "DataGateWin.Installer.exe"),
-            Path.Combine(baseDir, "installer", "DataGateWin.Installer.exe"),
-            Path.Combine(baseDir, "DataGateWin.Installer.exe")
+            Path.Combine(baseDir, "Installer", InstallerExeName),
+            Path.Combine(baseDir, "installer", InstallerExeName),
+            Path.Combine(baseDir, InstallerExeName)
         };
 
         foreach (var candidate in candidates)

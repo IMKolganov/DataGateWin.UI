@@ -1,10 +1,12 @@
 ﻿<Page x:Class="DataGateWin.Pages.Access"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
-
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:utils="clr-namespace:DataGateWin.ViewModels.Utils">
+    
     <Page.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+        <utils:BytesToHumanReadableConverter x:Key="BytesFmt"/>
     </Page.Resources>
 
     <Grid Margin="20" RowDefinitions="Auto,Auto,*">
@@ -77,12 +79,12 @@
 
                 <DataGridTextColumn
                     Header="In"
-                    Binding="{Binding TotalBytesIn}"
+                    Binding="{Binding TotalBytesIn, Converter={StaticResource BytesFmt}, ConverterParameter=IEC}"
                     Width="120"/>
 
                 <DataGridTextColumn
                     Header="Out"
-                    Binding="{Binding TotalBytesOut}"
+                    Binding="{Binding TotalBytesOut, Converter={StaticResource BytesFmt}, ConverterParameter=IEC}"
                     Width="120"/>
 
                 <DataGridCheckBoxColumn

@@ -167,7 +167,7 @@ public partial class App : Application
             {
                 authState.SetAuthorized(token);
 
-                var main = new MainWindow(authState);
+                var main = new MainWindow(authState, AuthedApiHttp);
                 MainWindow = main;
 
                 main.Show();
