@@ -33,7 +33,7 @@ public partial class LoginWindow : FluentWindow
         {
             _authState.SetAuthorized(accessToken);
 
-            var main = new MainWindow(_authState);
+            var main = new MainWindow(_authState, App.AuthedApiHttp);
             Application.Current.MainWindow = main;
             main.Show();
 

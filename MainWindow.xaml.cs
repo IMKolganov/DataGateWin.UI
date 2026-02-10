@@ -1,5 +1,8 @@
-﻿using System.Windows;
+﻿using System.Net.Http;
+using System.Runtime.InteropServices;
+using System.Windows;
 using System.Windows.Input;
+using System.Windows.Interop;
 using DataGateWin.Controllers;
 using DataGateWin.Pages;
 using DataGateWin.Pages.Home;
@@ -16,11 +19,10 @@ public partial class MainWindow : FluentWindow
     private readonly HomePage _homePage;
 
     private readonly Access _accessPage = new();
-    private readonly Statistics _statisticsPage = new();
-
+    private readonly Statistics _statisticsPage;
     private readonly SettingsPage _settingsPage;
 
-    public MainWindow(AuthStateStore authState)
+    public MainWindow(AuthStateStore authState, HttpClient authedApiHttp)
     {
         InitializeComponent();
 
@@ -28,6 +30,7 @@ public partial class MainWindow : FluentWindow
 
         _homePage = new HomePage(_homeController);
         _settingsPage = new SettingsPage(_authState);
+        _statisticsPage = new Statistics(authedApiHttp, App.Session);
 
         Loaded += OnLoaded;
 
@@ -37,6 +40,37 @@ public partial class MainWindow : FluentWindow
             true
         );
     }
+    
+    protected override void OnSourceInitialized(EventArgs e)
+    {
+        base.OnSourceInitialized(e);
+
+        var hwnd = new WindowInteropHelper(this).Handle;
+        if (hwnd == IntPtr.Zero)
+            return;
+
+        // Force immersive dark mode to avoid light fallback during moves
+        EnableImmersiveDarkMode(hwnd, true);
+
+        // Optional: reinforce backdrop (does not hurt)
+        // TrySetSystemBackdrop(hwnd);
+    }
+    
+    private static void EnableImmersiveDarkMode(IntPtr hwnd, bool enabled)
+    {
+        // Attribute id: 20 for older builds, 19 for newer - try both
+        var useDark = enabled ? 1 : 0;
+
+        DwmSetWindowAttribute(hwnd, 20, ref useDark, Marshal.SizeOf<int>());
+        DwmSetWindowAttribute(hwnd, 19, ref useDark, Marshal.SizeOf<int>());
+    }
+
+    [DllImport("dwmapi.dll")]
+    private static extern int DwmSetWindowAttribute(
+        IntPtr hwnd,
+        int dwAttribute,
+        ref int pvAttribute,
+        int cbAttribute);
 
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
@@ -133,5 +167,31 @@ public partial class MainWindow : FluentWindow
         }
 
         return null;
+    }
+    
+    private void Header_OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        if (e.ChangedButton != MouseButton.Left)
+            return;
+
+        if (e.ClickCount == 2)
+        {
+            WindowState = WindowState == WindowState.Maximized
+                ? WindowState.Normal
+                : WindowState.Maximized;
+
+            e.Handled = true;
+            return;
+        }
+
+        try
+        {
+            DragMove();
+            e.Handled = true;
+        }
+        catch
+        {
+            // DragMove can throw if called in an invalid state (rare edge cases)
+        }
     }
 }

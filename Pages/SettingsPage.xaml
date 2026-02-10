@@ -4,137 +4,137 @@
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       Title="Settings">
 
-    <Grid Margin="20">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="12"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="16"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+    <ScrollViewer
+        VerticalScrollBarVisibility="Auto"
+        HorizontalScrollBarVisibility="Disabled">
 
-        <!-- Header -->
-        <ui:TextBlock Grid.Row="0"
-                      Text="Settings"
-                      FontTypography="Title"
-                      FontSize="20"
-                      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-                      FontWeight="SemiBold"/>
-        
-        
-        <!-- Main card -->
-        <ui:Card Grid.Row="2" Padding="18">
-            <StackPanel>
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="12"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="16"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-                <!-- Appearance -->
-                <ui:TextBlock Text="Appearance"
-                              FontTypography="Subtitle"
-                              FontWeight="SemiBold"/>
+            <!-- Header -->
+            <ui:TextBlock Grid.Row="0"
+                          Text="Settings"
+                          FontTypography="Title"
+                          FontSize="20"
+                          Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                          FontWeight="SemiBold"/>
 
-                <ui:TextBlock Text="Choose the application theme."
-                              Opacity="0.75"
-                              Margin="0,4,0,12"/>
+            <!-- Main card -->
+            <ui:Card Grid.Row="2" Padding="18">
+                <StackPanel>
 
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
+                    <!-- Appearance -->
+                    <ui:TextBlock Text="Appearance"
+                                  FontTypography="Subtitle"
+                                  FontWeight="SemiBold"/>
 
-                    <StackPanel Grid.Column="0">
-                        <ui:TextBlock Text="Theme"
-                                      FontWeight="SemiBold"/>
-                        <ui:TextBlock Text="Light or Dark"
-                                      Opacity="0.75"
-                                      Margin="0,2,0,0"/>
-                    </StackPanel>
+                    <ui:TextBlock Text="Choose the application theme."
+                                  Opacity="0.75"
+                                  Margin="0,4,0,12"/>
 
-                    <ui:ToggleSwitch Grid.Column="1"
-                                     x:Name="ThemeToggle"
-                                     Width="140"
-                                     Content="Dark mode"
-                                     VerticalAlignment="Center"
-                                     Checked="ThemeToggle_OnChecked"
-                                     Unchecked="ThemeToggle_OnUnchecked"/>
-                </Grid>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
 
-                <Separator Margin="0,16,0,16"/>
+                        <StackPanel Grid.Column="0">
+                            <ui:TextBlock Text="Theme"
+                                          FontWeight="SemiBold"/>
+                            <ui:TextBlock Text="Light or Dark"
+                                          Opacity="0.75"
+                                          Margin="0,2,0,0"/>
+                        </StackPanel>
 
-                <!-- Account -->
-                <ui:TextBlock Text="Account"
-                              FontTypography="Subtitle"
-                              FontWeight="SemiBold"/>
+                        <ui:ToggleSwitch Grid.Column="1"
+                                         x:Name="ThemeToggle"
+                                         Width="140"
+                                         Content="Dark mode"
+                                         VerticalAlignment="Center"
+                                         Checked="ThemeToggle_OnChecked"
+                                         Unchecked="ThemeToggle_OnUnchecked"/>
+                    </Grid>
 
-                <ui:TextBlock Text="Sign out from the application."
-                              Opacity="0.75"
-                              Margin="0,4,0,12"/>
+                    <Separator Margin="0,16,0,16"/>
+
+                    <!-- Account -->
+                    <ui:TextBlock Text="Account"
+                                  FontTypography="Subtitle"
+                                  FontWeight="SemiBold"/>
+
+                    <ui:TextBlock Text="Sign out from the application."
+                                  Opacity="0.75"
+                                  Margin="0,4,0,12"/>
+
+                    <ui:Button Height="42"
+                               Appearance="Secondary"
+                               Click="LogoutButton_OnClick">
+                        <ui:Button.Icon>
+                            <ui:SymbolIcon Symbol="SignOut24"/>
+                        </ui:Button.Icon>
+                        <ui:Button.Content>
+                            <TextBlock Text="Logout"/>
+                        </ui:Button.Content>
+                    </ui:Button>
+
+                    <Separator Margin="0,16,0,16"/>
+
+                    <!-- Application -->
+                    <ui:TextBlock Text="Application"
+                                  FontTypography="Subtitle"
+                                  FontWeight="SemiBold"/>
+
+                    <Grid Margin="0,8,0,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Grid.Row="0" Orientation="Horizontal">
+                            <ui:TextBlock Text="Current version:"
+                                          FontWeight="SemiBold"/>
+                            <ui:TextBlock x:Name="CurrentVersionText"
+                                          Margin="8,0,0,0"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="1"
+                                    Orientation="Horizontal"
+                                    Margin="0,4,0,0">
+                            <ui:TextBlock Text="Latest version:"
+                                          FontWeight="SemiBold"/>
+                            <ui:TextBlock x:Name="LatestVersionText"
+                                          Margin="8,0,0,0"
+                                          Opacity="0.75"
+                                          Text="Checking..."/>
+                        </StackPanel>
+                    </Grid>
+
+                </StackPanel>
+            </ui:Card>
+
+            <!-- Bottom -->
+            <StackPanel Grid.Row="4">
+                <Separator Margin="0,12"/>
 
                 <ui:Button Height="42"
                            Appearance="Secondary"
-                           Click="LogoutButton_OnClick">
+                           HorizontalAlignment="Stretch"
+                           Click="AboutButton_OnClick">
                     <ui:Button.Icon>
-                        <ui:SymbolIcon Symbol="SignOut24"/>
+                        <ui:SymbolIcon Symbol="Info24"/>
                     </ui:Button.Icon>
                     <ui:Button.Content>
-                        <TextBlock Text="Logout"/>
+                        <TextBlock Text="About"/>
                     </ui:Button.Content>
                 </ui:Button>
-
-                <Separator Margin="0,16,0,16"/>
-
-                <!-- Application -->
-                <ui:TextBlock Text="Application"
-                              FontTypography="Subtitle"
-                              FontWeight="SemiBold"/>
-
-                <Grid Margin="0,8,0,0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-
-                    <StackPanel Grid.Row="0" Orientation="Horizontal">
-                        <ui:TextBlock Text="Current version:"
-                                      FontWeight="SemiBold"/>
-                        <ui:TextBlock x:Name="CurrentVersionText"
-                                      Margin="8,0,0,0"/>
-                    </StackPanel>
-
-                    <StackPanel Grid.Row="1"
-                                Orientation="Horizontal"
-                                Margin="0,4,0,0">
-                        <ui:TextBlock Text="Latest version:"
-                                      FontWeight="SemiBold"/>
-                        <ui:TextBlock x:Name="LatestVersionText"
-                                      Margin="8,0,0,0"
-                                      Opacity="0.75"
-                                      Text="Checking..."/>
-                    </StackPanel>
-                </Grid>
-
             </StackPanel>
-        </ui:Card>
 
-        <!-- About button at the bottom -->
-        <StackPanel Grid.Row="4"
-                    Orientation="Vertical">
-
-            <Separator Margin="0,12"/>
-
-            <ui:Button Height="42"
-                       Appearance="Secondary"
-                       HorizontalAlignment="Stretch"
-                       Click="AboutButton_OnClick">
-                <ui:Button.Icon>
-                    <ui:SymbolIcon Symbol="Info24"/>
-                </ui:Button.Icon>
-                <ui:Button.Content>
-                    <TextBlock Text="About"/>
-                </ui:Button.Content>
-            </ui:Button>
-
-        </StackPanel>
-
-
-    </Grid>
+        </Grid>
+    </ScrollViewer>
 </Page>
