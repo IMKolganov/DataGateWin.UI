@@ -24,68 +24,107 @@
                       FontWeight="SemiBold"/>
 
         <!-- Filters -->
-        <Border Grid.Row="2"
-                Padding="12"
-                CornerRadius="12"
-                Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
+        <ui:Card Grid.Row="2" Padding="12"
+                 HorizontalContentAlignment="Stretch"
+                 VerticalContentAlignment="Stretch">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="10"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="10"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
+                <!-- Row 0: main filters -->
                 <WrapPanel Grid.Row="0" VerticalAlignment="Center">
-                    <ui:TextBlock Text="From" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                    <DatePicker SelectedDate="{Binding FromLocalDate, Mode=TwoWay}"
-                                Width="140"/>
+                    <ui:TextBlock Text="From"
+                                  Margin="0,0,8,0"
+                                  VerticalAlignment="Center"
+                                  Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
 
-                    <ui:TextBlock Text="To" Margin="16,0,8,0" VerticalAlignment="Center"/>
-                    <DatePicker SelectedDate="{Binding ToLocalDate, Mode=TwoWay}"
-                                Width="140"/>
+                    <ui:CalendarDatePicker Width="170"
+                                           Date="{Binding FromLocalDate, Mode=TwoWay}"
+                                           Content="{Binding FromLocalDate, StringFormat={}{0:yyyy-MM-dd}}"
+                                           Appearance="Secondary"/>
 
-                    <ui:TextBlock Text="Grouping" Margin="16,0,8,0" VerticalAlignment="Center"/>
-                    <ComboBox ItemsSource="{Binding GroupingItems}"
-                              SelectedItem="{Binding Grouping, Mode=TwoWay}"
-                              Width="140"/>
+                    <ui:TextBlock Text="To"
+                                  Margin="16,0,8,0"
+                                  VerticalAlignment="Center"
+                                  Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+
+                    <ui:CalendarDatePicker Width="170"
+                                           Date="{Binding ToLocalDate, Mode=TwoWay}"
+                                           Content="{Binding ToLocalDate, StringFormat={}{0:yyyy-MM-dd}}"
+                                           Appearance="Secondary"/>
+
+                    <ui:TextBlock Text="Grouping"
+                                  Margin="16,0,8,0"
+                                  VerticalAlignment="Center"
+                                  Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+
+                    <ui:DropDownButton Width="160"
+                                       Content="{Binding GroupingText}"
+                                       Appearance="Secondary">
+                        <ui:DropDownButton.Flyout>
+                            <ContextMenu>
+                                <MenuItem Header="Auto"   Command="{Binding SetGroupingCommand}" CommandParameter="Auto"/>
+                                <MenuItem Header="Hours"  Command="{Binding SetGroupingCommand}" CommandParameter="Hours"/>
+                                <MenuItem Header="Days"   Command="{Binding SetGroupingCommand}" CommandParameter="Days"/>
+                                <MenuItem Header="Months" Command="{Binding SetGroupingCommand}" CommandParameter="Months"/>
+                                <MenuItem Header="Years"  Command="{Binding SetGroupingCommand}" CommandParameter="Years"/>
+                            </ContextMenu>
+                        </ui:DropDownButton.Flyout>
+                    </ui:DropDownButton>
                 </WrapPanel>
 
+                <!-- Row 2: quick range -->
                 <WrapPanel Grid.Row="2" VerticalAlignment="Center">
-                    <Button Content="7 days"
-                            Command="{Binding SetLastDaysCommand}"
-                            CommandParameter="7"
-                            Margin="0,0,8,0"/>
+                    <ui:Button Content="7 days"
+                               Command="{Binding SetLastDaysCommand}"
+                               CommandParameter="7"
+                               Margin="0,0,8,0"
+                               Appearance="Secondary"/>
 
-                    <Button Content="30 days"
-                            Command="{Binding SetLastDaysCommand}"
-                            CommandParameter="30"
-                            Margin="0,0,8,0"/>
+                    <ui:Button Content="30 days"
+                               Command="{Binding SetLastDaysCommand}"
+                               CommandParameter="30"
+                               Margin="0,0,8,0"
+                               Appearance="Secondary"/>
 
-                    <Button Content="90 days"
-                            Command="{Binding SetLastDaysCommand}"
-                            CommandParameter="90"
-                            Margin="0,0,16,0"/>
+                    <ui:Button Content="90 days"
+                               Command="{Binding SetLastDaysCommand}"
+                               CommandParameter="90"
+                               Margin="0,0,16,0"
+                               Appearance="Secondary"/>
+                </WrapPanel>
 
-                    <Button Content="Apply"
-                            Command="{Binding ApplyFiltersCommand}"
-                            Margin="0,0,8,0"/>
+                <!-- Row 4: apply/reset -->
+                <DockPanel Grid.Row="4" LastChildFill="True">
+                    <WrapPanel DockPanel.Dock="Left">
+                        <ui:Button Content="Apply"
+                                   Command="{Binding ApplyFiltersCommand}"
+                                   Margin="0,0,8,0"/>
 
-                    <Button Content="Reset"
-                            Command="{Binding ResetFiltersCommand}"
-                            Margin="0,0,16,0"/>
+                        <ui:Button Content="Reset"
+                                   Command="{Binding ResetFiltersCommand}"
+                                   Appearance="Secondary"/>
+                    </WrapPanel>
 
                     <ui:TextBlock Text="{Binding ErrorText}"
                                   Foreground="Tomato"
-                                  VerticalAlignment="Center"/>
-                </WrapPanel>
+                                  VerticalAlignment="Center"
+                                  Margin="16,0,0,0"/>
+                </DockPanel>
             </Grid>
-        </Border>
+        </ui:Card>
+
 
         <!-- Summary -->
-        <Border Grid.Row="4"
-                Padding="12"
-                CornerRadius="12"
-                Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
+        <ui:Card Grid.Row="4"
+                 Padding="12"
+                 HorizontalContentAlignment="Stretch"
+                 VerticalContentAlignment="Stretch">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -110,14 +149,16 @@
                                  IsIndeterminate="True"
                                  Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             </Grid>
-        </Border>
+        </ui:Card>
 
         <!-- Chart -->
-        <Border Grid.Row="6"
-                Padding="12"
-                CornerRadius="12"
-                Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
-            <oxy:PlotView x:Name="Chart" Model="{Binding PlotModel}" />
-        </Border>
+        <ui:Card Grid.Row="6"
+                 Padding="12">
+            <Grid MinHeight="220">
+                <oxy:PlotView x:Name="Chart"
+                              Model="{Binding PlotModel}"/>
+            </Grid>
+        </ui:Card>
+
     </Grid>
 </Page>

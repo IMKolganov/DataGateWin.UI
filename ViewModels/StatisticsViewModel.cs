@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.Input;
@@ -25,15 +21,6 @@ public sealed class StatisticsViewModel : INotifyPropertyChanged
     private readonly StatisticsApiClient _api;
 
     public event PropertyChangedEventHandler? PropertyChanged;
-
-    public IReadOnlyList<OverviewGrouping> GroupingItems { get; } = new[]
-    {
-        OverviewGrouping.Auto,
-        OverviewGrouping.Hours,
-        OverviewGrouping.Days,
-        OverviewGrouping.Months,
-        OverviewGrouping.Years
-    };
 
     private bool _isLoading;
     public bool IsLoading
@@ -88,17 +75,24 @@ public sealed class StatisticsViewModel : INotifyPropertyChanged
     public OverviewGrouping Grouping
     {
         get => _grouping;
-        set { _grouping = value; OnPropertyChanged(); }
+        private set
+        {
+            _grouping = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(GroupingText));
+        }
     }
 
+    public string GroupingText => Grouping.ToString();
+
+    public ICommand SetGroupingCommand { get; }
     public ICommand ApplyFiltersCommand { get; }
     public ICommand ResetFiltersCommand { get; }
     public ICommand SetLastDaysCommand { get; }
 
-    // Theme colors used by PlotModel builders
     private OxyColor _chartBg = OxyColors.Transparent;
-    private OxyColor _chartFg = OxyColors.White;
-    private OxyColor _chartGrid = OxyColor.FromAColor(60, OxyColors.White);
+    private OxyColor _chartFg = OxyColors.Black;
+    private OxyColor _chartGrid = OxyColor.FromAColor(60, OxyColors.Black);
 
     private OverviewSeriesResponse? _lastData;
 
@@ -106,6 +100,7 @@ public sealed class StatisticsViewModel : INotifyPropertyChanged
     {
         _api = api ?? throw new ArgumentNullException(nameof(api));
 
+        SetGroupingCommand = new RelayCommand<string>(SetGrouping);
         ApplyFiltersCommand = new AsyncRelayCommand(ApplyAsync);
         ResetFiltersCommand = new RelayCommand(ResetFilters);
         SetLastDaysCommand = new RelayCommand<string>(SetLastDays);
@@ -115,6 +110,12 @@ public sealed class StatisticsViewModel : INotifyPropertyChanged
     }
 
     public Task LoadAsync(CancellationToken ct) => ApplyAsync(ct);
+
+    private void SetGrouping(string? grouping)
+    {
+        if (Enum.TryParse<OverviewGrouping>(grouping, ignoreCase: true, out var parsed))
+            Grouping = parsed;
+    }
 
     private async Task ApplyAsync(CancellationToken ct)
     {
@@ -130,13 +131,16 @@ public sealed class StatisticsViewModel : INotifyPropertyChanged
         }
 
         IsLoading = true;
+
         try
         {
+            var effectiveGrouping = ResolveGrouping(Grouping, from, to);
+
             var req = new GetOverviewSeriesRequest
             {
                 From = from,
                 To = to,
-                Grouping = Grouping
+                Grouping = effectiveGrouping
             };
 
             var data = await _api.GetOverviewSeriesAsync(req, ct);
@@ -155,6 +159,20 @@ public sealed class StatisticsViewModel : INotifyPropertyChanged
         {
             IsLoading = false;
         }
+    }
+
+    private static OverviewGrouping ResolveGrouping(OverviewGrouping requested, DateTimeOffset from, DateTimeOffset to)
+    {
+        if (requested != OverviewGrouping.Auto)
+            return requested;
+
+        var days = (to - from).TotalDays;
+
+        if (days <= 2) return OverviewGrouping.Hours;
+        if (days <= 90) return OverviewGrouping.Days;
+        if (days <= 800) return OverviewGrouping.Months;
+
+        return OverviewGrouping.Years;
     }
 
     private void ResetFilters()
@@ -205,7 +223,6 @@ public sealed class StatisticsViewModel : INotifyPropertyChanged
         var textPrimary = plotView.TryFindResource("TextFillColorPrimaryBrush") as SolidColorBrush;
         var textSecondary = plotView.TryFindResource("TextFillColorSecondaryBrush") as SolidColorBrush;
 
-        // IMPORTANT: set PlotView background (WPF layer)
         plotView.Background = bgBrush ?? Brushes.Transparent;
 
         var bg = bgBrush?.Color ?? (theme == ApplicationTheme.Dark ? Colors.Black : Colors.White);
@@ -215,11 +232,6 @@ public sealed class StatisticsViewModel : INotifyPropertyChanged
         _chartBg = OxyColor.FromArgb(bg.A, bg.R, bg.G, bg.B);
         _chartFg = OxyColor.FromArgb(fg.A, fg.R, fg.G, fg.B);
         _chartGrid = OxyColor.FromArgb(60, gridBase.R, gridBase.G, gridBase.B);
-
-        RefreshChart();
-
-        // Force redraw (important!)
-        plotView.InvalidatePlot(true);
     }
 
     public void RefreshChart()
@@ -233,13 +245,23 @@ public sealed class StatisticsViewModel : INotifyPropertyChanged
     {
         var model = BuildEmptyModel();
 
+        var accent = OxyColor.FromRgb(0x4C, 0x9A, 0xFF);
+
         var series = new AreaSeries
         {
             Title = "Upload",
             StrokeThickness = 2,
-            ConstantY2 = 0
-        };
+            ConstantY2 = 0,
 
+            Color = accent,
+            TrackerFormatString =
+                "{0}\n" +
+                "{1:yyyy-MM-dd HH:mm}\n" +
+                "Upload: {2}",
+            Fill = OxyColor.FromAColor(80, accent),
+            MarkerType = MarkerType.None
+        };
+        
         foreach (var row in data.OverviewSeriesRows)
         {
             var x = DateTimeAxis.ToDouble(row.Ts.UtcDateTime);
@@ -256,6 +278,7 @@ public sealed class StatisticsViewModel : INotifyPropertyChanged
         var model = new PlotModel
         {
             Background = _chartBg,
+            PlotAreaBackground = _chartBg,
             TextColor = _chartFg,
             PlotAreaBorderThickness = new OxyThickness(0)
         };

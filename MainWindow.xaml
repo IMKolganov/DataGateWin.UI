@@ -8,6 +8,8 @@
                  Title="DataGate OpenVPN 3"
                  Width="980"
                  Height="620"
+                 MinHeight="650"
+                 MinWidth="900"
                  WindowStartupLocation="CenterScreen"
                  WindowBackdropType="Mica"
                  ExtendsContentIntoTitleBar="True">
