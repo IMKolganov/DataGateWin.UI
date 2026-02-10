@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Net.Http;
+using System.Windows;
 using System.Windows.Input;
 using DataGateWin.Controllers;
 using DataGateWin.Pages;
@@ -16,11 +17,10 @@ public partial class MainWindow : FluentWindow
     private readonly HomePage _homePage;
 
     private readonly Access _accessPage = new();
-    private readonly Statistics _statisticsPage = new();
-
+    private readonly Statistics _statisticsPage;
     private readonly SettingsPage _settingsPage;
 
-    public MainWindow(AuthStateStore authState)
+    public MainWindow(AuthStateStore authState, HttpClient authedApiHttp)
     {
         InitializeComponent();
 
@@ -28,6 +28,7 @@ public partial class MainWindow : FluentWindow
 
         _homePage = new HomePage(_homeController);
         _settingsPage = new SettingsPage(_authState);
+        _statisticsPage = new Statistics(authedApiHttp);
 
         Loaded += OnLoaded;
 
