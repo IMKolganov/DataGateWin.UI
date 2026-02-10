@@ -4,13 +4,15 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.Input;
+using DataGateWin.Services.Auth;
+using DataGateWin.Services.Identity;
 using DataGateWin.Services.Statistics;
+using DataGateWin.ViewModels.Utils;
 using OpenVPNGateMonitor.SharedModels.DataGateMonitorBackend.OpenVpnServerClients.Requests;
 using OpenVPNGateMonitor.SharedModels.DataGateMonitorBackend.OpenVpnServerClients.Responses;
 using OpenVPNGateMonitor.SharedModels.Enums;
 using OxyPlot;
 using OxyPlot.Axes;
-using OxyPlot.Series;
 using OxyPlot.Wpf;
 using Wpf.Ui.Appearance;
 
@@ -19,6 +21,7 @@ namespace DataGateWin.ViewModels;
 public sealed class StatisticsViewModel : INotifyPropertyChanged
 {
     private readonly StatisticsApiClient _api;
+    private readonly AuthSession _session;
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -96,9 +99,10 @@ public sealed class StatisticsViewModel : INotifyPropertyChanged
 
     private OverviewSeriesResponse? _lastData;
 
-    public StatisticsViewModel(StatisticsApiClient api)
+    public StatisticsViewModel(StatisticsApiClient api, AuthSession session)
     {
         _api = api ?? throw new ArgumentNullException(nameof(api));
+        _session = session ?? throw new ArgumentNullException(nameof(session));
 
         SetGroupingCommand = new RelayCommand<string>(SetGrouping);
         ApplyFiltersCommand = new AsyncRelayCommand(ApplyAsync);
@@ -134,12 +138,24 @@ public sealed class StatisticsViewModel : INotifyPropertyChanged
 
         try
         {
-            var effectiveGrouping = ResolveGrouping(Grouping, from, to);
+            var token = await _session.GetValidAccessTokenAsync(ct).ConfigureAwait(false);
+            if (string.IsNullOrWhiteSpace(token))
+                throw new InvalidOperationException("Access token not available");
 
+            var externalId =
+                JwtClaimReader.GetClaimFromBearerToken(token, "externalId")
+                ?? JwtClaimReader.GetClaimFromBearerToken(token, "sub")
+                ?? JwtClaimReader.GetClaimFromBearerToken(token, "nameid");
+
+            if (string.IsNullOrWhiteSpace(externalId))
+                throw new InvalidOperationException("ExternalId not available");
+
+            var effectiveGrouping = ResolveGrouping(Grouping, from, to);
             var req = new GetOverviewSeriesRequest
             {
                 From = from,
                 To = to,
+                ExternalId = externalId,
                 Grouping = effectiveGrouping
             };
 
@@ -246,20 +262,16 @@ public sealed class StatisticsViewModel : INotifyPropertyChanged
         var model = BuildEmptyModel();
 
         var accent = OxyColor.FromRgb(0x4C, 0x9A, 0xFF);
-
-        var series = new AreaSeries
+        
+        var series = new BytesAreaSeries
         {
             Title = "Upload",
             StrokeThickness = 2,
             ConstantY2 = 0,
-
             Color = accent,
-            TrackerFormatString =
-                "{0}\n" +
-                "{2}\n" +
-                "Upload: {4}",
             Fill = OxyColor.FromAColor(80, accent),
-            MarkerType = MarkerType.None
+            MarkerType = MarkerType.None,
+            BytesFormatter = FormatBytes
         };
         
         foreach (var row in data.OverviewSeriesRows)

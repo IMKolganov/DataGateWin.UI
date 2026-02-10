@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
+using DataGateWin.Services.Auth;
 using DataGateWin.Services.Statistics;
 using DataGateWin.ViewModels;
 using Wpf.Ui.Appearance;
@@ -18,11 +19,13 @@ public partial class Statistics : Page
         Interval = TimeSpan.FromMilliseconds(80)
     };
 
-    public Statistics(HttpClient authedApiHttp)
+    public Statistics(HttpClient authedApiHttp, AuthSession session)
     {
         InitializeComponent();
 
-        _vm = new StatisticsViewModel(new StatisticsApiClient(authedApiHttp));
+        _vm = new StatisticsViewModel(
+            new StatisticsApiClient(authedApiHttp),
+            session);
         DataContext = _vm;
 
         ApplicationThemeManager.Changed += OnThemeChanged;

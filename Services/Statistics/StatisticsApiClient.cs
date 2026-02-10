@@ -7,14 +7,9 @@ using OpenVPNGateMonitor.SharedModels.Responses;
 
 namespace DataGateWin.Services.Statistics;
 
-public sealed class StatisticsApiClient
+public sealed class StatisticsApiClient(HttpClient http)
 {
-    private readonly HttpClient _http;
-
-    public StatisticsApiClient(HttpClient http)
-    {
-        _http = http ?? throw new ArgumentNullException(nameof(http));
-    }
+    private readonly HttpClient _http = http ?? throw new ArgumentNullException(nameof(http));
 
     public async Task<OverviewSeriesResponse> GetOverviewSeriesAsync(GetOverviewSeriesRequest request, CancellationToken ct)
     {
@@ -38,12 +33,15 @@ public sealed class StatisticsApiClient
 
     private static string BuildOverviewSeriesUrl(GetOverviewSeriesRequest r)
     {
-        var query = new List<string>(capacity: 3)
+        var query = new List<string>(capacity: 4)
         {
             $"From={Uri.EscapeDataString(r.From.ToUniversalTime().ToString("O", CultureInfo.InvariantCulture))}",
             $"To={Uri.EscapeDataString(r.To.ToUniversalTime().ToString("O", CultureInfo.InvariantCulture))}",
             $"Grouping={Uri.EscapeDataString(((int)r.Grouping).ToString(CultureInfo.InvariantCulture))}"
         };
+
+        if (!string.IsNullOrWhiteSpace(r.ExternalId))
+            query.Add($"ExternalId={Uri.EscapeDataString(r.ExternalId)}");
 
         return "api/open-vpn-clients/overview/series?" + string.Join("&", query);
     }

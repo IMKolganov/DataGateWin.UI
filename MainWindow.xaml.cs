@@ -28,7 +28,7 @@ public partial class MainWindow : FluentWindow
 
         _homePage = new HomePage(_homeController);
         _settingsPage = new SettingsPage(_authState);
-        _statisticsPage = new Statistics(authedApiHttp);
+        _statisticsPage = new Statistics(authedApiHttp, App.Session);
 
         Loaded += OnLoaded;
 
