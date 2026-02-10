@@ -5,6 +5,38 @@
       xmlns:oxy="http://oxyplot.org/wpf"
       Loaded="OnLoaded">
 
+    <Page.Resources>
+        <ControlTemplate x:Key="ChartTrackerTemplate">
+            <oxy:TrackerControl
+                Position="{Binding Position}"
+                LineExtents="{Binding LineExtents}"
+                LineStroke="{DynamicResource ControlStrokeColorDefaultBrush}"
+                Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                FontFamily="Segoe UI"
+                FontSize="12"
+                CornerRadius="8"
+                Distance="10"
+                ShowPointer="True">
+
+                <oxy:TrackerControl.Content>
+                    <Border
+                        Background="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Background}"
+                        BorderBrush="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="10">
+                        <TextBlock
+                            Text="{Binding Text}"
+                            Foreground="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Foreground}"
+                            TextWrapping="Wrap" />
+                    </Border>
+                </oxy:TrackerControl.Content>
+            </oxy:TrackerControl>
+        </ControlTemplate>
+    </Page.Resources>
+
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -34,6 +66,8 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="10"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="10"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <!-- Row 0: main filters -->
@@ -57,9 +91,12 @@
                                            Date="{Binding ToLocalDate, Mode=TwoWay}"
                                            Content="{Binding ToLocalDate, StringFormat={}{0:yyyy-MM-dd}}"
                                            Appearance="Secondary"/>
+                </WrapPanel>
 
+                <!-- Row 2: grouping (moved one level down) -->
+                <WrapPanel Grid.Row="2" VerticalAlignment="Center">
                     <ui:TextBlock Text="Grouping"
-                                  Margin="16,0,8,0"
+                                  Margin="0,0,8,0"
                                   VerticalAlignment="Center"
                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
 
@@ -78,8 +115,8 @@
                     </ui:DropDownButton>
                 </WrapPanel>
 
-                <!-- Row 2: quick range -->
-                <WrapPanel Grid.Row="2" VerticalAlignment="Center">
+                <!-- Row 4: quick range -->
+                <WrapPanel Grid.Row="4" VerticalAlignment="Center">
                     <ui:Button Content="7 days"
                                Command="{Binding SetLastDaysCommand}"
                                CommandParameter="7"
@@ -99,8 +136,8 @@
                                Appearance="Secondary"/>
                 </WrapPanel>
 
-                <!-- Row 4: apply/reset -->
-                <DockPanel Grid.Row="4" LastChildFill="True">
+                <!-- Row 6: apply/reset -->
+                <DockPanel Grid.Row="6" LastChildFill="True">
                     <WrapPanel DockPanel.Dock="Left">
                         <ui:Button Content="Apply"
                                    Command="{Binding ApplyFiltersCommand}"
@@ -156,7 +193,8 @@
                  Padding="12">
             <Grid MinHeight="220">
                 <oxy:PlotView x:Name="Chart"
-                              Model="{Binding PlotModel}"/>
+                              Model="{Binding PlotModel}"
+                              DefaultTrackerTemplate="{StaticResource ChartTrackerTemplate}"/>
             </Grid>
         </ui:Card>
 

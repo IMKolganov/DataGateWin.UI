@@ -256,8 +256,8 @@ public sealed class StatisticsViewModel : INotifyPropertyChanged
             Color = accent,
             TrackerFormatString =
                 "{0}\n" +
-                "{1:yyyy-MM-dd HH:mm}\n" +
-                "Upload: {2}",
+                "{2}\n" +
+                "Upload: {4}",
             Fill = OxyColor.FromAColor(80, accent),
             MarkerType = MarkerType.None
         };
