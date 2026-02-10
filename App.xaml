@@ -10,7 +10,6 @@
             <ResourceDictionary.MergedDictionaries>
                 <ui:ControlsDictionary />
             </ResourceDictionary.MergedDictionaries>
-            <SolidColorBrush x:Key="OpaqueAppBackgroundBrush" Color="#FF0F0F0F"/>
             <tray:NotifyIcon x:Key="TrayIcon"
                              TooltipText="DataGate OpenVPN 3"
                              MenuOnRightClick="True"
