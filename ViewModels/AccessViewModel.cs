@@ -12,18 +12,23 @@ public sealed partial class AccessViewModel : ObservableObject
     public AccessViewModel(OpenVpnServersApiClient api)
     {
         _api = api;
+
+        RefreshCommand = LoadCommand;
+
         LoadCommand.Execute(null);
     }
 
     [ObservableProperty]
-    private bool _isLoading;
+    private bool isLoading;
 
     [ObservableProperty]
-    private string? _errorText;
+    private string? errorText;
 
     [ObservableProperty]
-    private IList<OpenVpnServerWithStatusDto> _servers = new List<OpenVpnServerWithStatusDto>();
+    private IList<OpenVpnServerWithStatusDto> servers
+        = new List<OpenVpnServerWithStatusDto>();
 
+    // основной метод загрузки
     [RelayCommand]
     private async Task LoadAsync()
     {
@@ -33,6 +38,7 @@ public sealed partial class AccessViewModel : ObservableObject
             ErrorText = null;
 
             var resp = await _api.GetAllWithStatusAsync(CancellationToken.None);
+
             Servers = resp.Data?.OpenVpnServerWithStatuses
                       ?? new List<OpenVpnServerWithStatusDto>();
         }
@@ -45,4 +51,6 @@ public sealed partial class AccessViewModel : ObservableObject
             IsLoading = false;
         }
     }
+
+    public IAsyncRelayCommand RefreshCommand { get; }
 }

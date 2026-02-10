@@ -10,7 +10,6 @@
             <ResourceDictionary.MergedDictionaries>
                 <ui:ControlsDictionary />
             </ResourceDictionary.MergedDictionaries>
-
             <tray:NotifyIcon x:Key="TrayIcon"
                              TooltipText="DataGate OpenVPN 3"
                              MenuOnRightClick="True"
