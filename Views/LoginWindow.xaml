@@ -4,9 +4,9 @@
                  xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
                  Title="{DynamicResource App_Title}"
                  Height="540"
-                 Width="600"
+                 Width="760"
                  MinHeight="540"
-                 MinWidth="600"
+                 MinWidth="760"
                  WindowStartupLocation="CenterScreen"
                  ResizeMode="NoResize"
                  WindowBackdropType="Mica"
@@ -128,7 +128,9 @@
 
             <!-- Footer -->
             <ui:TextBlock Grid.Row="2"
-                          HorizontalAlignment="Center"
+                          HorizontalAlignment="Stretch"
+                          TextAlignment="Center"
+                          TextWrapping="Wrap"
                           Opacity="0.55"
                           Margin="0,18,0,0"
                           Text="{DynamicResource Login_FooterHint}"/>
