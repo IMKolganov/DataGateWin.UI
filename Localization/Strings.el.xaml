@@ -2,8 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=System.Runtime">
 
-    <sys:String x:Key="App_Title">DataGate OpenVPN 3</sys:String>
-    <sys:String x:Key="Tray_Tooltip">DataGate OpenVPN 3</sys:String>
+    <sys:String x:Key="App_Title">DataGate</sys:String>
+    <sys:String x:Key="Tray_Tooltip">DataGate</sys:String>
     <sys:String x:Key="Tray_Open">Άνοιγμα</sys:String>
     <sys:String x:Key="Tray_Exit">Έξοδος</sys:String>
 
@@ -19,7 +19,7 @@
     <sys:String x:Key="Nav_Statistics">Στατιστικά</sys:String>
     <sys:String x:Key="Nav_Settings">Ρυθμίσεις</sys:String>
 
-    <sys:String x:Key="Home_WelcomeTitle">Καλώς ήρθατε στο DataGate OpenVPN 3</sys:String>
+    <sys:String x:Key="Home_WelcomeTitle">Καλώς ήρθατε στο DataGate</sys:String>
     <sys:String x:Key="Home_ConnectionStatus">Κατάσταση σύνδεσης</sys:String>
     <sys:String x:Key="Home_StatusIdle">Αδράνεια</sys:String>
     <sys:String x:Key="Home_VpnServer">Διακομιστής VPN</sys:String>
@@ -137,7 +137,7 @@
     <sys:String x:Key="Msg_LogoutFailedFmt">Αποτυχία αποσύνδεσης:&#x0a;{0}</sys:String>
     <sys:String x:Key="Msg_ErrorTitle">Σφάλμα</sys:String>
 
-    <sys:String x:Key="Login_Welcome">Καλώς ήρθατε στο DataGate OpenVPN 3</sys:String>
+    <sys:String x:Key="Login_Welcome">Καλώς ήρθατε στο DataGate</sys:String>
     <sys:String x:Key="Login_SignInToContinue">Συνδεθείτε για να συνεχίσετε</sys:String>
     <sys:String x:Key="Login_SignInGoogle">Σύνδεση με Google</sys:String>
     <sys:String x:Key="Login_Cancel">Ακύρωση</sys:String>

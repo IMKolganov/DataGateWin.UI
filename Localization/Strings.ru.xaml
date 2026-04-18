@@ -2,8 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=System.Runtime">
 
-    <sys:String x:Key="App_Title">DataGate OpenVPN 3</sys:String>
-    <sys:String x:Key="Tray_Tooltip">DataGate OpenVPN 3</sys:String>
+    <sys:String x:Key="App_Title">DataGate</sys:String>
+    <sys:String x:Key="Tray_Tooltip">DataGate</sys:String>
     <sys:String x:Key="Tray_Open">Открыть</sys:String>
     <sys:String x:Key="Tray_Exit">Выход</sys:String>
 
@@ -19,7 +19,7 @@
     <sys:String x:Key="Nav_Statistics">Статистика</sys:String>
     <sys:String x:Key="Nav_Settings">Настройки</sys:String>
 
-    <sys:String x:Key="Home_WelcomeTitle">Добро пожаловать в DataGate OpenVPN 3</sys:String>
+    <sys:String x:Key="Home_WelcomeTitle">Добро пожаловать в DataGate</sys:String>
     <sys:String x:Key="Home_ConnectionStatus">Состояние подключения</sys:String>
     <sys:String x:Key="Home_StatusIdle">Ожидание</sys:String>
     <sys:String x:Key="Home_VpnServer">VPN-сервер</sys:String>
@@ -137,7 +137,7 @@
     <sys:String x:Key="Msg_LogoutFailedFmt">Не удалось выйти:&#x0a;{0}</sys:String>
     <sys:String x:Key="Msg_ErrorTitle">Ошибка</sys:String>
 
-    <sys:String x:Key="Login_Welcome">Добро пожаловать в DataGate OpenVPN 3</sys:String>
+    <sys:String x:Key="Login_Welcome">Добро пожаловать в DataGate</sys:String>
     <sys:String x:Key="Login_SignInToContinue">Войдите, чтобы продолжить</sys:String>
     <sys:String x:Key="Login_SignInGoogle">Войти через Google</sys:String>
     <sys:String x:Key="Login_Cancel">Отмена</sys:String>
