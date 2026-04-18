@@ -1,3 +1,5 @@
+using System.Globalization;
+using DataGateWin.Localization;
 using DataGateWin.Models.Ipc;
 using DataGateWin.Services.Installation;
 using DataGateWin.Services.Ipc;
@@ -25,7 +27,7 @@ public sealed class HomeController : IDisposable
     private Action<string>? _log;
 
     private UiState _lastUiState = UiState.Idle;
-    private string _lastStatusText = "Idle";
+    private string _lastStatusText = Loc.T("Home_Status_Idle");
 
     public HomeController()
     {
@@ -51,7 +53,6 @@ public sealed class HomeController : IDisposable
 
     public void AppendLogLine(string line) => Log(line);
 
-    /// <summary>Re-run last <see cref="UiState"/> on the view (e.g. after Home «Refresh» toggles button state).</summary>
     public void ReapplyUiToLastState() => ApplyUiState(_lastUiState, _lastStatusText);
 
     public void AttachUi(
@@ -67,7 +68,7 @@ public sealed class HomeController : IDisposable
         }
 
         ApplyUiState(_lastUiState, _lastStatusText);
-        Log("UI attached.");
+        Log(Loc.T("Home_Log_UiAttached"));
     }
 
     public void DetachUi()
@@ -89,7 +90,7 @@ public sealed class HomeController : IDisposable
 
         try
         {
-            ApplyUiState(UiState.Connecting, "Attaching...");
+            ApplyUiState(UiState.Connecting, Loc.T("Home_Status_Attaching"));
 
             await _engine.AttachOrStartAsync(_lifetimeCts.Token);
 
@@ -97,8 +98,8 @@ public sealed class HomeController : IDisposable
         }
         catch (Exception ex)
         {
-            Log($"ERROR: {ex}");
-            ApplyUiState(UiState.Idle, $"Idle (attach failed: {ex.Message})");
+            Log(Loc.T("Home_Log_ErrorFmt", ex));
+            ApplyUiState(UiState.Idle, Loc.T("Home_Status_AttachFailedFmt", ex.Message));
         }
     }
 
@@ -131,33 +132,34 @@ public sealed class HomeController : IDisposable
         await _opLock.WaitAsync(ct);
         try
         {
-            ApplyUiState(UiState.Connecting, "Connecting...");
+            ApplyUiState(UiState.Connecting, Loc.T("Home_Status_Connecting"));
 
             await _engine.AttachOrStartAsync(ct);
 
             var state = await _engine.GetEngineStateAsync(ct);
             if (!EngineState.IsIdle(state))
             {
-                ApplyUiState(UiState.Connected, $"Connected ({state ?? "unknown"})");
+                var label = string.IsNullOrWhiteSpace(state) ? Loc.T("Common_Unknown") : state;
+                ApplyUiState(UiState.Connected, Loc.T("Home_Status_ConnectedFmt", label));
                 return;
             }
 
             var started = await _engine.StartSessionAsync(_connectAutoPick, _connectManualId, ct);
             if (!started)
             {
-                ApplyUiState(UiState.Idle, "Idle (start failed)");
+                ApplyUiState(UiState.Idle, Loc.T("Home_Status_IdleStartFailed"));
                 if (_desiredConnected)
                     _ = ScheduleReconnectAsync();
                 return;
             }
 
-            ApplyUiState(UiState.Connecting, "Connecting (waiting for events)...");
+            ApplyUiState(UiState.Connecting, Loc.T("Home_Status_ConnectingWaiting"));
             _reconnectAttempt = 0;
         }
         catch (Exception ex)
         {
-            ApplyUiState(UiState.Idle, $"Idle (error: {ex.Message})");
-            Log($"ERROR: {ex}");
+            ApplyUiState(UiState.Idle, Loc.T("Home_Status_IdleErrorFmt", ex.Message));
+            Log(Loc.T("Home_Log_ErrorFmt", ex));
 
             if (_desiredConnected)
                 _ = ScheduleReconnectAsync();
@@ -175,11 +177,13 @@ public sealed class HomeController : IDisposable
         await _opLock.WaitAsync(ct);
         try
         {
-            ApplyUiState(UiState.Disconnecting, "Disconnecting...");
+            ApplyUiState(UiState.Disconnecting, Loc.T("Home_Status_Disconnecting"));
 
             await _engine.StopSessionSafeAsync(ct);
 
-            ApplyUiState(UiState.Idle, userInitiated ? "Idle" : "Idle (disconnected)");
+            ApplyUiState(
+                UiState.Idle,
+                userInitiated ? Loc.T("Home_Status_Idle") : Loc.T("Home_Status_IdleDisconnected"));
         }
         finally
         {
@@ -191,14 +195,15 @@ public sealed class HomeController : IDisposable
     {
         if (!await _engine.IsAttachedAsync(ct))
         {
-            ApplyUiState(UiState.Idle, "Idle (not attached)");
+            ApplyUiState(UiState.Idle, Loc.T("Home_Status_IdleNotAttached"));
             return;
         }
 
         var state = await _engine.GetEngineStateAsync(ct);
+        var label = string.IsNullOrWhiteSpace(state) ? Loc.T("Common_Unknown") : state!;
         ApplyUiState(
             EngineState.IsIdle(state) ? UiState.Idle : UiState.Connected,
-            EngineState.IsIdle(state) ? "Idle" : $"Connected ({state ?? "unknown"})"
+            EngineState.IsIdle(state) ? Loc.T("Home_Status_Idle") : Loc.T("Home_Status_ConnectedFmt", label)
         );
     }
 
@@ -212,11 +217,16 @@ public sealed class HomeController : IDisposable
         _reconnectAttempt++;
         var delay = ReconnectPolicy.GetDelay(_reconnectAttempt);
 
-        ApplyUiState(UiState.Connecting, $"Reconnecting in {delay.TotalSeconds:0}s...");
-        Log($"Reconnect scheduled. Attempt={_reconnectAttempt}, Delay={delay.TotalSeconds:0}s");
+        ApplyUiState(
+            UiState.Connecting,
+            Loc.T("Home_Status_ReconnectingFmt", delay.TotalSeconds.ToString("0", CultureInfo.CurrentCulture)));
+        Log(Loc.T(
+            "Home_Log_ReconnectScheduledFmt",
+            _reconnectAttempt.ToString(CultureInfo.InvariantCulture),
+            delay.TotalSeconds.ToString("0", CultureInfo.InvariantCulture)));
 
         try { await Task.Delay(delay, ct); }
-        catch { ApplyUiState(UiState.Idle, "Idle"); return; }
+        catch { ApplyUiState(UiState.Idle, Loc.T("Home_Status_Idle")); return; }
 
         if (_desiredConnected)
             await EnsureConnectedAsync();
@@ -226,10 +236,11 @@ public sealed class HomeController : IDisposable
     {
         if (ev.Kind == EngineEventKind.StateChanged)
         {
-            SetStatusText($"State: {ev.State ?? "?"}");
+            SetStatusText(Loc.T("Home_Status_StateFmt", ev.State ?? "?"));
+            var label = string.IsNullOrWhiteSpace(ev.State) ? Loc.T("Common_Unknown") : ev.State;
             ApplyUiState(
                 EngineState.IsIdle(ev.State) ? UiState.Idle : UiState.Connected,
-                EngineState.IsIdle(ev.State) ? "Idle" : $"Connected ({ev.State})"
+                EngineState.IsIdle(ev.State) ? Loc.T("Home_Status_Idle") : Loc.T("Home_Status_ConnectedFmt", label)
             );
             return;
         }
@@ -239,15 +250,18 @@ public sealed class HomeController : IDisposable
             _reconnectAttempt = 0;
             ApplyUiState(
                 UiState.Connected,
-                string.IsNullOrWhiteSpace(ev.Ip) ? "Connected" : $"Connected ({ev.Ip})"
+                string.IsNullOrWhiteSpace(ev.Ip)
+                    ? Loc.T("Home_Status_Connected")
+                    : Loc.T("Home_Status_ConnectedIpFmt", ev.Ip)
             );
             return;
         }
 
         if (ev.Kind == EngineEventKind.Disconnected)
         {
-            Log($"Disconnected: {ev.Reason ?? "Unknown"}");
-            ApplyUiState(UiState.Idle, $"Idle (disconnected: {ev.Reason ?? "Unknown"})");
+            var reason = string.IsNullOrWhiteSpace(ev.Reason) ? Loc.T("Common_Unknown") : ev.Reason;
+            Log(Loc.T("Home_Log_DisconnectedLineFmt", reason));
+            ApplyUiState(UiState.Idle, Loc.T("Home_Status_IdleDisconnectedReasonFmt", reason));
 
             if (_desiredConnected)
                 _ = ScheduleReconnectAsync();

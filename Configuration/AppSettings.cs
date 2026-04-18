@@ -4,6 +4,9 @@ public sealed class AppSettings
 {
     public string Theme { get; set; } = "Dark";
 
+    /// <summary>UI language code: en, fr, ru, el.</summary>
+    public string UiLanguage { get; set; } = "en";
+
     public string? InstallationId { get; set; }
 
     /// <summary>Home: pick best WSS server automatically (Linux default).</summary>

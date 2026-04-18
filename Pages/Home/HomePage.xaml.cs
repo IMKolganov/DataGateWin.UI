@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using DataGateWin.Configuration;
 using DataGateWin.Controllers;
+using DataGateWin.Localization;
 using DataGateWin.Models.Ipc;
 using DataGateWin.Services.VpnServers;
 
@@ -12,6 +13,7 @@ public partial class HomePage : Page
 {
     private readonly HomeController _controller;
     private OpenVpnServersApiClient? _serversApi;
+    private List<CachedVpnServerRow>? _cachedServerRows;
 
     public HomePage(HomeController controller)
     {
@@ -21,6 +23,8 @@ public partial class HomePage : Page
 
     private async void HomePage_OnLoaded(object sender, RoutedEventArgs e)
     {
+        UiLanguageService.LanguageChanged += OnUiLanguageChanged;
+
         _serversApi ??= new OpenVpnServersApiClient(App.AuthedApiHttp);
 
         _controller.AttachUi(
@@ -29,7 +33,6 @@ public partial class HomePage : Page
             logAppender: line => DispatchUi(() => AppendLog(line))
         );
 
-        // Server list must not depend on engine attach: OnLoadedAsync can hang/fail first time and would skip the combo load.
         await EnsureAccessTokenForApiAsync().ConfigureAwait(true);
         await RefreshServerListAsync().ConfigureAwait(true);
         ApplyVpnHomeSettingsFromStore();
@@ -41,15 +44,19 @@ public partial class HomePage : Page
         }
         catch (Exception ex)
         {
-            _controller.AppendLogLine($"Engine attach: {ex.Message}");
+            _controller.AppendLogLine(Loc.T("Home_Log_EngineAttachFmt", ex.Message));
         }
     }
 
     private void HomePage_OnUnloaded(object sender, RoutedEventArgs e)
     {
+        UiLanguageService.LanguageChanged -= OnUiLanguageChanged;
         SaveVpnHomeSettingsFromUi();
         _controller.OnUnloaded();
     }
+
+    private void OnUiLanguageChanged(object? sender, EventArgs e)
+        => DispatchUi(RebuildServerComboFromCache);
 
     private async void ConnectButton_OnClick(object sender, RoutedEventArgs e)
     {
@@ -60,8 +67,8 @@ public partial class HomePage : Page
             if (ManualServerCombo.SelectedValue is not int sid || sid <= 0)
             {
                 MessageBox.Show(
-                    "Choose a VPN server or press Refresh to load the list.",
-                    "DataGate",
+                    Loc.T("Msg_ChooseServerBody"),
+                    Loc.T("Msg_ChooseServerTitle"),
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);
                 return;
@@ -98,7 +105,6 @@ public partial class HomePage : Page
         finally
         {
             RefreshServersButton.IsEnabled = true;
-            // Re-apply controller state (idle vs connecting) so we do not leave Refresh stuck enabled/disabled wrongly.
             _controller.ReapplyUiToLastState();
         }
     }
@@ -185,24 +191,31 @@ public partial class HomePage : Page
             var resp = await _serversApi.GetAllWithStatusAsync(CancellationToken.None).ConfigureAwait(true);
             var raw = resp.Data?.OpenVpnServerWithStatuses;
             var eligible = WssServerSelector.FilterEligible(raw);
-            items = eligible
+            _cachedServerRows = eligible
                 .Select(x =>
                 {
                     var srv = x.OpenVpnServerResponses!.OpenVpnServer;
-                    var name = string.IsNullOrWhiteSpace(srv.ServerName) ? $"Server #{srv.Id}" : srv.ServerName;
-                    var on = srv.IsOnline ? "online" : "offline";
-                    return new HomeVpnServerListItem
+                    return new CachedVpnServerRow
                     {
                         Id = srv.Id,
-                        Display = $"{name}  ·  {x.CountConnectedClients} clients  ·  {on}"
+                        Name = srv.ServerName ?? "",
+                        Clients = x.CountConnectedClients,
+                        Online = srv.IsOnline
                     };
                 })
                 .ToList();
+
+            items = _cachedServerRows.Select(r => new HomeVpnServerListItem
+            {
+                Id = r.Id,
+                Display = FormatServerDisplay(r)
+            }).ToList();
         }
         catch (Exception ex)
         {
             fetchFailed = true;
-            _controller.AppendLogLine($"VPN server list: {ex.Message}");
+            _cachedServerRows = null;
+            _controller.AppendLogLine(Loc.T("Home_Log_VpnListFmt", ex.Message));
             items = [];
         }
 
@@ -210,12 +223,51 @@ public partial class HomePage : Page
         {
             ManualServerCombo.ItemsSource = items;
             if (items.Count == 0 && !fetchFailed)
-                _controller.AppendLogLine("No WSS-enabled VPN servers available for your plan.");
+                _controller.AppendLogLine(Loc.T("Home_Log_NoWss"));
         }
 
         if (Dispatcher.CheckAccess())
             ApplyList();
         else
             await Dispatcher.InvokeAsync(ApplyList);
+    }
+
+    private void RebuildServerComboFromCache()
+    {
+        if (_cachedServerRows is null || _cachedServerRows.Count == 0)
+            return;
+
+        var prev = ManualServerCombo.SelectedValue;
+        var items = _cachedServerRows
+            .Select(r => new HomeVpnServerListItem { Id = r.Id, Display = FormatServerDisplay(r) })
+            .ToList();
+
+        ManualServerCombo.ItemsSource = items;
+
+        if (prev is int id && id > 0)
+            ManualServerCombo.SelectedValue = id;
+    }
+
+    private static string FormatServerDisplay(CachedVpnServerRow r)
+    {
+        var name = string.IsNullOrWhiteSpace(r.Name)
+            ? Loc.T("Home_ServerFallbackFmt", r.Id)
+            : r.Name;
+        var onOff = r.Online ? Loc.T("Common_Online") : Loc.T("Common_Offline");
+        return Loc.T("Home_ServerRowFmt", name, r.Clients, onOff);
+    }
+
+    private sealed class CachedVpnServerRow
+    {
+        public int Id { get; init; }
+        public string Name { get; init; } = "";
+        public int Clients { get; init; }
+        public bool Online { get; init; }
+    }
+
+    private sealed class HomeVpnServerListItem
+    {
+        public int Id { get; init; }
+        public string Display { get; init; } = "";
     }
 }

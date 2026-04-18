@@ -15,7 +15,7 @@
 
         <!-- Header -->
         <ui:TextBlock Grid.Row="0"
-                      Text="Welcome to DataGate OpenVPN 3"
+                      Text="{DynamicResource Home_WelcomeTitle}"
                       FontTypography="Title"
                       FontSize="20"
                       Foreground="{DynamicResource TextFillColorPrimaryBrush}"
@@ -33,13 +33,13 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0"
-                           Text="Connection status"
+                           Text="{DynamicResource Home_ConnectionStatus}"
                            FontWeight="SemiBold"/>
 
                 <TextBlock x:Name="StatusText"
                            Grid.Row="1"
                            Margin="0,6,0,0"
-                           Text="Idle"
+                           Text="{DynamicResource Home_StatusIdle}"
                            Opacity="0.8"/>
 
                 <Grid Grid.Row="2" Margin="0,12,0,0">
@@ -48,15 +48,15 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0"
-                               Text="VPN server"
+                               Text="{DynamicResource Home_VpnServer}"
                                VerticalAlignment="Center"
                                Opacity="0.9"/>
                     <ComboBox x:Name="ServerModeCombo"
                               Grid.Column="1"
                               VerticalAlignment="Center"
                               SelectionChanged="ServerModeCombo_OnSelectionChanged">
-                        <ComboBoxItem Content="Automatic (best server)"/>
-                        <ComboBoxItem Content="Choose server…"/>
+                        <ComboBoxItem Content="{DynamicResource Home_ModeAuto}"/>
+                        <ComboBoxItem Content="{DynamicResource Home_ModeManual}"/>
                     </ComboBox>
                 </Grid>
 
@@ -70,7 +70,7 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0"
-                               Text="Server"
+                               Text="{DynamicResource Home_Server}"
                                VerticalAlignment="Center"
                                Opacity="0.9"/>
                     <ComboBox x:Name="ManualServerCombo"
@@ -83,7 +83,7 @@
                     <ui:Button Grid.Column="2"
                                x:Name="RefreshServersButton"
                                Appearance="Secondary"
-                               Content="Refresh"
+                               Content="{DynamicResource Home_Refresh}"
                                MinWidth="90"
                                Click="RefreshServersButton_OnClick"/>
                 </Grid>
@@ -93,7 +93,7 @@
                             Margin="0,14,0,0">
                     <ui:Button x:Name="ConnectButton"
                                Appearance="Primary"
-                               Content="Connect"
+                               Content="{DynamicResource Home_Connect}"
                                Width="160"
                                HorizontalAlignment="Left"
                                Click="ConnectButton_OnClick"/>
@@ -101,7 +101,7 @@
                     <ui:Button x:Name="DisconnectButton"
                                Margin="10,0,0,0"
                                Appearance="Secondary"
-                               Content="Disconnect"
+                               Content="{DynamicResource Home_Disconnect}"
                                Width="160"
                                HorizontalAlignment="Left"
                                Click="DisconnectButton_OnClick"/>
@@ -118,7 +118,7 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0"
-                           Text="Engine logs"
+                           Text="{DynamicResource Home_EngineLogs}"
                            FontWeight="SemiBold"/>
 
                 <TextBox x:Name="LogTextBox"

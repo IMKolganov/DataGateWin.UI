@@ -27,7 +27,7 @@
             </Grid.ColumnDefinitions>
 
             <ui:TextBlock Grid.Column="0"
-                          Text="Access"
+                          Text="{DynamicResource Access_Title}"
                           FontTypography="Title"
                           FontSize="20"
                           Foreground="{DynamicResource TextFillColorPrimaryBrush}"
@@ -42,7 +42,7 @@
                     <ui:SymbolIcon Symbol="ArrowClockwise24"/>
                 </ui:Button.Icon>
                 <ui:Button.Content>
-                    <TextBlock Text="Refresh"/>
+                    <TextBlock Text="{DynamicResource Btn_Refresh}"/>
                 </ui:Button.Content>
             </ui:Button>
         </Grid>
@@ -50,14 +50,14 @@
         <!-- Plan & quotas (Linux MainWindow Access card) -->
         <ui:Card Grid.Row="1" Margin="0,16,0,0">
             <StackPanel Margin="4">
-                <TextBlock Text="Your plan &amp; quotas"
+                <TextBlock Text="{DynamicResource Access_PlanQuotas}"
                            FontWeight="SemiBold"
                            FontSize="14"/>
                 <TextBlock Text="{Binding PlanLineText}"
                            Margin="0,8,0,0"
                            TextWrapping="Wrap"
                            Opacity="0.85"/>
-                <TextBlock Text="Traffic quota"
+                <TextBlock Text="{DynamicResource Access_TrafficQuota}"
                            Margin="0,12,0,0"
                            FontWeight="SemiBold"
                            Visibility="{Binding ShowTrafficQuotaTitle, Converter={StaticResource BoolToVis}}"/>
@@ -146,27 +146,27 @@
                 <ui:DataGrid.Columns>
 
                     <DataGridTextColumn
-                        Header="Server"
+                        Header="{DynamicResource Access_Col_Server}"
                         Binding="{Binding OpenVpnServerResponses.OpenVpnServer.ServerName}"
                         Width="*" />
 
                     <DataGridTextColumn
-                        Header="Clients"
+                        Header="{DynamicResource Access_Col_Clients}"
                         Binding="{Binding CountConnectedClients}"
                         Width="90"/>
 
                     <DataGridTextColumn
-                        Header="In"
+                        Header="{DynamicResource Access_Col_In}"
                         Binding="{Binding TotalBytesIn, Converter={StaticResource BytesFmt}, ConverterParameter=IEC}"
                         Width="120"/>
 
                     <DataGridTextColumn
-                        Header="Out"
+                        Header="{DynamicResource Access_Col_Out}"
                         Binding="{Binding TotalBytesOut, Converter={StaticResource BytesFmt}, ConverterParameter=IEC}"
                         Width="120"/>
 
                     <DataGridCheckBoxColumn
-                        Header="Online"
+                        Header="{DynamicResource Access_Col_Online}"
                         Binding="{Binding OpenVpnServerResponses.OpenVpnServer.IsOnline}"
                         Width="90">
                         <DataGridCheckBoxColumn.ElementStyle>
@@ -177,7 +177,7 @@
                         </DataGridCheckBoxColumn.ElementStyle>
                     </DataGridCheckBoxColumn>
 
-                    <DataGridTextColumn Header="Plan access" Width="100">
+                    <DataGridTextColumn Header="{DynamicResource Access_Col_PlanAccess}" Width="100">
                         <DataGridTextColumn.Binding>
                             <Binding Converter="{StaticResource PlanAccessYesNo}"/>
                         </DataGridTextColumn.Binding>

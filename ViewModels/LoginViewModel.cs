@@ -1,6 +1,7 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DataGateWin.Configuration;
+using DataGateWin.Localization;
 using DataGateWin.Services.Auth;
 
 namespace DataGateWin.ViewModels;
@@ -35,13 +36,15 @@ public sealed partial class LoginViewModel : ObservableObject
 
         if (string.IsNullOrWhiteSpace(_apiBaseUrl))
             throw new InvalidOperationException("Api:BaseUrl is missing.");
+
+        StatusText = Loc.T("Login_Status_NotSignedIn");
     }
 
     public string ClientId { get; }
     public int Port { get; }
 
     [ObservableProperty]
-    private string _statusText = "Not signed in.";
+    private string _statusText = "";
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsNotBusy))]
@@ -55,13 +58,13 @@ public sealed partial class LoginViewModel : ObservableObject
     private async Task SignInAsync()
     {
         IsBusy = true;
-        StatusText = "Opening browser...";
+        StatusText = Loc.T("Login_Status_OpeningBrowser");
 
         _cts = new CancellationTokenSource();
 
         try
         {
-            StatusText = "Waiting for Google sign-in...";
+            StatusText = Loc.T("Login_Status_WaitingGoogle");
 
             var apiResponse = await _googleAuthService.SignInAndLoginAsync(
                 ClientId,
@@ -71,22 +74,22 @@ public sealed partial class LoginViewModel : ObservableObject
 
             if (!apiResponse.Success || apiResponse.Data == null)
             {
-                StatusText = "Sign-in failed.";
+                StatusText = Loc.T("Login_Status_Failed");
                 return;
             }
 
             await _session.SetFromLoginAsync(apiResponse.Data, _cts.Token);
 
-            StatusText = $"Signed in as {apiResponse.Data.DisplayName}.";
+            StatusText = Loc.T("Login_Status_SignedInFmt", apiResponse.Data.DisplayName);
             SignedIn?.Invoke(this, apiResponse.Data.Token);
         }
         catch (OperationCanceledException)
         {
-            StatusText = "Sign-in cancelled.";
+            StatusText = Loc.T("Login_Status_Cancelled");
         }
         catch (Exception ex)
         {
-            StatusText = $"Sign-in failed: {ex.Message}";
+            StatusText = Loc.T("Login_Status_FailedFmt", ex.Message);
         }
         finally
         {

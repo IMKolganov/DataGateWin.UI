@@ -26,7 +26,7 @@ public sealed class AuthenticatedHttpHandler(AuthSession session, HttpMessageHan
 
         response.Dispose();
 
-        var refreshed = await _session.RefreshAsync(ct).ConfigureAwait(false);
+        var refreshed = await _session.RefreshAsync(ct, forceRefresh: true).ConfigureAwait(false);
         if (!refreshed)
             return new HttpResponseMessage(HttpStatusCode.Unauthorized);
 
