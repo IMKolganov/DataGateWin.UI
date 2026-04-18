@@ -1,11 +1,12 @@
-﻿using System;
+using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using DataGateWin.Configuration;
-using DataGateWin.Services;
+using DataGateWin.Localization;
 using DataGateWin.Services.Auth;
+using DataGateWin.Services.Update;
 using DataGateWin.Views;
 using Wpf.Ui.Appearance;
 
@@ -14,6 +15,7 @@ namespace DataGateWin.Pages;
 public partial class SettingsPage : Page
 {
     private readonly AuthStateStore _authState;
+    private bool _suppressLanguageCombo;
 
     public SettingsPage(AuthStateStore authState)
     {
@@ -27,18 +29,64 @@ public partial class SettingsPage : Page
         LoadVersionInfo();
     }
 
+    private void SettingsPage_OnLoaded(object sender, RoutedEventArgs e)
+    {
+        var pref = UiLanguageService.GetStoredLanguagePreference();
+        _suppressLanguageCombo = true;
+        ComboBoxItem? match = null;
+        foreach (ComboBoxItem item in LanguageCombo.Items)
+        {
+            if (item.Tag is string t && string.Equals(t, pref, StringComparison.OrdinalIgnoreCase))
+            {
+                match = item;
+                break;
+            }
+        }
+
+        LanguageCombo.SelectedItem = match ?? LanguageCombo.Items[0] as ComboBoxItem;
+
+        _suppressLanguageCombo = false;
+    }
+
+    private void LanguageCombo_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (_suppressLanguageCombo)
+            return;
+
+        if (LanguageCombo.SelectedItem is not ComboBoxItem { Tag: string code })
+            return;
+
+        UiLanguageService.Apply(code, persist: true);
+    }
+
     private void LoadVersionInfo()
     {
         var version = Assembly.GetExecutingAssembly().GetName().Version;
-        CurrentVersionText.Text = version?.ToString() ?? "Unknown";
+        CurrentVersionText.Text = version?.ToString() ?? Loc.T("Settings_UnknownVersion");
 
         _ = LoadLatestVersionAsync();
     }
 
     private async Task LoadLatestVersionAsync()
     {
-        await Task.Delay(500);
-        LatestVersionText.Text = "1.2.0";
+        string text;
+        try
+        {
+            var checker = new GitHubUpdateChecker(
+                new HttpClient(),
+                "IMKolganov",
+                "DataGateWin");
+
+            var latest = await checker.TryGetLatestReleaseVersionForDisplayAsync(CancellationToken.None)
+                .ConfigureAwait(false);
+            text = latest ?? Loc.T("Settings_LatestVersionUnavailable");
+        }
+        catch
+        {
+            text = Loc.T("Settings_LatestVersionUnavailable");
+        }
+
+        await Application.Current.Dispatcher.InvokeAsync(() => LatestVersionText.Text = text);
     }
 
     private void ThemeToggle_OnChecked(object sender, RoutedEventArgs e)
@@ -60,8 +108,8 @@ public partial class SettingsPage : Page
     private async void LogoutButton_OnClick(object sender, RoutedEventArgs e)
     {
         var result = MessageBox.Show(
-            "Are you sure you want to log out?",
-            "Logout",
+            Loc.T("Msg_LogoutConfirm"),
+            Loc.T("Msg_LogoutTitle"),
             MessageBoxButton.YesNo,
             MessageBoxImage.Question);
 
@@ -85,8 +133,8 @@ public partial class SettingsPage : Page
         catch (Exception ex)
         {
             MessageBox.Show(
-                $"Logout failed:\n{ex.Message}",
-                "Error",
+                Loc.T("Msg_LogoutFailedFmt", ex.Message),
+                Loc.T("Msg_ErrorTitle"),
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);
         }

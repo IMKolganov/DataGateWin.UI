@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using DataGateWin.Ipc;
@@ -94,14 +94,19 @@ public sealed class EngineSessionService(
         return reply.Payload?["state"]?.ToString();
     }
 
-    public async Task<bool> StartSessionAsync(CancellationToken ct)
+    public Task<bool> StartSessionAsync(CancellationToken ct) =>
+        StartSessionAsync(autoPickServer: true, manualVpnServerId: null, ct);
+
+    public async Task<bool> StartSessionAsync(bool autoPickServer, int? manualVpnServerId, CancellationToken ct)
     {
         EnsureClientCreated();
 
         JObject? payload;
         try
         {
-            payload = await payloadBuilder.BuildAsync(ct).ConfigureAwait(false);
+            payload = await payloadBuilder
+                .BuildAsync(autoPickServer, manualVpnServerId, ct)
+                .ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (ct.IsCancellationRequested)
         {

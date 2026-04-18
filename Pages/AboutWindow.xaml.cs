@@ -1,6 +1,8 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
+using DataGateWin.Localization;
+using DataGateWin.Services.Ui;
 
 namespace DataGateWin.Pages;
 
@@ -10,8 +12,13 @@ public partial class AboutWindow
     {
         InitializeComponent();
 
+        FluentWindowChrome.Attach(this);
+
         var version = Assembly.GetExecutingAssembly().GetName().Version;
-        VersionText.Text = $"Version {version}";
+        var v = version?.ToString();
+        VersionText.Text = string.IsNullOrEmpty(v)
+            ? Loc.T("About_VersionFmt", Loc.T("Settings_UnknownVersion"))
+            : Loc.T("About_VersionFmt", v);
     }
 
     private void Website_OnClick(object sender, RoutedEventArgs e)

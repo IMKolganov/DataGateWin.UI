@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using DataGateWin.Services.Auth;
 using DataGateWin.Services.Identity;
 using DataGateWin.Services.Installation;
@@ -14,9 +14,14 @@ public sealed class StartSessionPayloadBuilder(
     OpenVpnFilesApiClient filesApi,
     AuthSession session)
 {
-    public async Task<JObject?> BuildAsync(CancellationToken ct)
+    public Task<JObject?> BuildAsync(CancellationToken ct) =>
+        BuildAsync(autoPickServer: true, manualVpnServerId: null, ct);
+
+    public async Task<JObject?> BuildAsync(bool autoPickServer, int? manualVpnServerId, CancellationToken ct)
     {
-        var server = await wssServerSelector.GetBestWssAsync(ct).ConfigureAwait(false);
+        var server = await wssServerSelector
+            .GetServerAsync(autoPickServer, manualVpnServerId, ct)
+            .ConfigureAwait(false);
         if (server == null)
             return null;
 

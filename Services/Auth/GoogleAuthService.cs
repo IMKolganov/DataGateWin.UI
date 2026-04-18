@@ -1,4 +1,4 @@
-﻿using System.Collections.Specialized;
+using System.Collections.Specialized;
 using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography;
@@ -37,7 +37,7 @@ public sealed class GoogleAuthService(HttpClient http)
             codeChallenge: pkce.CodeChallenge
         );
 
-        var query = await GetQueryAsync(authorizationUrl, port, ct);
+        var query = await GetQueryAsync(authorizationUrl, port, state, ct);
 
         var error = query["error"];
         if (!string.IsNullOrWhiteSpace(error))
@@ -94,7 +94,11 @@ public sealed class GoogleAuthService(HttpClient http)
             $"&prompt=select_account";
     }
 
-    private async Task<NameValueCollection> GetQueryAsync(string authorizationUrl, int port, CancellationToken ct)
+    private async Task<NameValueCollection> GetQueryAsync(
+        string authorizationUrl,
+        int port,
+        string state,
+        CancellationToken ct)
     {
         var prefix = $"http://127.0.0.1:{port}/";
 
@@ -113,28 +117,74 @@ public sealed class GoogleAuthService(HttpClient http)
             UseShellExecute = true
         });
 
-        HttpListenerContext context;
-        try
+        while (true)
         {
-            context = await listener.GetContextAsync().ConfigureAwait(false);
+            HttpListenerContext context;
+            try
+            {
+                context = await listener.GetContextAsync().ConfigureAwait(false);
+            }
+            catch (Exception ex) when (ct.IsCancellationRequested && (ex is HttpListenerException || ex is ObjectDisposedException))
+            {
+                throw new OperationCanceledException(ct);
+            }
+
+            var query = context.Request.QueryString;
+            var code = query["code"];
+            var error = query["error"];
+
+            // Same as DataGateLinux GoogleAuthHelper: ignore favicon / probes without OAuth params.
+            if (string.IsNullOrEmpty(code) && string.IsNullOrEmpty(error))
+            {
+                await WriteLoopbackNoContentAsync(context.Response, ct).ConfigureAwait(false);
+                continue;
+            }
+
+            string html;
+            int status;
+            if (!string.IsNullOrEmpty(error))
+            {
+                status = 200;
+                html = OAuthLoopbackHtml.GoogleErrorDocument(error, query["error_description"]);
+            }
+            else if (!string.Equals(state, query["state"], StringComparison.Ordinal))
+            {
+                status = 400;
+                html = OAuthLoopbackHtml.BadRequestDocument();
+            }
+            else if (string.IsNullOrWhiteSpace(code))
+            {
+                status = 400;
+                html = OAuthLoopbackHtml.BadRequestDocument();
+            }
+            else
+            {
+                status = 200;
+                html = OAuthLoopbackHtml.SuccessDocument();
+            }
+
+            await WriteLoopbackHtmlAsync(context.Response, status, html, ct).ConfigureAwait(false);
+            return query;
         }
-        catch (Exception ex) when (ct.IsCancellationRequested && (ex is HttpListenerException || ex is ObjectDisposedException))
-        {
-            throw new OperationCanceledException(ct);
-        }
+    }
 
-        var query = context.Request.QueryString;
+    private static async Task WriteLoopbackNoContentAsync(HttpListenerResponse response, CancellationToken ct)
+    {
+        response.StatusCode = 204;
+        response.ContentLength64 = 0;
+        response.Close();
+        await Task.CompletedTask.ConfigureAwait(false);
+    }
 
-        var responseHtml = "<html><body>You can close this window now.</body></html>";
-        var buffer = Encoding.UTF8.GetBytes(responseHtml);
-
-        context.Response.ContentType = "text/html";
-        context.Response.ContentLength64 = buffer.Length;
-
-        await context.Response.OutputStream.WriteAsync(buffer, 0, buffer.Length, ct);
-        context.Response.Close();
-
-        return query;
+    private static async Task WriteLoopbackHtmlAsync(HttpListenerResponse response, int statusCode, string html, CancellationToken ct)
+    {
+        response.StatusCode = statusCode;
+        response.ContentType = "text/html; charset=utf-8";
+        var buffer = Encoding.UTF8.GetBytes(html);
+        response.ContentLength64 = buffer.Length;
+        await response.OutputStream.WriteAsync(buffer, ct).ConfigureAwait(false);
+        await response.OutputStream.FlushAsync(ct).ConfigureAwait(false);
+        response.Close();
     }
 
     private static string GenerateState()

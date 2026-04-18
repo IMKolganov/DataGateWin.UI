@@ -1,10 +1,10 @@
-﻿<!-- MainWindow.xaml -->
+<!-- MainWindow.xaml -->
 <ui:FluentWindow x:Class="DataGateWin.MainWindow"
                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
                  Icon="Images/favicon.ico"
-                 Title="DataGate OpenVPN 3"
+                 Title="{DynamicResource App_Title}"
                  Width="980"
                  Height="620"
                  MinHeight="650"
@@ -42,7 +42,7 @@
                        Margin="0,0,8,0"
                        Source="pack://application:,,,/Images/favicon.ico"/>
 
-                <TextBlock Text="DataGate OpenVPN 3"
+                <TextBlock Text="{DynamicResource App_Title}"
                            VerticalAlignment="Center"
                            FontWeight="SemiBold"
                            Opacity="0.95" />
@@ -75,19 +75,19 @@
                                Background="{DynamicResource ApplicationBackgroundBrush}">
 
                 <ui:NavigationView.MenuItems>
-                    <ui:NavigationViewItem x:Name="NavHome" Content="Home" Tag="home" IsActive="True">
+                    <ui:NavigationViewItem x:Name="NavHome" Content="{DynamicResource Nav_Home}" Tag="home" IsActive="True">
                         <ui:NavigationViewItem.Icon>
                             <ui:SymbolIcon Symbol="Home24"/>
                         </ui:NavigationViewItem.Icon>
                     </ui:NavigationViewItem>
 
-                    <ui:NavigationViewItem x:Name="NavAccess" Content="Access" Tag="access">
+                    <ui:NavigationViewItem x:Name="NavAccess" Content="{DynamicResource Nav_Access}" Tag="access">
                         <ui:NavigationViewItem.Icon>
                             <ui:SymbolIcon Symbol="PlugConnected24"/>
                         </ui:NavigationViewItem.Icon>
                     </ui:NavigationViewItem>
 
-                    <ui:NavigationViewItem x:Name="NavStatistics" Content="Statistics" Tag="statistics">
+                    <ui:NavigationViewItem x:Name="NavStatistics" Content="{DynamicResource Nav_Statistics}" Tag="statistics">
                         <ui:NavigationViewItem.Icon>
                             <ui:SymbolIcon Symbol="ShieldKeyhole24"/>
                         </ui:NavigationViewItem.Icon>
@@ -95,7 +95,7 @@
 
                     <ui:NavigationViewItemSeparator/>
 
-                    <ui:NavigationViewItem x:Name="NavSettings" Content="Settings" Tag="settings">
+                    <ui:NavigationViewItem x:Name="NavSettings" Content="{DynamicResource Nav_Settings}" Tag="settings">
                         <ui:NavigationViewItem.Icon>
                             <ui:SymbolIcon Symbol="Settings24"/>
                         </ui:NavigationViewItem.Icon>

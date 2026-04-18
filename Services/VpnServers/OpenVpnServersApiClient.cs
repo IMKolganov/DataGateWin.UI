@@ -1,4 +1,4 @@
-﻿using System.Net.Http;
+using System.Net.Http;
 using Newtonsoft.Json;
 using OpenVPNGateMonitor.SharedModels.DataGateMonitorBackend.OpenVpnServers.Responses;
 using OpenVPNGateMonitor.SharedModels.Responses;
@@ -14,7 +14,7 @@ public sealed class OpenVpnServersApiClient(HttpClient http)
     {
         using var req = new HttpRequestMessage(
             HttpMethod.Get,
-            "/api/open-vpn-servers/get-all-with-status");
+            "api/open-vpn-servers/get-all-with-status");
 
         using var resp = await _http.SendAsync(req, ct);
 
@@ -27,6 +27,12 @@ public sealed class OpenVpnServersApiClient(HttpClient http)
         var result = JsonConvert.DeserializeObject<ApiResponse<OpenVpnServerWithStatusesResponse>>(json);
         if (result == null)
             throw new InvalidOperationException("Response deserialization returned null.");
+
+        if (!result.Success)
+            throw new InvalidOperationException(
+                string.IsNullOrWhiteSpace(result.Message)
+                    ? "Server list: API returned success=false."
+                    : $"Server list: {result.Message}");
 
         return result;
     }

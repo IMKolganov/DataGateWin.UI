@@ -1,9 +1,10 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Security.Principal;
 using System.Windows;
 using DataGateWin.Configuration;
+using DataGateWin.Localization;
 using DataGateWin.Services.Auth;
 using DataGateWin.Services.Ipc;
 using DataGateWin.Services.Tray;
@@ -34,6 +35,7 @@ public partial class App : Application
         base.OnStartup(e);
         
         Settings = AppSettingsStore.LoadSafe();
+        UiLanguageService.ApplyFromSettings();
 
         var themeName = Settings.Theme;
         if (!string.Equals(themeName, "Light", StringComparison.OrdinalIgnoreCase)
@@ -93,9 +95,8 @@ public partial class App : Application
             if (!IsRunningAsAdministrator())
             {
                 MessageBox.Show(
-                    "This application must be run with administrator privileges.\n\n" +
-                    "Please restart the application as an administrator.",
-                    "Administrator privileges required",
+                    Loc.T("Msg_AdminBody"),
+                    Loc.T("Msg_AdminTitle"),
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
 
@@ -108,8 +109,8 @@ public partial class App : Application
             if (!File.Exists(configPath))
             {
                 MessageBox.Show(
-                    $"Configuration file was not found:\n{configPath}",
-                    "Configuration missing",
+                    Loc.T("Msg_ConfigMissingBodyFmt", configPath),
+                    Loc.T("Msg_ConfigMissingTitle"),
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
 
@@ -197,8 +198,8 @@ public partial class App : Application
         catch (Exception ex)
         {
             MessageBox.Show(
-                $"Startup failed:\n{ex.Message}",
-                "Error",
+                Loc.T("Msg_StartupFailedBodyFmt", ex.Message),
+                Loc.T("Msg_StartupFailedTitle"),
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);
 

@@ -1,12 +1,11 @@
-﻿using System.Net.Http;
-using System.Runtime.InteropServices;
+using System.Net.Http;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Interop;
 using DataGateWin.Controllers;
 using DataGateWin.Pages;
 using DataGateWin.Pages.Home;
 using DataGateWin.Services.Auth;
+using DataGateWin.Services.Ui;
 using Wpf.Ui.Controls;
 
 namespace DataGateWin;
@@ -39,38 +38,9 @@ public partial class MainWindow : FluentWindow
             new MouseButtonEventHandler(NavView_OnMouseLeftButtonUp),
             true
         );
+
+        FluentWindowChrome.Attach(this);
     }
-    
-    protected override void OnSourceInitialized(EventArgs e)
-    {
-        base.OnSourceInitialized(e);
-
-        var hwnd = new WindowInteropHelper(this).Handle;
-        if (hwnd == IntPtr.Zero)
-            return;
-
-        // Force immersive dark mode to avoid light fallback during moves
-        EnableImmersiveDarkMode(hwnd, true);
-
-        // Optional: reinforce backdrop (does not hurt)
-        // TrySetSystemBackdrop(hwnd);
-    }
-    
-    private static void EnableImmersiveDarkMode(IntPtr hwnd, bool enabled)
-    {
-        // Attribute id: 20 for older builds, 19 for newer - try both
-        var useDark = enabled ? 1 : 0;
-
-        DwmSetWindowAttribute(hwnd, 20, ref useDark, Marshal.SizeOf<int>());
-        DwmSetWindowAttribute(hwnd, 19, ref useDark, Marshal.SizeOf<int>());
-    }
-
-    [DllImport("dwmapi.dll")]
-    private static extern int DwmSetWindowAttribute(
-        IntPtr hwnd,
-        int dwAttribute,
-        ref int pvAttribute,
-        int cbAttribute);
 
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
