@@ -130,6 +130,7 @@
     <sys:String x:Key="Settings_CurrentVersion">Текущая версия:</sys:String>
     <sys:String x:Key="Settings_LatestVersion">Последняя версия:</sys:String>
     <sys:String x:Key="Settings_Checking">Проверка…</sys:String>
+    <sys:String x:Key="Settings_LatestVersionUnavailable">Не удалось проверить</sys:String>
     <sys:String x:Key="Settings_UnknownVersion">Неизвестно</sys:String>
     <sys:String x:Key="Settings_About">О программе</sys:String>
     <sys:String x:Key="Msg_LogoutTitle">Выход</sys:String>

@@ -130,6 +130,7 @@
     <sys:String x:Key="Settings_CurrentVersion">Τρέχουσα έκδοση:</sys:String>
     <sys:String x:Key="Settings_LatestVersion">Τελευταία έκδοση:</sys:String>
     <sys:String x:Key="Settings_Checking">Έλεγχος…</sys:String>
+    <sys:String x:Key="Settings_LatestVersionUnavailable">Δεν ήταν δυνατός ο έλεγχος</sys:String>
     <sys:String x:Key="Settings_UnknownVersion">Άγνωστο</sys:String>
     <sys:String x:Key="Settings_About">Σχετικά</sys:String>
     <sys:String x:Key="Msg_LogoutTitle">Αποσύνδεση</sys:String>

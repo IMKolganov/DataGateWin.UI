@@ -130,6 +130,7 @@
     <sys:String x:Key="Settings_CurrentVersion">Current version:</sys:String>
     <sys:String x:Key="Settings_LatestVersion">Latest version:</sys:String>
     <sys:String x:Key="Settings_Checking">Checking…</sys:String>
+    <sys:String x:Key="Settings_LatestVersionUnavailable">Unable to check</sys:String>
     <sys:String x:Key="Settings_UnknownVersion">Unknown</sys:String>
     <sys:String x:Key="Settings_About">About</sys:String>
     <sys:String x:Key="Msg_LogoutTitle">Logout</sys:String>
