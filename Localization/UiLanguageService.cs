@@ -10,22 +10,58 @@ public static class UiLanguageService
 
     public static readonly string[] SupportedCodes = ["en", "fr", "ru", "el"];
 
+    public const string SystemPreference = "system";
+
     public static event EventHandler? LanguageChanged;
 
-    public static string Normalize(string? code)
+    /// <summary>Value stored in <see cref="AppSettings.UiLanguage"/> for combo binding and persistence.</summary>
+    public static string GetStoredLanguagePreference()
+        => NormalizePreferenceForStorage(App.Settings.UiLanguage);
+
+    /// <summary>Maps stored preference (including <see cref="SystemPreference"/>) to a supported resource code.</summary>
+    public static string ResolveEffectiveLanguageCode(string? preference)
     {
-        if (string.IsNullOrWhiteSpace(code))
-            return "en";
-        var c = code.Trim().ToLowerInvariant();
-        if (c is "gr" or "el-gr" or "el")
+        var p = NormalizePreferenceForStorage(preference);
+        if (p == SystemPreference)
+            return MapCultureToSupported(CultureInfo.CurrentUICulture);
+        return p;
+    }
+
+    /// <summary>Normalizes a user-chosen or JSON value to <c>system</c> or one of <see cref="SupportedCodes"/>.</summary>
+    public static string NormalizePreferenceForStorage(string? languageCode)
+    {
+        if (string.IsNullOrWhiteSpace(languageCode))
+            return SystemPreference;
+
+        var s = languageCode.Trim().ToLowerInvariant();
+        if (s is "system" or "auto" or "default" or "os")
+            return SystemPreference;
+
+        if (SupportedCodes.Contains(s))
+            return s;
+
+        if (s is "gr" or "el-gr" || s.StartsWith("el", StringComparison.Ordinal))
             return "el";
-        if (c.StartsWith("fr", StringComparison.Ordinal))
+        if (s.StartsWith("fr", StringComparison.Ordinal))
             return "fr";
-        if (c.StartsWith("ru", StringComparison.Ordinal))
+        if (s.StartsWith("ru", StringComparison.Ordinal))
             return "ru";
-        if (c.StartsWith("en", StringComparison.Ordinal))
+        if (s.StartsWith("en", StringComparison.Ordinal))
             return "en";
-        return SupportedCodes.Contains(c) ? c : "en";
+
+        return SystemPreference;
+    }
+
+    private static string MapCultureToSupported(CultureInfo culture)
+    {
+        var name = culture.TwoLetterISOLanguageName.ToLowerInvariant();
+        return name switch
+        {
+            "ru" => "ru",
+            "fr" => "fr",
+            "el" => "el",
+            _ => "en"
+        };
     }
 
     public static void ApplyFromSettings()
@@ -35,14 +71,19 @@ public static class UiLanguageService
 
     public static void Apply(string? languageCode, bool persist)
     {
-        var code = Normalize(languageCode);
+        var preference = persist
+            ? NormalizePreferenceForStorage(languageCode)
+            : NormalizePreferenceForStorage(App.Settings.UiLanguage);
+
         if (persist)
         {
-            App.Settings.UiLanguage = code;
+            App.Settings.UiLanguage = preference;
             AppSettingsStore.SaveSafe(App.Settings);
         }
 
-        var culture = code switch
+        var effective = ResolveEffectiveLanguageCode(preference);
+
+        var culture = effective switch
         {
             "fr" => new CultureInfo("fr-FR"),
             "ru" => new CultureInfo("ru-RU"),
@@ -66,7 +107,7 @@ public static class UiLanguageService
 
         _activeStrings = new ResourceDictionary
         {
-            Source = new Uri($"/DataGateWin;component/Localization/Strings.{code}.xaml", UriKind.Relative)
+            Source = new Uri($"/DataGateWin;component/Localization/Strings.{effective}.xaml", UriKind.Relative)
         };
         merged.Add(_activeStrings);
 

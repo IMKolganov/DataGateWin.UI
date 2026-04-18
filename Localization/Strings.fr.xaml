@@ -156,6 +156,7 @@
     <sys:String x:Key="About_Description">Client VPN sécurisé pour la plateforme DataGate.</sys:String>
     <sys:String x:Key="About_Close">Fermer</sys:String>
 
+    <sys:String x:Key="Lang_Name_system">Comme la langue du système</sys:String>
     <sys:String x:Key="Lang_Name_en">English</sys:String>
     <sys:String x:Key="Lang_Name_fr">Français</sys:String>
     <sys:String x:Key="Lang_Name_ru">Русский</sys:String>

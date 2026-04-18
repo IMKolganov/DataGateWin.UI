@@ -156,6 +156,7 @@
     <sys:String x:Key="About_Description">Ασφαλής πελάτης VPN για την πλατφόρμα DataGate.</sys:String>
     <sys:String x:Key="About_Close">Κλείσιμο</sys:String>
 
+    <sys:String x:Key="Lang_Name_system">Όπως στο σύστημα</sys:String>
     <sys:String x:Key="Lang_Name_en">English</sys:String>
     <sys:String x:Key="Lang_Name_fr">Français</sys:String>
     <sys:String x:Key="Lang_Name_ru">Русский</sys:String>

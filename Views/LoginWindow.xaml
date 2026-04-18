@@ -53,6 +53,7 @@
                           Width="200"
                           VerticalAlignment="Center"
                           SelectionChanged="LoginLanguageCombo_OnSelectionChanged">
+                    <ComboBoxItem Tag="system" Content="{DynamicResource Lang_Name_system}"/>
                     <ComboBoxItem Tag="en" Content="{DynamicResource Lang_Name_en}"/>
                     <ComboBoxItem Tag="fr" Content="{DynamicResource Lang_Name_fr}"/>
                     <ComboBoxItem Tag="ru" Content="{DynamicResource Lang_Name_ru}"/>

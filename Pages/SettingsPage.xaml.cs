@@ -29,16 +29,19 @@ public partial class SettingsPage : Page
 
     private void SettingsPage_OnLoaded(object sender, RoutedEventArgs e)
     {
-        var code = UiLanguageService.Normalize(App.Settings.UiLanguage);
+        var pref = UiLanguageService.GetStoredLanguagePreference();
         _suppressLanguageCombo = true;
+        ComboBoxItem? match = null;
         foreach (ComboBoxItem item in LanguageCombo.Items)
         {
-            if (item.Tag is string t && string.Equals(t, code, StringComparison.OrdinalIgnoreCase))
+            if (item.Tag is string t && string.Equals(t, pref, StringComparison.OrdinalIgnoreCase))
             {
-                LanguageCombo.SelectedItem = item;
+                match = item;
                 break;
             }
         }
+
+        LanguageCombo.SelectedItem = match ?? LanguageCombo.Items[0] as ComboBoxItem;
 
         _suppressLanguageCombo = false;
     }

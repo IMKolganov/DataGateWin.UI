@@ -51,16 +51,19 @@ public partial class LoginWindow : FluentWindow
 
     private void LoginWindow_OnLoaded(object sender, RoutedEventArgs e)
     {
-        var code = UiLanguageService.Normalize(App.Settings.UiLanguage);
+        var pref = UiLanguageService.GetStoredLanguagePreference();
         _suppressLanguageCombo = true;
+        ComboBoxItem? match = null;
         foreach (ComboBoxItem item in LoginLanguageCombo.Items)
         {
-            if (item.Tag is string t && string.Equals(t, code, StringComparison.OrdinalIgnoreCase))
+            if (item.Tag is string t && string.Equals(t, pref, StringComparison.OrdinalIgnoreCase))
             {
-                LoginLanguageCombo.SelectedItem = item;
+                match = item;
                 break;
             }
         }
+
+        LoginLanguageCombo.SelectedItem = match ?? LoginLanguageCombo.Items[0] as ComboBoxItem;
 
         _suppressLanguageCombo = false;
     }

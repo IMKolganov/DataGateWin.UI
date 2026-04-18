@@ -4,8 +4,8 @@ public sealed class AppSettings
 {
     public string Theme { get; set; } = "Dark";
 
-    /// <summary>UI language code: en, fr, ru, el.</summary>
-    public string UiLanguage { get; set; } = "en";
+    /// <summary>UI language: <c>system</c> (follow Windows display language) or en, fr, ru, el.</summary>
+    public string UiLanguage { get; set; } = "system";
 
     public string? InstallationId { get; set; }
 
