@@ -8,63 +8,77 @@
                  WindowStartupLocation="CenterOwner"
                  ResizeMode="NoResize"
                  WindowBackdropType="Mica"
+                 ExtendsContentIntoTitleBar="True"
                  Background="{DynamicResource ApplicationBackgroundBrush}"
                  UseLayoutRounding="True"
                  SnapsToDevicePixels="True">
 
-    <Grid Margin="20"
-          Background="{DynamicResource ApplicationBackgroundBrush}">
-        <ui:Card Padding="18">
-            <StackPanel>
+    <Grid Background="{DynamicResource ApplicationBackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-                <ui:TextBlock Text="{DynamicResource About_ProductName}"
-                              FontTypography="Title"
-                              FontWeight="SemiBold"
-                              Margin="0,0,0,6"/>
+        <ui:TitleBar Grid.Row="0"
+                     Title="{DynamicResource About_Title}"
+                     ShowClose="True"
+                     ShowMinimize="False"
+                     ShowMaximize="False"/>
 
-                <ui:TextBlock x:Name="VersionText"
-                              Opacity="0.75"
-                              Margin="0,0,0,12"/>
+        <Grid Grid.Row="1"
+              Margin="20"
+              Background="{DynamicResource ApplicationBackgroundBrush}">
+            <ui:Card Padding="18">
+                <StackPanel>
 
-                <ui:TextBlock Text="{DynamicResource About_Description}"
-                              TextWrapping="Wrap"
-                              Opacity="0.75"
-                              Margin="0,0,0,16"/>
+                    <ui:TextBlock Text="{DynamicResource About_ProductName}"
+                                  FontTypography="Title"
+                                  FontWeight="SemiBold"
+                                  Margin="0,0,0,6"/>
 
-                <!-- Website row -->
-                <Grid Margin="0,0,0,16">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="8"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
+                    <ui:TextBlock x:Name="VersionText"
+                                  Opacity="0.75"
+                                  Margin="0,0,0,12"/>
 
-                    <ui:SymbolIcon Grid.Column="0"
-                                   Symbol="Globe24"
-                                   Opacity="0.75"
-                                   VerticalAlignment="Center"/>
+                    <ui:TextBlock Text="{DynamicResource About_Description}"
+                                  TextWrapping="Wrap"
+                                  Opacity="0.75"
+                                  Margin="0,0,0,16"/>
 
-                    <TextBlock Grid.Column="2"
-                               Text="https://datagateapp.com"
-                               Cursor="Hand"
-                               TextDecorations="Underline"
-                               Foreground="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"
-                               VerticalAlignment="Center"
-                               MouseLeftButtonUp="Website_OnClick"/>
-                </Grid>
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="8"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
 
-                <Separator Margin="0,0,0,12"/>
+                        <ui:SymbolIcon Grid.Column="0"
+                                       Symbol="Globe24"
+                                       Opacity="0.75"
+                                       VerticalAlignment="Center"/>
 
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <ui:Button Height="36"
-                               MinWidth="90"
-                               Appearance="Secondary"
-                               Click="Close_OnClick">
-                        <TextBlock Text="{DynamicResource About_Close}"/>
-                    </ui:Button>
+                        <TextBlock Grid.Column="2"
+                                   Text="https://datagateapp.com"
+                                   Cursor="Hand"
+                                   TextDecorations="Underline"
+                                   Foreground="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"
+                                   VerticalAlignment="Center"
+                                   MouseLeftButtonUp="Website_OnClick"/>
+                    </Grid>
+
+                    <Separator Margin="0,0,0,12"/>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <ui:Button Height="36"
+                                   MinWidth="90"
+                                   Appearance="Secondary"
+                                   Click="Close_OnClick">
+                            <TextBlock Text="{DynamicResource About_Close}"/>
+                        </ui:Button>
+                    </StackPanel>
+
                 </StackPanel>
-
-            </StackPanel>
-        </ui:Card>
+            </ui:Card>
+        </Grid>
     </Grid>
 </ui:FluentWindow>
