@@ -52,19 +52,23 @@
             <StackPanel Margin="4">
                 <TextBlock Text="{DynamicResource Access_PlanQuotas}"
                            FontWeight="SemiBold"
-                           FontSize="14"/>
+                           FontSize="14"
+                           Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                 <TextBlock Text="{Binding PlanLineText}"
                            Margin="0,8,0,0"
                            TextWrapping="Wrap"
-                           Opacity="0.85"/>
+                           Opacity="0.85"
+                           Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                 <TextBlock Text="{DynamicResource Access_TrafficQuota}"
                            Margin="0,12,0,0"
                            FontWeight="SemiBold"
+                           Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                            Visibility="{Binding ShowTrafficQuotaTitle, Converter={StaticResource BoolToVis}}"/>
                 <TextBlock Text="{Binding QuotaMetaText}"
                            Margin="0,6,0,0"
                            TextWrapping="Wrap"
                            Opacity="0.85"
+                           Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                            Visibility="{Binding QuotaMetaVisible, Converter={StaticResource BoolToVis}}"/>
                 <ProgressBar Height="12"
                              Margin="0,6,0,0"
@@ -86,11 +90,13 @@
                            Margin="0,6,0,0"
                            TextWrapping="Wrap"
                            Opacity="0.85"
+                           Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                            Visibility="{Binding QuotaDetailsVisible, Converter={StaticResource BoolToVis}}"/>
                 <TextBlock Text="{Binding ValidityFooterText}"
                            Margin="0,10,0,0"
                            TextWrapping="Wrap"
-                           Opacity="0.85"/>
+                           Opacity="0.85"
+                           Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
             </StackPanel>
         </ui:Card>
 
@@ -191,6 +197,7 @@
         <TextBlock Grid.Row="4"
                    Margin="0,8,0,0"
                    Text="{Binding TotalClientsLineText}"
-                   Opacity="0.75"/>
+                   Opacity="0.75"
+                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
     </Grid>
 </Page>
