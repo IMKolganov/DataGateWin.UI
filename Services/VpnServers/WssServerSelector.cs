@@ -1,31 +1,58 @@
-﻿using OpenVPNGateMonitor.SharedModels.DataGateMonitorBackend.OpenVpnServers.Dto;
+using System.Linq;
+using OpenVPNGateMonitor.SharedModels.DataGateMonitorBackend.OpenVpnServers.Dto;
 
 namespace DataGateWin.Services.VpnServers;
 
 public sealed class WssServerSelector(OpenVpnServersApiClient apiClient)
 {
-    // Remember last selected server to rotate on next call
     private int? _lastSelectedServerId;
 
-    public async Task<OpenVpnServerDto?> GetBestWssAsync(CancellationToken ct)
+    public Task<OpenVpnServerDto?> GetBestWssAsync(CancellationToken ct) =>
+        GetServerAsync(autoPick: true, manualServerId: null, ct);
+
+    /// <summary>WSS-enabled and allowed by user quota plan (Linux <c>parseWssServersFromStatusJson</c> filter).</summary>
+    public static List<OpenVpnServerWithStatusDto> FilterEligible(
+        IEnumerable<OpenVpnServerWithStatusDto>? source) =>
+        source?
+            .Where(x => x.OpenVpnServerResponses?.OpenVpnServer != null)
+            .Where(x => x.OpenVpnServerResponses.OpenVpnServer.IsEnableWss)
+            .Where(x => x.OpenVpnServerResponses.OpenVpnServer.IsAccessibleForUserQuotaPlanOrDefault())
+            .OrderBy(x => x.OpenVpnServerResponses.OpenVpnServer.ServerName, StringComparer.OrdinalIgnoreCase)
+            .ToList()
+            ?? new List<OpenVpnServerWithStatusDto>();
+
+    /// <summary>
+    /// Linux parity: WSS + quota filter; auto = online first, then least <see cref="OpenVpnServerWithStatusDto.CountConnectedClients"/>, with rotation.
+    /// Manual = server by id if present in filtered list.
+    /// </summary>
+    public async Task<OpenVpnServerDto?> GetServerAsync(bool autoPick, int? manualServerId, CancellationToken ct)
     {
         var resp = await apiClient.GetAllWithStatusAsync(ct).ConfigureAwait(false);
         var list = resp.Data?.OpenVpnServerWithStatuses;
         if (list == null || list.Count == 0)
             return null;
 
-        // Build ranked list of WSS-enabled servers
-        var ranked = list
-            .Where(x => x.OpenVpnServerResponses.OpenVpnServer.IsEnableWss)
+        var eligible = FilterEligible(list);
+
+        if (eligible.Count == 0)
+            return null;
+
+        if (!autoPick && manualServerId is int id && id > 0)
+        {
+            var row = eligible.FirstOrDefault(x => x.OpenVpnServerResponses.OpenVpnServer.Id == id);
+            if (row == null)
+                return null;
+            var chosen = row.OpenVpnServerResponses.OpenVpnServer;
+            _lastSelectedServerId = chosen.Id;
+            return chosen;
+        }
+
+        var ranked = eligible
             .OrderByDescending(x => x.OpenVpnServerResponses.OpenVpnServer.IsOnline)
-            .ThenByDescending(x => x.CountConnectedClients)
+            .ThenBy(x => x.CountConnectedClients)
             .Select(x => x.OpenVpnServerResponses.OpenVpnServer)
             .ToList();
 
-        if (ranked.Count == 0)
-            return null;
-
-        // Only one candidate → no rotation needed
         if (ranked.Count == 1)
         {
             var only = ranked[0];
@@ -33,9 +60,7 @@ public sealed class WssServerSelector(OpenVpnServersApiClient apiClient)
             return only;
         }
 
-        // Multiple candidates → rotate
         var index = 0;
-
         if (_lastSelectedServerId.HasValue)
         {
             var prevIndex = ranked.FindIndex(s => s.Id == _lastSelectedServerId.Value);

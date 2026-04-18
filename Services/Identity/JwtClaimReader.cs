@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using Newtonsoft.Json.Linq;
 
 namespace DataGateWin.Services.Identity;
@@ -29,4 +29,11 @@ public static class JwtClaimReader
 
         return obj.Value<string>(claimName);
     }
+
+    /// <summary>Linux parity: <c>nameid</c> then WS-Federation nameidentifier claim (numeric user id for quota APIs).</summary>
+    public static string? GetNumericUserIdFromBearerToken(string? bearerToken) =>
+        GetClaimFromBearerToken(bearerToken, "nameid")
+        ?? GetClaimFromBearerToken(
+            bearerToken,
+            "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
 }

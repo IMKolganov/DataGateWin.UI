@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+using System.Windows.Controls;
+using DataGateWin.Services.Access;
 using DataGateWin.Services.VpnServers;
 using DataGateWin.ViewModels;
 
@@ -10,7 +11,9 @@ public partial class Access : Page
     {
         InitializeComponent();
 
-        var serversApi = new OpenVpnServersApiClient(App.AuthedApiHttp);
-        DataContext = new AccessViewModel(serversApi);
+        var http = App.AuthedApiHttp;
+        var serversApi = new OpenVpnServersApiClient(http);
+        var quotaApi = new UserVpnAccessClient(http);
+        DataContext = new AccessViewModel(serversApi, quotaApi, App.Session);
     }
 }

@@ -1,4 +1,4 @@
-﻿using DataGateWin.Models.Ipc;
+using DataGateWin.Models.Ipc;
 using DataGateWin.Services.Installation;
 using DataGateWin.Services.Ipc;
 using DataGateWin.Services.OpenVpnFiles;
@@ -13,6 +13,8 @@ public sealed class HomeController : IDisposable
     private CancellationTokenSource? _lifetimeCts;
     private bool _desiredConnected;
     private int _reconnectAttempt;
+    private bool _connectAutoPick = true;
+    private int? _connectManualId;
 
     private readonly EngineSessionService _engine;
 
@@ -46,6 +48,11 @@ public sealed class HomeController : IDisposable
             onEngineEvent: HandleEngineEvent
         );
     }
+
+    public void AppendLogLine(string line) => Log(line);
+
+    /// <summary>Re-run last <see cref="UiState"/> on the view (e.g. after Home «Refresh» toggles button state).</summary>
+    public void ReapplyUiToLastState() => ApplyUiState(_lastUiState, _lastStatusText);
 
     public void AttachUi(
         Action<string> statusTextSetter,
@@ -103,9 +110,11 @@ public sealed class HomeController : IDisposable
         DetachUi();
     }
 
-    public async Task ConnectAsync()
+    public async Task ConnectAsync(bool autoPickServer, int? manualVpnServerId)
     {
         _desiredConnected = true;
+        _connectAutoPick = autoPickServer;
+        _connectManualId = manualVpnServerId;
         await EnsureConnectedAsync();
     }
 
@@ -133,7 +142,7 @@ public sealed class HomeController : IDisposable
                 return;
             }
 
-            var started = await _engine.StartSessionAsync(ct);
+            var started = await _engine.StartSessionAsync(_connectAutoPick, _connectManualId, ct);
             if (!started)
             {
                 ApplyUiState(UiState.Idle, "Idle (start failed)");

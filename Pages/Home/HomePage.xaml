@@ -1,4 +1,4 @@
-﻿<!-- HomePage.xaml -->
+<!-- HomePage.xaml -->
 <Page x:Class="DataGateWin.Pages.Home.HomePage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -28,6 +28,8 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0"
@@ -40,9 +42,55 @@
                            Text="Idle"
                            Opacity="0.8"/>
 
-                <StackPanel Grid.Row="2"
+                <Grid Grid.Row="2" Margin="0,12,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0"
+                               Text="VPN server"
+                               VerticalAlignment="Center"
+                               Opacity="0.9"/>
+                    <ComboBox x:Name="ServerModeCombo"
+                              Grid.Column="1"
+                              VerticalAlignment="Center"
+                              SelectionChanged="ServerModeCombo_OnSelectionChanged">
+                        <ComboBoxItem Content="Automatic (best server)"/>
+                        <ComboBoxItem Content="Choose server…"/>
+                    </ComboBox>
+                </Grid>
+
+                <Grid x:Name="ManualServerRow"
+                      Grid.Row="3"
+                      Margin="0,8,0,0"
+                      Visibility="Collapsed">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0"
+                               Text="Server"
+                               VerticalAlignment="Center"
+                               Opacity="0.9"/>
+                    <ComboBox x:Name="ManualServerCombo"
+                              Grid.Column="1"
+                              Margin="0,0,8,0"
+                              VerticalAlignment="Center"
+                              DisplayMemberPath="Display"
+                              SelectedValuePath="Id"
+                              SelectionChanged="ManualServerCombo_OnSelectionChanged"/>
+                    <ui:Button Grid.Column="2"
+                               x:Name="RefreshServersButton"
+                               Appearance="Secondary"
+                               Content="Refresh"
+                               MinWidth="90"
+                               Click="RefreshServersButton_OnClick"/>
+                </Grid>
+
+                <StackPanel Grid.Row="4"
                             Orientation="Horizontal"
-                            Margin="0,12,0,0">
+                            Margin="0,14,0,0">
                     <ui:Button x:Name="ConnectButton"
                                Appearance="Primary"
                                Content="Connect"

@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -12,13 +12,12 @@ public sealed class AuthenticatedHttpHandler(AuthSession session, HttpMessageHan
 
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken ct)
     {
-        var cloned = await CloneHttpRequestMessageAsync(request, ct).ConfigureAwait(false);
-
+        // Attach bearer first, then clone — clone must copy Authorization for the 401 retry path.
         var token = await _session.GetValidAccessTokenAsync(ct).ConfigureAwait(false);
         if (!string.IsNullOrWhiteSpace(token))
-        {
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-        }
+
+        var cloned = await CloneHttpRequestMessageAsync(request, ct).ConfigureAwait(false);
 
         var response = await base.SendAsync(request, ct).ConfigureAwait(false);
 
