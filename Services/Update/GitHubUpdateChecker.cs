@@ -44,6 +44,22 @@ public sealed class GitHubUpdateChecker
         }
     }
 
+    /// <summary>Latest release version from GitHub, formatted for display, or null if unavailable.</summary>
+    public async Task<string?> TryGetLatestReleaseVersionForDisplayAsync(CancellationToken ct)
+    {
+        try
+        {
+            var latest = await GetLatestReleaseAsync(ct);
+            return latest == null ? null : FormatVersionForDisplay(latest.Version);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    private static string FormatVersionForDisplay(Version v) => v.ToString(3);
+
     private async Task<GitHubRelease?> GetLatestReleaseAsync(CancellationToken ct)
     {
         var url = $"https://api.github.com/repos/{_owner}/{_repo}/releases/latest";

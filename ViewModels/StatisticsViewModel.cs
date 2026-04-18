@@ -1,9 +1,10 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.Input;
+using DataGateWin.Localization;
 using DataGateWin.Services.Auth;
 using DataGateWin.Services.Identity;
 using DataGateWin.Services.Statistics;
@@ -64,14 +65,28 @@ public sealed class StatisticsViewModel : INotifyPropertyChanged
     public DateTime? FromLocalDate
     {
         get => _fromLocalDate;
-        set { _fromLocalDate = value; OnPropertyChanged(); UpdatePeriodTextPreview(); }
+        set
+        {
+            _fromLocalDate = value;
+            OnPropertyChanged();
+            _loadedFromUtc = null;
+            _loadedToUtc = null;
+            UpdatePeriodTextPreview();
+        }
     }
 
     private DateTime? _toLocalDate;
     public DateTime? ToLocalDate
     {
         get => _toLocalDate;
-        set { _toLocalDate = value; OnPropertyChanged(); UpdatePeriodTextPreview(); }
+        set
+        {
+            _toLocalDate = value;
+            OnPropertyChanged();
+            _loadedFromUtc = null;
+            _loadedToUtc = null;
+            UpdatePeriodTextPreview();
+        }
     }
 
     private OverviewGrouping _grouping = OverviewGrouping.Auto;
@@ -86,7 +101,15 @@ public sealed class StatisticsViewModel : INotifyPropertyChanged
         }
     }
 
-    public string GroupingText => Grouping.ToString();
+    public string GroupingText => Grouping switch
+    {
+        OverviewGrouping.Auto => Loc.T("Stats_Group_Auto"),
+        OverviewGrouping.Hours => Loc.T("Stats_Group_Hours"),
+        OverviewGrouping.Days => Loc.T("Stats_Group_Days"),
+        OverviewGrouping.Months => Loc.T("Stats_Group_Months"),
+        OverviewGrouping.Years => Loc.T("Stats_Group_Years"),
+        _ => Grouping.ToString()
+    };
 
     public ICommand SetGroupingCommand { get; }
     public ICommand ApplyFiltersCommand { get; }
@@ -98,6 +121,8 @@ public sealed class StatisticsViewModel : INotifyPropertyChanged
     private OxyColor _chartGrid = OxyColor.FromAColor(60, OxyColors.Black);
 
     private OverviewSeriesResponse? _lastData;
+    private DateTimeOffset? _loadedFromUtc;
+    private DateTimeOffset? _loadedToUtc;
 
     public StatisticsViewModel(StatisticsApiClient api, AuthSession session)
     {
@@ -109,8 +134,20 @@ public sealed class StatisticsViewModel : INotifyPropertyChanged
         ResetFiltersCommand = new RelayCommand(ResetFilters);
         SetLastDaysCommand = new RelayCommand<string>(SetLastDays);
 
+        UiLanguageService.LanguageChanged += OnUiLanguageChanged;
+
         ResetFilters();
         PlotModel = BuildEmptyModel();
+    }
+
+    private void OnUiLanguageChanged(object? sender, EventArgs e)
+    {
+        OnPropertyChanged(nameof(GroupingText));
+        if (_loadedFromUtc is not null && _loadedToUtc is not null)
+            ApplyLoadedPeriodText();
+        else
+            UpdatePeriodTextPreview();
+        RefreshChart();
     }
 
     public Task LoadAsync(CancellationToken ct) => ApplyAsync(ct);
@@ -130,7 +167,7 @@ public sealed class StatisticsViewModel : INotifyPropertyChanged
 
         if (to <= from)
         {
-            ErrorText = "Invalid period: To must be greater than From.";
+            ErrorText = Loc.T("Stats_InvalidPeriod");
             return;
         }
 
@@ -140,7 +177,10 @@ public sealed class StatisticsViewModel : INotifyPropertyChanged
         {
             var token = await _session.GetValidAccessTokenAsync(ct).ConfigureAwait(false);
             if (string.IsNullOrWhiteSpace(token))
-                throw new InvalidOperationException("Access token not available");
+            {
+                ErrorText = Loc.T("Stats_Err_NoToken");
+                return;
+            }
 
             var externalId =
                 JwtClaimReader.GetClaimFromBearerToken(token, "externalId")
@@ -148,7 +188,10 @@ public sealed class StatisticsViewModel : INotifyPropertyChanged
                 ?? JwtClaimReader.GetClaimFromBearerToken(token, "nameid");
 
             if (string.IsNullOrWhiteSpace(externalId))
-                throw new InvalidOperationException("ExternalId not available");
+            {
+                ErrorText = Loc.T("Stats_Err_NoExternalId");
+                return;
+            }
 
             var effectiveGrouping = ResolveGrouping(Grouping, from, to);
             var req = new GetOverviewSeriesRequest
@@ -163,7 +206,9 @@ public sealed class StatisticsViewModel : INotifyPropertyChanged
             _lastData = data;
 
             TotalUploadedText = FormatBytes(data.Summary.TotalTrafficOutBytes);
-            PeriodText = $"{from:yyyy-MM-dd} — {to:yyyy-MM-dd}";
+            _loadedFromUtc = from;
+            _loadedToUtc = to;
+            ApplyLoadedPeriodText();
 
             PlotModel = BuildUploadSeriesModel(data);
         }
@@ -175,6 +220,17 @@ public sealed class StatisticsViewModel : INotifyPropertyChanged
         {
             IsLoading = false;
         }
+    }
+
+    private void ApplyLoadedPeriodText()
+    {
+        if (_loadedFromUtc is null || _loadedToUtc is null)
+            return;
+
+        PeriodText = Loc.T(
+            "Stats_PeriodDataFmt",
+            _loadedFromUtc.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+            _loadedToUtc.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
     }
 
     private static OverviewGrouping ResolveGrouping(OverviewGrouping requested, DateTimeOffset from, DateTimeOffset to)
@@ -199,6 +255,8 @@ public sealed class StatisticsViewModel : INotifyPropertyChanged
         FromLocalDate = nowLocal.AddDays(-7);
         ToLocalDate = nowLocal;
 
+        _loadedFromUtc = null;
+        _loadedToUtc = null;
         UpdatePeriodTextPreview();
     }
 
@@ -230,7 +288,7 @@ public sealed class StatisticsViewModel : INotifyPropertyChanged
     {
         var from = FromLocalDate?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) ?? "—";
         var to = ToLocalDate?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) ?? "—";
-        PeriodText = $"{from} — {to}";
+        PeriodText = Loc.T("Stats_PeriodDataFmt", from, to);
     }
 
     public void SetChartTheme(PlotView plotView, ApplicationTheme theme)
@@ -262,10 +320,10 @@ public sealed class StatisticsViewModel : INotifyPropertyChanged
         var model = BuildEmptyModel();
 
         var accent = OxyColor.FromRgb(0x4C, 0x9A, 0xFF);
-        
+
         var series = new BytesAreaSeries
         {
-            Title = "Upload",
+            Title = Loc.T("Stats_Series_Upload"),
             StrokeThickness = 2,
             ConstantY2 = 0,
             Color = accent,
@@ -273,7 +331,7 @@ public sealed class StatisticsViewModel : INotifyPropertyChanged
             MarkerType = MarkerType.None,
             BytesFormatter = FormatBytes
         };
-        
+
         foreach (var row in data.OverviewSeriesRows)
         {
             var x = DateTimeAxis.ToDouble(row.Ts.UtcDateTime);
@@ -310,7 +368,7 @@ public sealed class StatisticsViewModel : INotifyPropertyChanged
         model.Axes.Add(new LinearAxis
         {
             Position = AxisPosition.Left,
-            Title = "Traffic",
+            Title = Loc.T("Stats_Axis_Traffic"),
             MajorGridlineStyle = LineStyle.Solid,
             MinorGridlineStyle = LineStyle.None,
             MajorGridlineColor = _chartGrid,

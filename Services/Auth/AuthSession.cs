@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Net.Http;
 using DataGateWin.Services.Auth.Interfaces;
 using OpenVPNGateMonitor.SharedModels.DataGateMonitorBackend.Auth.Requests;
@@ -44,11 +44,12 @@ public sealed class AuthSession(
         if (IsAccessValid(current))
             return current.Token;
 
-        var refreshed = await RefreshAsync(ct).ConfigureAwait(false);
+        var refreshed = await RefreshAsync(ct, forceRefresh: false).ConfigureAwait(false);
         return refreshed ? _current?.Token : null;
     }
 
-    public async Task<bool> RefreshAsync(CancellationToken ct)
+    /// <param name="forceRefresh">If true, calls the refresh endpoint even when the access token is still within the local validity window (e.g. after HTTP 401).</param>
+    public async Task<bool> RefreshAsync(CancellationToken ct, bool forceRefresh = false)
     {
         await _refreshLock.WaitAsync(ct).ConfigureAwait(false);
         try
@@ -57,7 +58,7 @@ public sealed class AuthSession(
             if (current == null)
                 return false;
 
-            if (IsAccessValid(current))
+            if (!forceRefresh && IsAccessValid(current))
                 return true;
 
             if (current.RefreshToken == null || current.RefreshExpiration == null)
