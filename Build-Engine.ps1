@@ -144,6 +144,15 @@ function Copy-EngineToUiBin {
     Copy-Item -LiteralPath $EngineExe.FullName -Destination (Join-Path $destDir 'engine.exe') -Force
     Write-Host "Copied: $($EngineExe.FullName) -> $(Join-Path $destDir 'engine.exe')"
     Copy-VcpkgRuntimeDlls -DestEngineDir $destDir -CMakeConfig $CMakeConfig
+
+    $wintunSrc = Join-Path $RepoRoot 'drivers\wintun\wintun.dll'
+    if (Test-Path -LiteralPath $wintunSrc) {
+        Copy-Item -LiteralPath $wintunSrc -Destination (Join-Path $destDir 'wintun.dll') -Force
+        Write-Host "Copied: wintun.dll -> $destDir"
+    }
+    else {
+        Write-Warning "wintun.dll not found at $wintunSrc — engine cannot load Wintun (see drivers/wintun/README.md)."
+    }
 }
 
 function Invoke-EngineBuild {

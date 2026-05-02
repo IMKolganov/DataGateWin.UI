@@ -42,6 +42,10 @@
     <Content Include="Assets\IpLists\**\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <!-- Wintun amd64 DLL: must sit next to engine.exe (LoadLibraryEx APPLICATION_DIR). Vendor: wintun.net -->
+    <None Include="..\drivers\wintun\wintun.dll" Link="engine\wintun.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
