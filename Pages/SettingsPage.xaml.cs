@@ -5,9 +5,9 @@ using System.Windows;
 using System.Windows.Controls;
 using DataGateWin.Configuration;
 using DataGateWin.Localization;
+using DataGateWin.Views;
 using DataGateWin.Services.Auth;
 using DataGateWin.Services.Update;
-using DataGateWin.Views;
 using Wpf.Ui.Appearance;
 
 namespace DataGateWin.Pages;
@@ -16,6 +16,7 @@ public partial class SettingsPage : Page
 {
     private readonly AuthStateStore _authState;
     private bool _suppressLanguageCombo;
+    private bool _suppressIpListsToggle;
 
     public SettingsPage(AuthStateStore authState)
     {
@@ -27,12 +28,79 @@ public partial class SettingsPage : Page
             !string.Equals(App.Settings.Theme, "Light", StringComparison.OrdinalIgnoreCase);
 
         LoadVersionInfo();
+
+        UiLanguageService.LanguageChanged += OnUiLanguageChanged;
+        Unloaded += (_, _) => UiLanguageService.LanguageChanged -= OnUiLanguageChanged;
+    }
+
+    private void OnUiLanguageChanged(object? sender, EventArgs e)
+    {
+        Dispatcher.Invoke(PopulateLanguageComboSelection);
     }
 
     private void SettingsPage_OnLoaded(object sender, RoutedEventArgs e)
     {
+        PopulateLanguageComboSelection();
+        ApplyIpListsToggleFromStore();
+    }
+
+    private void ApplyIpListsToggleFromStore()
+    {
+        _suppressIpListsToggle = true;
+        IpListsMainToggle.IsChecked = IpListStore.LoadSettings().CidrListsEnabled;
+        _suppressIpListsToggle = false;
+    }
+
+    private void IpListsMainToggle_OnChecked(object sender, RoutedEventArgs e)
+    {
+        if (_suppressIpListsToggle)
+            return;
+
+        var s = IpListStore.LoadSettings();
+        s.CidrListsEnabled = true;
+        IpListStore.SaveSettings(s);
+    }
+
+    private void IpListsMainToggle_OnUnchecked(object sender, RoutedEventArgs e)
+    {
+        if (_suppressIpListsToggle)
+            return;
+
+        var s = IpListStore.LoadSettings();
+        s.CidrListsEnabled = false;
+        IpListStore.SaveSettings(s);
+    }
+
+    private void IpListsConfigure_OnClick(object sender, RoutedEventArgs e)
+    {
+        var w = new IpListSettingsWindow
+        {
+            Owner = Window.GetWindow(this)
+        };
+
+        w.ShowDialog();
+        ApplyIpListsToggleFromStore();
+    }
+
+    private void PopulateLanguageComboSelection()
+    {
         var pref = UiLanguageService.GetStoredLanguagePreference();
         _suppressLanguageCombo = true;
+        LanguageCombo.Items.Clear();
+        LanguageCombo.Items.Add(new ComboBoxItem
+        {
+            Tag = UiLanguageService.SystemPreference,
+            Content = UiLanguageService.GetLanguageDisplayName(UiLanguageService.SystemPreference),
+        });
+        foreach (var code in UiLanguageService.GetLanguagePickerCodes())
+        {
+            LanguageCombo.Items.Add(new ComboBoxItem
+            {
+                Tag = code,
+                Content = UiLanguageService.GetLanguageDisplayName(code),
+            });
+        }
+
         ComboBoxItem? match = null;
         foreach (ComboBoxItem item in LanguageCombo.Items)
         {

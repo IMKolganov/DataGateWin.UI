@@ -4,13 +4,12 @@ using System.Net.Http;
 using System.Reflection;
 using System.Text.Json;
 using System.Windows;
+using DataGateWin.Localization;
 
 namespace DataGateWin.Services.Update;
 
 public sealed class GitHubUpdateChecker
 {
-    private const string UpdateArgument = "update";
-    private const string InstallerExeName = "DataGateWin.Installer.exe";
     private const string EngineExeRelativePath = "engine";
 
     private readonly HttpClient _http;
@@ -119,7 +118,7 @@ public sealed class GitHubUpdateChecker
                 if (!ConfirmUpdate(owner))
                     return;
 
-                var updaterPath = ResolveUpdaterPath();
+                var updaterPath = AppInstallerLocator.TryFindInstallerExe();
                 if (string.IsNullOrWhiteSpace(updaterPath))
                 {
                     ShowUpdaterMissing(owner);
@@ -144,8 +143,8 @@ public sealed class GitHubUpdateChecker
     {
         var decision = MessageBox.Show(
             owner,
-            "A new update is available. Do you want to install it now?",
-            "Update available",
+            Loc.T("Msg_UpdateAvailableBody"),
+            Loc.T("Msg_UpdateAvailableTitle"),
             MessageBoxButton.YesNo,
             MessageBoxImage.Information);
 
@@ -156,9 +155,8 @@ public sealed class GitHubUpdateChecker
     {
         MessageBox.Show(
             owner,
-            "A new update is available, but the update component could not be found.\n\n" +
-            "Please reinstall the application or contact support.",
-            "Update Error",
+            Loc.T("Msg_UpdateErrorBody"),
+            Loc.T("Msg_UpdateErrorTitle"),
             MessageBoxButton.OK,
             MessageBoxImage.Error);
     }
@@ -175,7 +173,7 @@ public sealed class GitHubUpdateChecker
         Process.Start(new ProcessStartInfo
         {
             FileName = updaterPath,
-            Arguments = UpdateArgument,
+            Arguments = AppInstallerLocator.InstallerUpdateArgument,
             UseShellExecute = true,
             WorkingDirectory = AppContext.BaseDirectory
         });
@@ -191,26 +189,6 @@ public sealed class GitHubUpdateChecker
         }
 
         dispatcher.Invoke(action);
-    }
-
-    private static string? ResolveUpdaterPath()
-    {
-        var baseDir = AppContext.BaseDirectory;
-
-        var candidates = new[]
-        {
-            Path.Combine(baseDir, "Installer", InstallerExeName),
-            Path.Combine(baseDir, "installer", InstallerExeName),
-            Path.Combine(baseDir, InstallerExeName)
-        };
-
-        foreach (var candidate in candidates)
-        {
-            if (File.Exists(candidate))
-                return candidate;
-        }
-
-        return null;
     }
 
     private static void KillEngineProcessesByExactPathOnce(string engineExePath)

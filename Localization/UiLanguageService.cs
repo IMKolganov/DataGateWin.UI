@@ -6,19 +6,22 @@ namespace DataGateWin.Localization;
 
 public static class UiLanguageService
 {
-    private static ResourceDictionary? _activeStrings;
+    private static ResourceDictionary? _activeBase;
+    private static ResourceDictionary? _activeOverlay;
 
-    public static readonly string[] SupportedCodes = ["en", "fr", "ru", "el"];
+    public static readonly string[] SupportedCodes = UiLocale.All.Select(l => l.Code).ToArray();
+
+    /// <inheritdoc cref="UiLocale.GetLanguagePickerCodes"/>
+    public static IReadOnlyList<string> GetLanguagePickerCodes() => UiLocale.GetLanguagePickerCodes();
+
 
     public const string SystemPreference = "system";
 
     public static event EventHandler? LanguageChanged;
 
-    /// <summary>Value stored in <see cref="AppSettings.UiLanguage"/> for combo binding and persistence.</summary>
     public static string GetStoredLanguagePreference()
         => NormalizePreferenceForStorage(App.Settings.UiLanguage);
 
-    /// <summary>Maps stored preference (including <see cref="SystemPreference"/>) to a supported resource code.</summary>
     public static string ResolveEffectiveLanguageCode(string? preference)
     {
         var p = NormalizePreferenceForStorage(preference);
@@ -27,7 +30,6 @@ public static class UiLanguageService
         return p;
     }
 
-    /// <summary>Normalizes a user-chosen or JSON value to <c>system</c> or one of <see cref="SupportedCodes"/>.</summary>
     public static string NormalizePreferenceForStorage(string? languageCode)
     {
         if (string.IsNullOrWhiteSpace(languageCode))
@@ -37,32 +39,14 @@ public static class UiLanguageService
         if (s is "system" or "auto" or "default" or "os")
             return SystemPreference;
 
-        if (SupportedCodes.Contains(s))
+        if (SupportedCodes.Contains(s, StringComparer.OrdinalIgnoreCase))
             return s;
-
-        if (s is "gr" or "el-gr" || s.StartsWith("el", StringComparison.Ordinal))
-            return "el";
-        if (s.StartsWith("fr", StringComparison.Ordinal))
-            return "fr";
-        if (s.StartsWith("ru", StringComparison.Ordinal))
-            return "ru";
-        if (s.StartsWith("en", StringComparison.Ordinal))
-            return "en";
 
         return SystemPreference;
     }
 
-    private static string MapCultureToSupported(CultureInfo culture)
-    {
-        var name = culture.TwoLetterISOLanguageName.ToLowerInvariant();
-        return name switch
-        {
-            "ru" => "ru",
-            "fr" => "fr",
-            "el" => "el",
-            _ => "en"
-        };
-    }
+    public static string MapCultureToSupported(CultureInfo culture)
+        => CultureMapping.MapCultureToSupportedCode(culture);
 
     public static void ApplyFromSettings()
     {
@@ -83,34 +67,85 @@ public static class UiLanguageService
 
         var effective = ResolveEffectiveLanguageCode(preference);
 
-        var culture = effective switch
+        try
         {
-            "fr" => new CultureInfo("fr-FR"),
-            "ru" => new CultureInfo("ru-RU"),
-            "el" => new CultureInfo("el-GR"),
-            _ => new CultureInfo("en-US")
-        };
-
-        CultureInfo.DefaultThreadCurrentUICulture = culture;
-        CultureInfo.DefaultThreadCurrentCulture = culture;
+            var loc = UiLocale.FindByCode(effective);
+            var ci = loc != null
+                ? CultureInfo.GetCultureInfo(loc.CultureName)
+                : CultureInfo.GetCultureInfo("en-US");
+            CultureInfo.DefaultThreadCurrentUICulture = ci;
+            CultureInfo.DefaultThreadCurrentCulture = ci;
+        }
+        catch (CultureNotFoundException)
+        {
+            CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("en-US");
+            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.GetCultureInfo("en-US");
+        }
 
         var app = Application.Current;
         if (app is null)
             return;
 
         var merged = app.Resources.MergedDictionaries;
-        if (_activeStrings is not null)
+        if (_activeOverlay is not null)
         {
-            merged.Remove(_activeStrings);
-            _activeStrings = null;
+            merged.Remove(_activeOverlay);
+            _activeOverlay = null;
         }
 
-        _activeStrings = new ResourceDictionary
+        if (_activeBase is not null)
         {
-            Source = new Uri($"/DataGateWin;component/Localization/Strings.{effective}.xaml", UriKind.Relative)
+            merged.Remove(_activeBase);
+            _activeBase = null;
+        }
+
+        _activeBase = new ResourceDictionary
+        {
+            Source = new Uri("/DataGateWin;component/Localization/Strings.en.xaml", UriKind.Relative),
         };
-        merged.Add(_activeStrings);
+        merged.Add(_activeBase);
+
+        if (!string.Equals(effective, "en", StringComparison.OrdinalIgnoreCase))
+        {
+            try
+            {
+                var packPath = $"/DataGateWin;component/Localization/Strings.{effective}.xaml";
+                _activeOverlay = new ResourceDictionary
+                {
+                    Source = new Uri(packPath, UriKind.Relative),
+                };
+                merged.Add(_activeOverlay);
+            }
+            catch
+            {
+                _activeOverlay = null;
+            }
+        }
 
         LanguageChanged?.Invoke(null, EventArgs.Empty);
+    }
+
+    /// <summary>Display name for language list (usually <see cref="CultureInfo.NativeName"/>).</summary>
+    public static string GetLanguageDisplayName(string code)
+    {
+        if (string.Equals(code, SystemPreference, StringComparison.OrdinalIgnoreCase))
+        {
+            if (Application.Current?.TryFindResource("Lang_Name_system") is string sys && !string.IsNullOrWhiteSpace(sys))
+                return sys;
+            return "Same as Windows display language";
+        }
+
+        var loc = UiLocale.FindByCode(code);
+        if (loc is null)
+            return code;
+        try
+        {
+            var ci = CultureInfo.GetCultureInfo(loc.CultureName);
+            return ci.NativeName;
+        }
+        catch (CultureNotFoundException)
+        {
+            return code;
+        }
     }
 }

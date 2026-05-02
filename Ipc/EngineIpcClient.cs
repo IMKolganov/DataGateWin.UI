@@ -1,8 +1,9 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
 using System.Text;
+using DataGateWin.Localization;
 using DataGateWin.Models.Ipc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -62,8 +63,7 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
         await Task.Delay(150, ct).ConfigureAwait(false);
         if (_process!.HasExited)
         {
-            throw new InvalidOperationException(
-                $"Engine exited early. ExitCode={_process.ExitCode}. LastOut={_lastOut ?? "<null>"}. LastErr={_lastErr ?? "<null>"}");
+            throw new InvalidOperationException(BuildEarlyExitMessage(_process.ExitCode, _lastOut, _lastErr));
         }
 
         await ConnectAsync(timeoutMs: 1000, ct).ConfigureAwait(false);
@@ -241,6 +241,21 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
         await Task.CompletedTask.ConfigureAwait(false);
     }
 
+    /// <summary>Maps common Windows process exit codes (NTSTATUS) to actionable hints.</summary>
+    private static string BuildEarlyExitMessage(int exitCode, string? lastOut, string? lastErr)
+    {
+        var head = Loc.T(
+            "Err_EngineExit_HeadFmt",
+            exitCode.ToString(),
+            lastOut ?? "<null>",
+            lastErr ?? "<null>");
+
+        if (exitCode == unchecked((int)0xC0000135))
+            return head + "\n" + Loc.T("Err_EngineExit_HintDllNotFound");
+
+        return head;
+    }
+
     private async Task ConnectOrFailFastAsync(
         NamedPipeClientStream pipe,
         string label,
@@ -255,8 +270,7 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
 
             if (_process != null && _process.HasExited)
             {
-                throw new InvalidOperationException(
-                    $"Engine exited while connecting pipes. ExitCode={_process.ExitCode}. LastOut={_lastOut ?? "<null>"}. LastErr={_lastErr ?? "<null>"}");
+                throw new InvalidOperationException(BuildEarlyExitMessage(_process.ExitCode, _lastOut, _lastErr));
             }
 
             var elapsed = (int)Math.Max(0, Environment.TickCount64 - start);

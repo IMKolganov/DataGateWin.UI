@@ -1,17 +1,26 @@
 using System.Net.Http;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shell;
 using DataGateWin.Controllers;
+using DataGateWin.Localization;
 using DataGateWin.Pages;
 using DataGateWin.Pages.Home;
 using DataGateWin.Services.Auth;
+using DataGateWin.Services.Identity;
+using DataGateWin.Services.Support;
 using DataGateWin.Services.Ui;
+using DataGateWin.Views;
 using Wpf.Ui.Controls;
 
 namespace DataGateWin;
 
 public partial class MainWindow : FluentWindow
 {
+    private ImageSource? _taskbarAvatarOverlay;
+
     private readonly AuthStateStore _authState;
 
     private readonly HomeController _homeController = new();
@@ -31,7 +40,7 @@ public partial class MainWindow : FluentWindow
         _settingsPage = new SettingsPage(_authState);
         _statisticsPage = new Statistics(authedApiHttp, App.Session);
 
-        Loaded += OnLoaded;
+        Loaded += OnLoadedAsync;
 
         NavView.AddHandler(
             UIElement.MouseLeftButtonUpEvent,
@@ -40,11 +49,114 @@ public partial class MainWindow : FluentWindow
         );
 
         FluentWindowChrome.Attach(this);
+
+        StateChanged += (_, _) => UpdateTaskbarOverlay();
     }
 
-    private void OnLoaded(object sender, RoutedEventArgs e)
+    private async void OnLoadedAsync(object sender, RoutedEventArgs e)
     {
         NavigateTo("home");
+        await ApplyUserPaneFooterAsync().ConfigureAwait(true);
+    }
+
+    private async Task ApplyUserPaneFooterAsync()
+    {
+        void ShowUserAvatarFallback()
+        {
+            UserAvatarImage.Source = null;
+            UserAvatarImage.Visibility = Visibility.Collapsed;
+            UserAvatarInitials.Visibility = Visibility.Visible;
+            _taskbarAvatarOverlay = null;
+            UpdateTaskbarOverlay();
+        }
+
+        var token = App.Session.Current?.Token;
+        var displayName = AccountDisplay.TryResolveDisplayName(token) ?? Loc.T("Common_Unknown");
+        UserDisplayName.Text = displayName;
+        UserAvatarInitials.Text = AccountDisplay.GetInitials(displayName);
+        UserProfileRoot.ToolTip = displayName;
+
+        var picUrl = JwtClaimReader.GetProfileImageUrlFromBearerToken(token);
+        if (string.IsNullOrWhiteSpace(picUrl))
+        {
+            ShowUserAvatarFallback();
+            return;
+        }
+
+        var userId = JwtClaimReader.GetNumericUserIdFromBearerToken(token);
+
+        try
+        {
+            var bmp = await UserAvatarCache.TryLoadOrDownloadAsync(picUrl, userId, CancellationToken.None)
+                .ConfigureAwait(false);
+
+            await Dispatcher.InvokeAsync(() =>
+            {
+                if (bmp is not null)
+                {
+                    UserAvatarImage.Source = bmp;
+                    UserAvatarImage.Visibility = Visibility.Visible;
+                    UserAvatarInitials.Visibility = Visibility.Collapsed;
+                    _taskbarAvatarOverlay = CreateTaskbarOverlaySource(bmp);
+                    UpdateTaskbarOverlay();
+                }
+                else
+                    ShowUserAvatarFallback();
+            });
+        }
+        catch
+        {
+            await Dispatcher.InvokeAsync(ShowUserAvatarFallback);
+        }
+    }
+
+    private static ImageSource? CreateTaskbarOverlaySource(BitmapSource source)
+    {
+        try
+        {
+            const int size = 16;
+            var scaleX = size / (double)source.PixelWidth;
+            var scaleY = size / (double)source.PixelHeight;
+            var scaled = new TransformedBitmap(source, new ScaleTransform(scaleX, scaleY));
+            scaled.Freeze();
+
+            var visual = new DrawingVisual();
+            using (var dc = visual.RenderOpen())
+            {
+                dc.PushClip(new EllipseGeometry(new Rect(0, 0, size, size)));
+                dc.DrawImage(scaled, new Rect(0, 0, size, size));
+                dc.Pop();
+            }
+
+            var rtb = new RenderTargetBitmap(size, size, 96, 96, PixelFormats.Pbgra32);
+            rtb.Render(visual);
+            rtb.Freeze();
+            return rtb;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    private void UpdateTaskbarOverlay()
+    {
+        if (ShellTaskbarItemInfo is null)
+            return;
+
+        ShellTaskbarItemInfo.Overlay = WindowState == WindowState.Minimized && _taskbarAvatarOverlay is not null
+            ? _taskbarAvatarOverlay
+            : null;
+    }
+
+    private void ReportIssue_OnClick(object sender, RoutedEventArgs e)
+    {
+        new ReportIssueDialog { Owner = this }.ShowDialog();
+    }
+
+    private void TelegramChannel_OnClick(object sender, RoutedEventArgs e)
+    {
+        TelegramChannel.OpenPublicChannel();
     }
 
     protected override void OnClosed(EventArgs e)

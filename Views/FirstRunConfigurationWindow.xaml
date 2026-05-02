@@ -1,0 +1,103 @@
+<ui:FluentWindow x:Class="DataGateWin.Views.FirstRunConfigurationWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 Title="{DynamicResource FirstRun_Title}"
+                 Height="560"
+                 Width="720"
+                 MinHeight="520"
+                 MinWidth="640"
+                 WindowStartupLocation="CenterScreen"
+                 ResizeMode="NoResize"
+                 WindowBackdropType="Mica"
+                 ExtendsContentIntoTitleBar="True"
+                 Background="{DynamicResource ApplicationBackgroundBrush}"
+                 UseLayoutRounding="True"
+                 SnapsToDevicePixels="True">
+
+    <Grid Background="{DynamicResource ApplicationBackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0"
+                     Title="{DynamicResource FirstRun_Title}"
+                     ShowClose="True"
+                     ShowMinimize="False"
+                     ShowMaximize="False"/>
+
+        <ScrollViewer Grid.Row="1"
+                      Margin="28"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <ui:Card Padding="28" VerticalAlignment="Top">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,18">
+                        <ui:SymbolIcon Symbol="Settings24" FontSize="26" Margin="0,2,12,0"/>
+                        <StackPanel>
+                            <ui:TextBlock Text="{DynamicResource FirstRun_Title}"
+                                          FontTypography="Title"
+                                          FontWeight="SemiBold"/>
+                            <ui:TextBlock Text="{DynamicResource FirstRun_Subtitle}"
+                                          Opacity="0.75"
+                                          TextWrapping="Wrap"
+                                          Margin="0,6,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <ui:TextBlock Text="{DynamicResource FirstRun_ApiBaseUrl}"
+                                  FontWeight="SemiBold"
+                                  Margin="0,0,0,6"/>
+                    <ui:TextBox x:Name="ApiBaseUrlBox"
+                                PlaceholderText="{DynamicResource FirstRun_Placeholder_ApiBaseUrl}"
+                                Margin="0,0,0,16"/>
+
+                    <ui:TextBlock Text="{DynamicResource FirstRun_GoogleClientId}"
+                                  FontWeight="SemiBold"
+                                  Margin="0,0,0,6"/>
+                    <ui:TextBox x:Name="GoogleClientIdBox"
+                                PlaceholderText="{DynamicResource FirstRun_Placeholder_GoogleClientId}"
+                                Margin="0,0,0,16"/>
+
+                    <ui:TextBlock Text="{DynamicResource FirstRun_RedirectPort}"
+                                  FontWeight="SemiBold"
+                                  Margin="0,0,0,6"/>
+                    <ui:TextBox x:Name="RedirectPortBox"
+                                MaxLength="5"
+                                Margin="0,0,0,16"/>
+
+                    <ui:TextBlock x:Name="StatusText"
+                                  TextWrapping="Wrap"
+                                  Opacity="0.9"
+                                  Foreground="{DynamicResource SystemFillColorCriticalBrush}"
+                                  Margin="0,0,0,16"
+                                  Visibility="Collapsed"/>
+
+                    <ui:Button Height="46"
+                               Appearance="Primary"
+                               Click="Save_OnClick">
+                        <ui:Button.Icon>
+                            <ui:SymbolIcon Symbol="Save24"/>
+                        </ui:Button.Icon>
+                        <ui:Button.Content>
+                            <TextBlock Text="{DynamicResource FirstRun_SaveContinue}"/>
+                        </ui:Button.Content>
+                    </ui:Button>
+
+                    <ui:Button Height="42"
+                               Margin="0,10,0,0"
+                               Appearance="Secondary"
+                               Click="Cancel_OnClick">
+                        <ui:Button.Icon>
+                            <ui:SymbolIcon Symbol="Dismiss24"/>
+                        </ui:Button.Icon>
+                        <ui:Button.Content>
+                            <TextBlock Text="{DynamicResource FirstRun_CancelExit}"/>
+                        </ui:Button.Content>
+                    </ui:Button>
+                </StackPanel>
+            </ui:Card>
+        </ScrollViewer>
+    </Grid>
+</ui:FluentWindow>
