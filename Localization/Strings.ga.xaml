@@ -176,5 +176,52 @@
     <sys:String x:Key="Tray_Exit">Exit</sys:String>
     <sys:String x:Key="Tray_Open">Open</sys:String>
     <sys:String x:Key="Tray_Tooltip">DataGate</sys:String>
+
+    <!-- Missing keys synced from en (machine-translated) -->
+    <sys:String x:Key="Err_EngineExit_HeadFmt">Stopadh an t-inneall láithreach. ExitCode={0}. LastOut={1}. LastErr={2}</sys:String>
+    <sys:String x:Key="Err_EngineExit_HintDllNotFound">Ciallaíonn cód scoir 0xC0000135 nach bhféadfadh an lódóir Windows DLL cleithiúnach a réiteach sular thosaigh engine.exe – ní ritheann an t-inneall riamh, mar sin fan folamh agus ní féidir leis an Chomhéadain an t-ainm comhaid atá ar iarraidh a léamh. suiteáilte\x64-windows\bin in aice le engine.exe (nó reáchtáil Build-Engine.ps1 — déanann sé iad a chóipeáil).&#x0a;• Má tá an CRT in easnamh, suiteáil “Microsoft Visual C++ 2015–2022 Redistributable (x64)”. Seans go mbeidh MSVC de dhíth ar an meaisín le tógáil dífhabhtaithe.&#x0a;&#x0a;Má shuiteáil tú ó phacáiste, athshuiteáil an feidhmchlár ón suiteálaí oifigiúil ionas go mbeidh gach DLL comhpháirte (mar shampla in aice le engine.exe) athchóirithe.</sys:String>
+    <sys:String x:Key="Home_Log_DllMissingHint">Leid: níorbh fhéidir an dll riachtanach a luchtú (féach an líne thuas). Athshuiteáil an feidhmchlár ón suiteálaí oifigiúil chun comhaid atá ar iarraidh a chur ar ais.</sys:String>
+    <sys:String x:Key="Settings_IpLists">Liostaí IP (seachbhóthar VPN)</sys:String>
+    <sys:String x:Key="Settings_IpLists_Subtitle">Seol trácht ar líonraí liostaithe lasmuigh den tollán VPN trí bhealaí scoilte a cheangal le próifíl OpenVPN.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Enable">Úsáid liostaí IP</sys:String>
+    <sys:String x:Key="Settings_IpLists_EnableSubtitle">Nuair atá sé múchta, úsáideann gach trácht an VPN.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Open">Cumraigh liostaí IP…</sys:String>
+    <sys:String x:Key="IpList_Title">Liostaí IP</sys:String>
+    <sys:String x:Key="IpList_WindowsNotice">Déantar liostaí a chumasc le próifíl an chliaint: is fearr bealaí IPv4 suas go dtí teorainn do bhealaigh; féadfar liostaí an-mhóra a bhearradh le caipín méid na próifíle. Tá seachbhóthar scoilte IPv6 teoranta ar Windows - seans nach mbeidh lánéifeacht ag línte IPv6.</sys:String>
+    <sys:String x:Key="IpList_EnableTitle">Úsáid liostaí IP CIDR</sys:String>
+    <sys:String x:Key="IpList_EnableSubtitle">Íoslódáil agus cuir i bhfeidhm liostaí líonra comhiomlán le haghaidh ródú scoilte.</sys:String>
+    <sys:String x:Key="IpList_DisabledNotice">Tá liostaí IP díchumasaithe. Cas air chun foinsí a chur in eagar agus nuashonraigh.</sys:String>
+    <sys:String x:Key="IpList_SourceTitle">Foinsí</sys:String>
+    <sys:String x:Key="IpList_SourceSubtitle">URL amháin in aghaidh an líne (liostaí comhiomlánaithe IPv4 agus/nó IPv6).</sys:String>
+    <sys:String x:Key="IpList_FrequencyLabel">Nuashonraigh minicíocht</sys:String>
+    <sys:String x:Key="IpList_Freq_6h">Gach 6 uair an chloig</sys:String>
+    <sys:String x:Key="IpList_Freq_Daily">laethúil</sys:String>
+    <sys:String x:Key="IpList_Freq_Weekly">Seachtainiúil</sys:String>
+    <sys:String x:Key="IpList_Freq_Manual">Lámhleabhar amháin</sys:String>
+    <sys:String x:Key="IpList_CoverageLabel">Clúdach</sys:String>
+    <sys:String x:Key="IpList_CoverageWinNote">Ní bhaineann ach an teorainn uimhriúil bealaigh thíos: Roghnaítear na bealaí IPv4 is leithne-an chéad dul síos suas go dtí an teorainn sin. Bíonn tionchar ag FAST agus IOMLÁN ar ordú sula gcuirtear an teorainn i bhfeidhm.</sys:String>
+    <sys:String x:Key="IpList_CoverageFast">Go tapa (níos lú bealaí)</sys:String>
+    <sys:String x:Key="IpList_CoverageFull">Iomlán (lean an t-ordú ar an liosta)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitLabel">Uasbhealaí sa phróifíl (IPv4-an chéad)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitHint">Idir 50 agus 3000. Coimeádann luachanna níos lú an phróifíl níos lú.</sys:String>
+    <sys:String x:Key="IpList_RouteLimitErrorFmt">Cuir isteach teorainn bealaigh idir {0} agus {1}.</sys:String>
+    <sys:String x:Key="IpList_Save">Sábháil</sys:String>
+    <sys:String x:Key="IpList_UpdateNow">Nuashonraigh anois</sys:String>
+    <sys:String x:Key="IpList_Saved">Shábháil.</sys:String>
+    <sys:String x:Key="IpList_StatusTitle">Stádas</sys:String>
+    <sys:String x:Key="IpList_LastUpdated">Nuashonraithe is déanaí:</sys:String>
+    <sys:String x:Key="IpList_LastUpdatedNever">riamh</sys:String>
+    <sys:String x:Key="IpList_LoadedRoutesFmt">Bealaí parsáilte: {0}</sys:String>
+    <sys:String x:Key="IpList_SourceListTruncated">Bhí an liosta comhcheangailte níos mó ná mar a thacaíonn an lódóir go hiomlán; níor bacadh le hiontrálacha breise.</sys:String>
+    <sys:String x:Key="IpList_LastError">Earráid dheireanach:</sys:String>
+    <sys:String x:Key="IpList_LastErrorNone">aon cheann</sys:String>
+    <sys:String x:Key="IpList_UpdateReadyFmt">Nuashonraíodh na liostaí. Bealaí: {0}.</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFmt">Theip ar an nuashonrú: {0}</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Theip ar an nuashonrú ({0}). Cúltaca taisce nó cuachta á úsáid.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingTitle">Inneall gan aimsiú</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">Tá an t-inneall VPN (engine.exe) in easnamh. Athshuiteáil DataGate chun é a aischur.&#x0a;&#x0a;Leathanach íoslódála: {0}&#x0a;&#x0a; Sea - rith an suiteálaí atá cuachta leis an aip seo (molta).</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">Tá an t-inneall VPN (engine.exe) in easnamh. Athshuiteáil DataGate le do thoil.&#x0a;&#x0a; Íoslódáil an leathanach: {0}&#x0a;&#x0a;An leathanach íoslódála a oscailt i do bhrabhsálaí anois?</sys:String>
+    <sys:String x:Key="Home_Status_EngineMissing">Díomhaoin - tá gá le hathshuiteáil (inneall in easnamh)</sys:String>
+    <sys:String x:Key="Home_Log_EngineMissing">EARRÁID: níor aimsíodh inneall VPN. Athshuiteáil an feidhmchlár nó rith an suiteálaí.</sys:String>
 </ResourceDictionary>
 

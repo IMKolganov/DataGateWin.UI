@@ -176,5 +176,52 @@
     <sys:String x:Key="Tray_Exit">Exit</sys:String>
     <sys:String x:Key="Tray_Open">Open</sys:String>
     <sys:String x:Key="Tray_Tooltip">DataGate</sys:String>
+
+    <!-- Missing keys synced from en (machine-translated) -->
+    <sys:String x:Key="Err_EngineExit_HeadFmt">Dzinējs nekavējoties apstājās. ExitCode={0}. LastOut={1}. LastErr={2}</sys:String>
+    <sys:String x:Key="Err_EngineExit_HintDllNotFound">Izejas kods 0xC0000135 nozīmē, ka Windows ielādētājs nevarēja atrisināt atkarīgo DLL pirms engine.exe palaišanas — dzinējs nekad nedarbojas, tāpēc stdout/stderr paliek tukšs un lietotāja saskarne nevar nolasīt trūkstošo faila nosaukumu.&#x0a;&#x0a;• Bieži vien OpenSSL: kopējiet libscrypto-3-x64.dll.dll un -libscslkg. instalēta\x64-windows\bin blakus engine.exe (vai palaidiet Build-Engine.ps1 — tas tos kopē).&#x0a;• Ja trūkst CRT, instalējiet “Microsoft Visual C++ 2015–2022 Redistributable (x64)”. Atkļūdošanas būvēm var būt nepieciešams MSVC datorā.&#x0a;&#x0a;Ja instalējāt no pakotnes, atkārtoti instalējiet lietojumprogrammu no oficiālā instalēšanas programmas, lai tiktu atjaunoti visi komponentu DLL (piemēram, blakus engine.exe).</sys:String>
+    <sys:String x:Key="Home_Log_DllMissingHint">Padoms: nepieciešamo DLL nevarēja ielādēt (skatiet rindiņu iepriekš). Pārinstalējiet lietojumprogrammu no oficiālā instalētāja, lai atjaunotu trūkstošos failus.</sys:String>
+    <sys:String x:Key="Settings_IpLists">IP saraksti (apiet VPN)</sys:String>
+    <sys:String x:Key="Settings_IpLists_Subtitle">Nosūtiet trafiku uzskaitītajiem tīkliem ārpus VPN tuneļa, pievienojot OpenVPN profilam sadalītos maršrutus.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Enable">Izmantojiet IP sarakstus</sys:String>
+    <sys:String x:Key="Settings_IpLists_EnableSubtitle">Kad tas ir izslēgts, visa satiksme izmanto VPN.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Open">Konfigurēt IP sarakstus…</sys:String>
+    <sys:String x:Key="IpList_Title">IP saraksti</sys:String>
+    <sys:String x:Key="IpList_WindowsNotice">Saraksti tiek apvienoti klienta profilā: priekšroka tiek dota IPv4 maršrutiem līdz maršruta ierobežojumam; ļoti lielus sarakstus var apgriezt ar profila izmēra vāciņu. IPv6 dalītā apiešana ir ierobežota operētājsistēmā Windows — IPv6 līnijas var nedarboties pilnībā.</sys:String>
+    <sys:String x:Key="IpList_EnableTitle">Izmantojiet CIDR IP sarakstus</sys:String>
+    <sys:String x:Key="IpList_EnableSubtitle">Lejupielādējiet un lietojiet apkopotos tīklu sarakstus dalītai maršrutēšanai.</sys:String>
+    <sys:String x:Key="IpList_DisabledNotice">IP saraksti ir atspējoti. Ieslēdziet, lai rediģētu avotus un atjauninātu.</sys:String>
+    <sys:String x:Key="IpList_SourceTitle">Avoti</sys:String>
+    <sys:String x:Key="IpList_SourceSubtitle">Viens URL katrā rindiņā (IPv4 un/vai IPv6 apkopotie saraksti).</sys:String>
+    <sys:String x:Key="IpList_FrequencyLabel">Atjaunināšanas biežums</sys:String>
+    <sys:String x:Key="IpList_Freq_6h">Ik pēc 6 stundām</sys:String>
+    <sys:String x:Key="IpList_Freq_Daily">Ikdienas</sys:String>
+    <sys:String x:Key="IpList_Freq_Weekly">Iknedēļas</sys:String>
+    <sys:String x:Key="IpList_Freq_Manual">Tikai manuāli</sys:String>
+    <sys:String x:Key="IpList_CoverageLabel">Pārklājums</sys:String>
+    <sys:String x:Key="IpList_CoverageWinNote">Ir spēkā tikai tālāk norādītais maršruta skaitliskais ierobežojums: IPv4 maršruti tiek izvēlēti visplašākie līdz šim ierobežojumam. ĀTRI un PILNĪGI ietekmē pasūtīšanu pirms limita piemērošanas.</sys:String>
+    <sys:String x:Key="IpList_CoverageFast">Ātri (mazāk maršrutu)</sys:String>
+    <sys:String x:Key="IpList_CoverageFull">Pilns (sekojiet saraksta secībai)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitLabel">Maksimālais maršrutu skaits profilā (vispirms IPv4)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitHint">No 50 līdz 3000. Mazākas vērtības samazina profilu.</sys:String>
+    <sys:String x:Key="IpList_RouteLimitErrorFmt">Ievadiet maršruta ierobežojumu starp {0} un {1}.</sys:String>
+    <sys:String x:Key="IpList_Save">Saglabāt</sys:String>
+    <sys:String x:Key="IpList_UpdateNow">Atjauniniet tūlīt</sys:String>
+    <sys:String x:Key="IpList_Saved">Saglabāts.</sys:String>
+    <sys:String x:Key="IpList_StatusTitle">Statuss</sys:String>
+    <sys:String x:Key="IpList_LastUpdated">Pēdējo reizi atjaunināts:</sys:String>
+    <sys:String x:Key="IpList_LastUpdatedNever">nekad</sys:String>
+    <sys:String x:Key="IpList_LoadedRoutesFmt">Parsētie maršruti: {0}</sys:String>
+    <sys:String x:Key="IpList_SourceListTruncated">Apvienotais saraksts bija lielāks nekā iekrāvējs pilnībā atbalsta; papildu ieraksti tika izlaisti.</sys:String>
+    <sys:String x:Key="IpList_LastError">Pēdējā kļūda:</sys:String>
+    <sys:String x:Key="IpList_LastErrorNone">neviens</sys:String>
+    <sys:String x:Key="IpList_UpdateReadyFmt">Saraksti atjaunināti. Maršruti: {0}.</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFmt">Atjaunināšana neizdevās: {0}</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Atjaunināšana neizdevās ({0}). Izmantojot kešatmiņā saglabāto vai komplektēto atkāpšanos.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingTitle">Dzinējs nav atrasts</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">Trūkst VPN dzinēja (engine.exe). Atkārtoti instalējiet DataGate, lai to atjaunotu.&#x0a;&#x0a;Lejupielādes lapa: {0}&#x0a;&#x0a;Jā — palaidiet šīs lietotnes komplektācijā iekļauto instalēšanas programmu (ieteicams).&#x0a;Nē — atveriet lejupielādes lapu savā pārlūkprogrammā.&#x0a;Atceliet šo ziņojumu.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">Trūkst VPN dzinēja (engine.exe). Lūdzu, atkārtoti instalējiet DataGate.&#x0a;&#x0a;Lejupielādes lapa: {0}&#x0a;&#x0a;Vai atvērt pārlūkprogrammas lejupielādes lapu tūlīt?</sys:String>
+    <sys:String x:Key="Home_Status_EngineMissing">Tukšgaita — nepieciešama atkārtota instalēšana (trūkst dzinēja)</sys:String>
+    <sys:String x:Key="Home_Log_EngineMissing">KĻŪDA: VPN programma nav atrasta. Pārinstalējiet lietojumprogrammu vai palaidiet instalēšanas programmu.</sys:String>
 </ResourceDictionary>
 

@@ -176,5 +176,52 @@
     <sys:String x:Key="Tray_Exit">Exit</sys:String>
     <sys:String x:Key="Tray_Open">Open</sys:String>
     <sys:String x:Key="Tray_Tooltip">DataGate</sys:String>
+
+    <!-- Missing keys synced from en (machine-translated) -->
+    <sys:String x:Key="Err_EngineExit_HeadFmt">توقف المحرك على الفور. رمز الخروج={0}. آخر خروج={1}. LastErr={2}</sys:String>
+    <sys:String x:Key="Err_EngineExit_HintDllNotFound">رمز الخروج 0xC0000135 يعني أن أداة تحميل Windows لم تتمكن من حل ملف DLL التابع قبل بدء تشغيل Engine.exe - المحرك لا يعمل أبدًا، لذلك يظل stdout/stderr فارغًا ولا يمكن لواجهة المستخدم قراءة اسم الملف المفقود.&#x0a;&#x0a;• في كثير من الأحيان OpenSSL: انسخ libcrypto-3-x64.dll و libssl-3-x64.dll من vcpkg الخاص بك تم تثبيت\x64-windows\bin بجوار Engine.exe (أو قم بتشغيل Build-Engine.ps1 - فهو ينسخها).&#x0a;• إذا كان CRT مفقودًا، قم بتثبيت "Microsoft Visual C++ 2015–2022 Redistributable (x64)". قد تحتاج إصدارات تصحيح الأخطاء إلى MSVC على الجهاز.&#x0a;&#x0a;إذا قمت بالتثبيت من حزمة، فأعد تثبيت التطبيق من المثبت الرسمي بحيث تتم استعادة كافة ملفات DLL الخاصة بالمكونات (على سبيل المثال بجوار Engine.exe).</sys:String>
+    <sys:String x:Key="Home_Log_DllMissingHint">تلميح: تعذر تحميل ملف DLL المطلوب (انظر السطر أعلاه). أعد تثبيت التطبيق من المثبت الرسمي لاستعادة الملفات المفقودة.</sys:String>
+    <sys:String x:Key="Settings_IpLists">قوائم IP (تجاوز VPN)</sys:String>
+    <sys:String x:Key="Settings_IpLists_Subtitle">أرسل حركة المرور للشبكات المدرجة خارج نفق VPN عن طريق إلحاق مسارات مقسمة بملف تعريف OpenVPN.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Enable">استخدم قوائم IP</sys:String>
+    <sys:String x:Key="Settings_IpLists_EnableSubtitle">عند إيقاف التشغيل، تستخدم كل حركة المرور شبكة VPN.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Open">تكوين قوائم IP...</sys:String>
+    <sys:String x:Key="IpList_Title">قوائم IP</sys:String>
+    <sys:String x:Key="IpList_WindowsNotice">يتم دمج القوائم في ملف تعريف العميل: تُفضل مسارات IPv4 حتى الحد الأقصى للمسار الخاص بك؛ قد يتم اقتطاع القوائم الكبيرة جدًا من خلال الحد الأقصى لحجم ملف التعريف. يقتصر تجاوز تقسيم IPv6 على نظام التشغيل Windows، وقد لا يكون لخطوط IPv6 تأثير كامل.</sys:String>
+    <sys:String x:Key="IpList_EnableTitle">استخدم قوائم CIDR IP</sys:String>
+    <sys:String x:Key="IpList_EnableSubtitle">قم بتنزيل وتطبيق قوائم الشبكات المجمعة للتوجيه المقسم.</sys:String>
+    <sys:String x:Key="IpList_DisabledNotice">تم تعطيل قوائم IP. قم بالتشغيل لتحرير المصادر والتحديث.</sys:String>
+    <sys:String x:Key="IpList_SourceTitle">مصادر</sys:String>
+    <sys:String x:Key="IpList_SourceSubtitle">عنوان URL واحد لكل سطر (قوائم IPv4 و/أو IPv6 المجمعة).</sys:String>
+    <sys:String x:Key="IpList_FrequencyLabel">تردد التحديث</sys:String>
+    <sys:String x:Key="IpList_Freq_6h">كل 6 ساعات</sys:String>
+    <sys:String x:Key="IpList_Freq_Daily">يوميًا</sys:String>
+    <sys:String x:Key="IpList_Freq_Weekly">أسبوعي</sys:String>
+    <sys:String x:Key="IpList_Freq_Manual">دليل فقط</sys:String>
+    <sys:String x:Key="IpList_CoverageLabel">التغطية</sys:String>
+    <sys:String x:Key="IpList_CoverageWinNote">ينطبق فقط الحد الرقمي للمسار أدناه: يتم اختيار مسارات IPv4 على نطاق أوسع أولاً حتى هذا الحد الأقصى. سريع وكامل يؤثر على الطلب قبل تطبيق الحد.</sys:String>
+    <sys:String x:Key="IpList_CoverageFast">سريع (طرق أقل)</sys:String>
+    <sys:String x:Key="IpList_CoverageFull">كامل (متابعة ترتيب القائمة)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitLabel">الحد الأقصى للمسارات في الملف الشخصي (IPv4-first)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitHint">بين 50 و3000. القيم الأصغر تجعل ملف التعريف أصغر.</sys:String>
+    <sys:String x:Key="IpList_RouteLimitErrorFmt">أدخل حد المسار بين {0} و{1}.</sys:String>
+    <sys:String x:Key="IpList_Save">يحفظ</sys:String>
+    <sys:String x:Key="IpList_UpdateNow">قم بالتحديث الآن</sys:String>
+    <sys:String x:Key="IpList_Saved">أنقذ.</sys:String>
+    <sys:String x:Key="IpList_StatusTitle">حالة</sys:String>
+    <sys:String x:Key="IpList_LastUpdated">آخر تحديث:</sys:String>
+    <sys:String x:Key="IpList_LastUpdatedNever">أبداً</sys:String>
+    <sys:String x:Key="IpList_LoadedRoutesFmt">الطرق التي تم تحليلها: {0}</sys:String>
+    <sys:String x:Key="IpList_SourceListTruncated">كانت القائمة المدمجة أكبر مما يدعمه المُحمل بالكامل؛ تم تخطي الإدخالات الإضافية.</sys:String>
+    <sys:String x:Key="IpList_LastError">الخطأ الأخير:</sys:String>
+    <sys:String x:Key="IpList_LastErrorNone">لا أحد</sys:String>
+    <sys:String x:Key="IpList_UpdateReadyFmt">تم تحديث القوائم. الطرق: {0}.</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFmt">فشل التحديث: {0}</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFallbackFmt">فشل التحديث ({0}). استخدام النسخة الاحتياطية المخزنة مؤقتًا أو المجمعة.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingTitle">لم يتم العثور على المحرك</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">محرك VPN (engine.exe) مفقود. أعد تثبيت DataGate لاستعادته.&#x0a;&#x0a;صفحة التنزيل: {0}&#x0a;&#x0a;نعم - قم بتشغيل برنامج التثبيت المرفق مع هذا التطبيق (مستحسن).&#x0a;لا - افتح صفحة التنزيل في متصفحك.&#x0a;إلغاء - أغلق هذه الرسالة.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">محرك VPN (engine.exe) مفقود. يرجى إعادة تثبيت DataGate.&#x0a;&#x0a;صفحة التنزيل: {0}&#x0a;&#x0a;افتح صفحة التنزيل في متصفحك الآن؟</sys:String>
+    <sys:String x:Key="Home_Status_EngineMissing">خامل - يلزم إعادة التثبيت (المحرك مفقود)</sys:String>
+    <sys:String x:Key="Home_Log_EngineMissing">خطأ: لم يتم العثور على محرك VPN. أعد تثبيت التطبيق أو قم بتشغيل المثبت.</sys:String>
 </ResourceDictionary>
 

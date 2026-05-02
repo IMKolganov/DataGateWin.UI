@@ -176,5 +176,52 @@
     <sys:String x:Key="Tray_Exit">Exit</sys:String>
     <sys:String x:Key="Tray_Open">Open</sys:String>
     <sys:String x:Key="Tray_Tooltip">DataGate</sys:String>
+
+    <!-- Missing keys synced from en (machine-translated) -->
+    <sys:String x:Key="Err_EngineExit_HeadFmt">A motor azonnal leállt. ExitCode={0}. LastOut={1}. LastErr={2}</sys:String>
+    <sys:String x:Key="Err_EngineExit_HintDllNotFound">A 0xC0000135 kilépési kód azt jelenti, hogy a Windows betöltő nem tudott feloldani egy függő DLL-t az engine.exe elindítása előtt – a motor soha nem fut, így az stdout/stderr üres marad, és a felhasználói felület nem tudja beolvasni a hiányzó fájlnevet.&#x0a;&#x0a;• Gyakran OpenSSL: másolja a libscrypto-3-x64.dll.dll.dll-t a yourxccrypto-x64.dll és- telepítve\x64-windows\bin a engine.exe mellett (vagy futtassa a Build-Engine.ps1-et – másolja őket).&#x0a;• Ha hiányzik a CRT, telepítse a „Microsoft Visual C++ 2015–2022 Redistributable (x64)” programot. A hibakereső buildekhez szükség lehet az MSVC-re a gépen.&#x0a;&#x0a;Ha csomagból telepítette, telepítse újra az alkalmazást a hivatalos telepítőből, hogy az összes összetevő DLL (például a engine.exe mellett) visszaálljon.</sys:String>
+    <sys:String x:Key="Home_Log_DllMissingHint">Tipp: a szükséges DLL-t nem sikerült betölteni (lásd a fenti sort). Telepítse újra az alkalmazást a hivatalos telepítőből a hiányzó fájlok visszaállításához.</sys:String>
+    <sys:String x:Key="Settings_IpLists">IP-listák (VPN megkerülése)</sys:String>
+    <sys:String x:Key="Settings_IpLists_Subtitle">Küldje el a listán szereplő hálózatok forgalmát a VPN-alagúton kívül úgy, hogy felosztott útvonalakat fűz hozzá az OpenVPN-profilhoz.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Enable">Használjon IP listákat</sys:String>
+    <sys:String x:Key="Settings_IpLists_EnableSubtitle">Kikapcsolt állapotban az összes forgalom a VPN-t használja.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Open">IP-listák konfigurálása…</sys:String>
+    <sys:String x:Key="IpList_Title">IP listák</sys:String>
+    <sys:String x:Key="IpList_WindowsNotice">A listák az ügyfélprofilba egyesülnek: az IPv4-útvonalak előnyben részesíthetők az útvonalkorlátig; a nagyon nagy listákat a profilméret sapka levághatja. Az IPv6 megosztott bypassa korlátozott a Windows rendszeren – előfordulhat, hogy az IPv6-vonalak nem érnek el teljes mértékben.</sys:String>
+    <sys:String x:Key="IpList_EnableTitle">CIDR IP listák használata</sys:String>
+    <sys:String x:Key="IpList_EnableSubtitle">Töltse le és alkalmazza az összesített hálózati listákat az osztott útválasztáshoz.</sys:String>
+    <sys:String x:Key="IpList_DisabledNotice">Az IP listák le vannak tiltva. Kapcsolja be a források szerkesztéséhez és frissítéséhez.</sys:String>
+    <sys:String x:Key="IpList_SourceTitle">Források</sys:String>
+    <sys:String x:Key="IpList_SourceSubtitle">Soronként egy URL (IPv4 és/vagy IPv6 összesített listák).</sys:String>
+    <sys:String x:Key="IpList_FrequencyLabel">Frissítési gyakoriság</sys:String>
+    <sys:String x:Key="IpList_Freq_6h">6 óránként</sys:String>
+    <sys:String x:Key="IpList_Freq_Daily">Napi</sys:String>
+    <sys:String x:Key="IpList_Freq_Weekly">Heti</sys:String>
+    <sys:String x:Key="IpList_Freq_Manual">Csak kézi</sys:String>
+    <sys:String x:Key="IpList_CoverageLabel">Lefedettség</sys:String>
+    <sys:String x:Key="IpList_CoverageWinNote">Csak az alábbi numerikus útvonalkorlát érvényes: az IPv4-útvonalakat a legszélesebb körben választják ki, egészen az adott korlátig. GYORS és TELJES hatással van a rendelésre a limit alkalmazása előtt.</sys:String>
+    <sys:String x:Key="IpList_CoverageFast">Gyors (kevesebb útvonal)</sys:String>
+    <sys:String x:Key="IpList_CoverageFull">Teljes (a lista sorrendjének követése)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitLabel">Maximális útvonalak a profilban (első IPv4)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitHint">50 és 3000 között. A kisebb értékek kisebbnek tartják a profilt.</sys:String>
+    <sys:String x:Key="IpList_RouteLimitErrorFmt">Adjon meg egy útvonalkorlátot {0} és {1} között.</sys:String>
+    <sys:String x:Key="IpList_Save">Megtakarítás</sys:String>
+    <sys:String x:Key="IpList_UpdateNow">Frissítse most</sys:String>
+    <sys:String x:Key="IpList_Saved">Mentve.</sys:String>
+    <sys:String x:Key="IpList_StatusTitle">Állapot</sys:String>
+    <sys:String x:Key="IpList_LastUpdated">Utolsó frissítés:</sys:String>
+    <sys:String x:Key="IpList_LastUpdatedNever">soha</sys:String>
+    <sys:String x:Key="IpList_LoadedRoutesFmt">Elemezve útvonalak: {0}</sys:String>
+    <sys:String x:Key="IpList_SourceListTruncated">A kombinált lista nagyobb volt, mint amennyit a betöltő teljes mértékben támogat; extra bejegyzések kimaradtak.</sys:String>
+    <sys:String x:Key="IpList_LastError">Utolsó hiba:</sys:String>
+    <sys:String x:Key="IpList_LastErrorNone">egyik sem</sys:String>
+    <sys:String x:Key="IpList_UpdateReadyFmt">Listák frissítve. Útvonalak: {0}.</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFmt">A frissítés sikertelen: {0}</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFallbackFmt">A frissítés nem sikerült ({0}). Gyorsítótárazott vagy kötegelt tartalék használata.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingTitle">Motor nem található</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">A VPN-motor (engine.exe) hiányzik. A visszaállításhoz telepítse újra a DataGate-et.&#x0a;&#x0a;Letöltési oldal: {0}&#x0a;&#x0a;Igen – futtassa az alkalmazáshoz mellékelt telepítőt (ajánlott).&#x0a;Nem – nyissa meg a letöltési oldalt a böngészőben.&#x0a;Mégse az üzenetet.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">A VPN-motor (engine.exe) hiányzik. Kérjük, telepítse újra a DataGate-et.&#x0a;&#x0a;Letöltési oldal: {0}&#x0a;&#x0a;Megnyitja most a letöltési oldalt a böngészőjében?</sys:String>
+    <sys:String x:Key="Home_Status_EngineMissing">Üresjárat – újra kell telepíteni (hiányzik a motor)</sys:String>
+    <sys:String x:Key="Home_Log_EngineMissing">HIBA: VPN motor nem található. Telepítse újra az alkalmazást, vagy futtassa a telepítőt.</sys:String>
 </ResourceDictionary>
 

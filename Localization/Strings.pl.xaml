@@ -176,5 +176,52 @@
     <sys:String x:Key="Tray_Exit">Exit</sys:String>
     <sys:String x:Key="Tray_Open">Open</sys:String>
     <sys:String x:Key="Tray_Tooltip">DataGate</sys:String>
+
+    <!-- Missing keys synced from en (machine-translated) -->
+    <sys:String x:Key="Err_EngineExit_HeadFmt">Silnik natychmiast się zatrzymał. Kod wyjścia={0}. LastOut={1}. OstatniErr={2}</sys:String>
+    <sys:String x:Key="Err_EngineExit_HintDllNotFound">Kod zakończenia 0xC0000135 oznacza, że moduł ładujący systemu Windows nie mógł rozpoznać zależnej biblioteki DLL przed uruchomieniem silnika.exe — silnik nigdy nie działa, więc stdout/stderr pozostaje puste, a interfejs użytkownika nie może odczytać brakującej nazwy pliku.&#x0a;&#x0a; • Często OpenSSL: skopiuj libcrypto-3-x64.dll i libssl-3-x64.dll z pliku vcpkg zainstalowany\x64-windows\bin obok pliku Engine.exe (lub uruchom Build-Engine.ps1 — skopiuje je).&#x0a; • Jeśli brakuje CRT, zainstaluj „Microsoft Visual C++ 2015–2022 Redistributable (x64)”. Kompilacje debugowania mogą wymagać MSVC na komputerze.&#x0a;&#x0a;Jeśli instalowałeś z pakietu, zainstaluj ponownie aplikację z oficjalnego instalatora, aby przywrócić wszystkie biblioteki DLL komponentów (na przykład obok pliku Engine.exe).</sys:String>
+    <sys:String x:Key="Home_Log_DllMissingHint">Wskazówka: nie można załadować wymaganej biblioteki DLL (patrz linia powyżej). Zainstaluj ponownie aplikację z oficjalnego instalatora, aby przywrócić brakujące pliki.</sys:String>
+    <sys:String x:Key="Settings_IpLists">Listy IP (omiń VPN)</sys:String>
+    <sys:String x:Key="Settings_IpLists_Subtitle">Wysyłaj ruch dla wymienionych sieci poza tunel VPN, dołączając podzielone trasy do profilu OpenVPN.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Enable">Użyj list adresów IP</sys:String>
+    <sys:String x:Key="Settings_IpLists_EnableSubtitle">Gdy opcja ta jest wyłączona, cały ruch korzysta z sieci VPN.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Open">Skonfiguruj listy adresów IP…</sys:String>
+    <sys:String x:Key="IpList_Title">Listy adresów IP</sys:String>
+    <sys:String x:Key="IpList_WindowsNotice">Listy są scalane z profilem klienta: preferowane są trasy IPv4 w zależności od limitu tras; bardzo duże listy można przyciąć za pomocą ograniczenia rozmiaru profilu. Pomijanie podziału IPv6 jest ograniczone w systemie Windows — linie IPv6 mogą nie działać w pełni.</sys:String>
+    <sys:String x:Key="IpList_EnableTitle">Użyj list adresów IP CIDR</sys:String>
+    <sys:String x:Key="IpList_EnableSubtitle">Pobierz i zastosuj zagregowane listy sieci dla dzielonego routingu.</sys:String>
+    <sys:String x:Key="IpList_DisabledNotice">Listy IP są wyłączone. Włącz, aby edytować źródła i aktualizować.</sys:String>
+    <sys:String x:Key="IpList_SourceTitle">Źródła</sys:String>
+    <sys:String x:Key="IpList_SourceSubtitle">Jeden adres URL w wierszu (zagregowane listy IPv4 i/lub IPv6).</sys:String>
+    <sys:String x:Key="IpList_FrequencyLabel">Częstotliwość aktualizacji</sys:String>
+    <sys:String x:Key="IpList_Freq_6h">Co 6 godzin</sys:String>
+    <sys:String x:Key="IpList_Freq_Daily">Codziennie</sys:String>
+    <sys:String x:Key="IpList_Freq_Weekly">Tygodnik</sys:String>
+    <sys:String x:Key="IpList_Freq_Manual">Tylko ręczne</sys:String>
+    <sys:String x:Key="IpList_CoverageLabel">Zasięg</sys:String>
+    <sys:String x:Key="IpList_CoverageWinNote">Obowiązuje tylko poniższy liczbowy limit tras: Trasy IPv4 są wybierane od najszerszej do tego limitu. SZYBKO i FULL wpływają na kolejność zamawiania przed zastosowaniem limitu.</sys:String>
+    <sys:String x:Key="IpList_CoverageFast">Szybko (mniej tras)</sys:String>
+    <sys:String x:Key="IpList_CoverageFull">Pełne (zgodnie z kolejnością na liście)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitLabel">Maksymalna liczba tras w profilu (najpierw IPv4)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitHint">Od 50 do 3000. Mniejsze wartości sprawiają, że profil jest mniejszy.</sys:String>
+    <sys:String x:Key="IpList_RouteLimitErrorFmt">Wprowadź limit trasy pomiędzy {0} i {1}.</sys:String>
+    <sys:String x:Key="IpList_Save">Ratować</sys:String>
+    <sys:String x:Key="IpList_UpdateNow">Zaktualizuj teraz</sys:String>
+    <sys:String x:Key="IpList_Saved">Zapisano.</sys:String>
+    <sys:String x:Key="IpList_StatusTitle">Status</sys:String>
+    <sys:String x:Key="IpList_LastUpdated">Ostatnia aktualizacja:</sys:String>
+    <sys:String x:Key="IpList_LastUpdatedNever">nigdy</sys:String>
+    <sys:String x:Key="IpList_LoadedRoutesFmt">Przeanalizowane trasy: {0}</sys:String>
+    <sys:String x:Key="IpList_SourceListTruncated">Połączona lista była większa niż w pełni obsługuje moduł ładujący; dodatkowe wpisy zostały pominięte.</sys:String>
+    <sys:String x:Key="IpList_LastError">Ostatni błąd:</sys:String>
+    <sys:String x:Key="IpList_LastErrorNone">nic</sys:String>
+    <sys:String x:Key="IpList_UpdateReadyFmt">Listy zaktualizowane. Trasy: {0}.</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFmt">Aktualizacja nie powiodła się: {0}</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Aktualizacja nie powiodła się ({0}). Korzystanie z buforowanej lub pakowanej wersji rezerwowej.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingTitle">Nie znaleziono silnika</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">Brak silnika VPN (engine.exe). Zainstaluj ponownie DataGate, aby ją przywrócić.&#x0a;&#x0a;Strona pobierania: {0}&#x0a;&#x0a;Tak — uruchom instalator dołączony do tej aplikacji (zalecane).&#x0a;Nie — otwórz stronę pobierania w przeglądarce.&#x0a;Anuluj — zamknij tę wiadomość.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">Brak silnika VPN (engine.exe). Zainstaluj ponownie DataGate.&#x0a;&#x0a;Strona pobierania: {0}&#x0a;&#x0a;Otworzyć teraz stronę pobierania w przeglądarce?</sys:String>
+    <sys:String x:Key="Home_Status_EngineMissing">Na biegu jałowym — wymagana ponowna instalacja (brak silnika)</sys:String>
+    <sys:String x:Key="Home_Log_EngineMissing">BŁĄD: nie znaleziono silnika VPN. Zainstaluj ponownie aplikację lub uruchom instalator.</sys:String>
 </ResourceDictionary>
 

@@ -176,5 +176,52 @@
     <sys:String x:Key="Tray_Exit">Exit</sys:String>
     <sys:String x:Key="Tray_Open">Open</sys:String>
     <sys:String x:Key="Tray_Tooltip">DataGate</sys:String>
+
+    <!-- Missing keys synced from en (machine-translated) -->
+    <sys:String x:Key="Err_EngineExit_HeadFmt">Il-magna waqfet immedjatament. ExitCode={0}. LastOut={1}. LastErr={2}</sys:String>
+    <sys:String x:Key="Err_EngineExit_HintDllNotFound">Kodiċi tal-ħruġ 0xC0000135 ifisser li l-loader tal-Windows ma setax isolvi DLL dipendenti qabel ma beda engine.exe — il-magna qatt ma taħdem, għalhekk stdout/stderr jibqgħu vojta u l-UI ma tistax taqra l-isem tal-fajl nieqes.&#x0a;&#x0a;• Spiss OpenSSL: kopja libcrypto-3-x64.dll-x64.dll-3-x64.dll tiegħek installat\x64-windows\bin ħdejn engine.exe (jew ħaddem Build-Engine.ps1 — tikkopjahom).&#x0a;• Jekk is-CRT ikun nieqes, installa “Microsoft Visual C++ 2015–2022 Redistributable (x64)”. Il-bini tad-debug jista' jkollu bżonn MSVC fuq il-magna.&#x0a;&#x0a;Jekk installajt minn pakkett, installa mill-ġdid l-applikazzjoni mill-installatur uffiċjali sabiex id-DLLs tal-komponenti kollha (per eżempju ħdejn engine.exe) jiġu restawrati.</sys:String>
+    <sys:String x:Key="Home_Log_DllMissingHint">Ħjiel: DLL meħtieġa ma setgħetx titgħabba (ara l-linja hawn fuq). Erġa' installa l-applikazzjoni mill-installatur uffiċjali biex tirrestawra l-fajls neqsin.</sys:String>
+    <sys:String x:Key="Settings_IpLists">Listi tal-IP (bypass VPN)</sys:String>
+    <sys:String x:Key="Settings_IpLists_Subtitle">Ibgħat it-traffiku għal netwerks elenkati barra l-mina VPN billi tehmeż rotot maqsuma mal-profil OpenVPN.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Enable">Uża listi IP</sys:String>
+    <sys:String x:Key="Settings_IpLists_EnableSubtitle">Meta mitfi, it-traffiku kollu juża l-VPN.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Open">Ikkonfigura l-listi tal-IP...</sys:String>
+    <sys:String x:Key="IpList_Title">listi IP</sys:String>
+    <sys:String x:Key="IpList_WindowsNotice">Il-listi jingħaqdu fil-profil tal-klijent: ir-rotot IPv4 huma preferuti sal-limitu tar-rotta tiegħek; listi kbar ħafna jistgħu jiġu mirquma mill-għatu tad-daqs tal-profil. L-IPv6 split-bypass huwa limitat fuq il-Windows—il-linji IPv6 jistgħu ma jidħlux fis-seħħ bis-sħiħ.</sys:String>
+    <sys:String x:Key="IpList_EnableTitle">Uża listi CIDR IP</sys:String>
+    <sys:String x:Key="IpList_EnableSubtitle">Niżżel u applika listi tan-netwerks aggregati għal rotot maqsum.</sys:String>
+    <sys:String x:Key="IpList_DisabledNotice">Listi IP huma diżattivati. Ixgħel biex teditja s-sorsi u aġġorna.</sys:String>
+    <sys:String x:Key="IpList_SourceTitle">Sorsi</sys:String>
+    <sys:String x:Key="IpList_SourceSubtitle">URL wieħed għal kull linja (listi aggregati IPv4 u/jew IPv6).</sys:String>
+    <sys:String x:Key="IpList_FrequencyLabel">Aġġorna l-frekwenza</sys:String>
+    <sys:String x:Key="IpList_Freq_6h">Kull 6 sigħat</sys:String>
+    <sys:String x:Key="IpList_Freq_Daily">Kuljum</sys:String>
+    <sys:String x:Key="IpList_Freq_Weekly">Kull ġimgħa</sys:String>
+    <sys:String x:Key="IpList_Freq_Manual">Manwal biss</sys:String>
+    <sys:String x:Key="IpList_CoverageLabel">Kopertura</sys:String>
+    <sys:String x:Key="IpList_CoverageWinNote">Japplika biss il-limitu tar-rotot numeriku hawn taħt: Ir-rotot IPv4 jintgħażlu l-aktar wiesgħa l-ewwel sa dak il-limitu massimu. FAST u SĦIĦA jaffettwaw l-ordni qabel ma jiġi applikat il-limitu.</sys:String>
+    <sys:String x:Key="IpList_CoverageFast">Mgħaġġel (inqas rotot)</sys:String>
+    <sys:String x:Key="IpList_CoverageFull">Sħiħ (segwi l-ordni tal-lista)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitLabel">Max rotot fil-profil (IPv4-ewwel)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitHint">Bejn 50 u 3000. Valuri iżgħar iżommu l-profil iżgħar.</sys:String>
+    <sys:String x:Key="IpList_RouteLimitErrorFmt">Daħħal limitu tar-rotta bejn {0} u {1}.</sys:String>
+    <sys:String x:Key="IpList_Save">Ħlief</sys:String>
+    <sys:String x:Key="IpList_UpdateNow">Aġġorna issa</sys:String>
+    <sys:String x:Key="IpList_Saved">Salvat.</sys:String>
+    <sys:String x:Key="IpList_StatusTitle">Status</sys:String>
+    <sys:String x:Key="IpList_LastUpdated">Aġġornata l-aħħar:</sys:String>
+    <sys:String x:Key="IpList_LastUpdatedNever">qatt</sys:String>
+    <sys:String x:Key="IpList_LoadedRoutesFmt">Rotot analizzati: {0}</sys:String>
+    <sys:String x:Key="IpList_SourceListTruncated">Il-lista magħquda kienet akbar milli l-loader jappoġġja bis-sħiħ; daħliet żejda ġew maqbuża.</sys:String>
+    <sys:String x:Key="IpList_LastError">L-aħħar żball:</sys:String>
+    <sys:String x:Key="IpList_LastErrorNone">xejn</sys:String>
+    <sys:String x:Key="IpList_UpdateReadyFmt">Listi aġġornati. Rotot: {0}.</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFmt">Aġġornament falla: {0}</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFallbackFmt">L-aġġornament falla ({0}). Bl-użu cached jew bundled fallback.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingTitle">Magna ma nstabitx</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">Il-magna VPN (engine.exe) hija nieqsa. Installa mill-ġdid DataGate biex tirrestawrah.&#x0a;&#x0a;Niżżel il-paġna: {0}&#x0a;&#x0a;Iva — ħaddem l-installatur miġbur ma' din l-app (rakkomandat).&#x0a;Le — iftaħ il-paġna tat-tniżżil fil-browser tiegħek.&#x0a;&#x0a;.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">Il-magna VPN (engine.exe) hija nieqsa. Jekk jogħġbok installa mill-ġdid DataGate.&#x0a;&#x0a;Niżżel il-paġna: {0}&#x0a;&#x0a;Ftaħ il-paġna tat-tniżżil fil-browser tiegħek issa?</sys:String>
+    <sys:String x:Key="Home_Status_EngineMissing">Idle — installazzjoni mill-ġdid meħtieġa (magna nieqsa)</sys:String>
+    <sys:String x:Key="Home_Log_EngineMissing">ŻBALL: Magna VPN ma nstabx. Erġa' installa l-applikazzjoni jew ħaddem l-installatur.</sys:String>
 </ResourceDictionary>
 

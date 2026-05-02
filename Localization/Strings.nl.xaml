@@ -176,5 +176,52 @@
     <sys:String x:Key="Tray_Exit">Exit</sys:String>
     <sys:String x:Key="Tray_Open">Open</sys:String>
     <sys:String x:Key="Tray_Tooltip">DataGate</sys:String>
+
+    <!-- Missing keys synced from en (machine-translated) -->
+    <sys:String x:Key="Err_EngineExit_HeadFmt">Motor stopte onmiddellijk. Afsluitcode={0}. LaatsteUit={1}. LaatsteErr={2}</sys:String>
+    <sys:String x:Key="Err_EngineExit_HintDllNotFound">Afsluitcode 0xC0000135 betekent dat de Windows-lader een afhankelijke DLL niet kon omzetten voordat engine.exe startte - de engine draait nooit, dus stdout/stderr blijft leeg en de gebruikersinterface kan de ontbrekende bestandsnaam niet lezen.&#x0a;&#x0a;• Vaak OpenSSL: kopieer libcrypto-3-x64.dll en libssl-3-x64.dll van uw vcpkg geïnstalleerd\x64-windows\bin naast engine.exe (of voer Build-Engine.ps1 uit — het kopieert ze).&#x0a;• Als de CRT ontbreekt, installeer dan “Microsoft Visual C++ 2015–2022 Redistributable (x64)”. Voor debug-builds is mogelijk MSVC op de machine nodig.&#x0a;&#x0a;Als u de applicatie vanuit een pakket hebt geïnstalleerd, installeert u de applicatie opnieuw vanuit het officiële installatieprogramma, zodat alle component-DLL's (bijvoorbeeld naast engine.exe) worden hersteld.</sys:String>
+    <sys:String x:Key="Home_Log_DllMissingHint">Tip: een vereiste DLL kon niet worden geladen (zie de regel hierboven). Installeer de applicatie opnieuw vanuit het officiële installatieprogramma om ontbrekende bestanden te herstellen.</sys:String>
+    <sys:String x:Key="Settings_IpLists">IP-lijsten (VPN omzeilen)</sys:String>
+    <sys:String x:Key="Settings_IpLists_Subtitle">Stuur verkeer voor vermelde netwerken buiten de VPN-tunnel door gesplitste routes toe te voegen aan het OpenVPN-profiel.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Enable">Gebruik IP-lijsten</sys:String>
+    <sys:String x:Key="Settings_IpLists_EnableSubtitle">Als deze optie is uitgeschakeld, gebruikt al het verkeer de VPN.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Open">IP-lijsten configureren…</sys:String>
+    <sys:String x:Key="IpList_Title">IP-lijsten</sys:String>
+    <sys:String x:Key="IpList_WindowsNotice">Lijsten worden samengevoegd in het klantprofiel: IPv4-routes hebben de voorkeur tot uw routelimiet; zeer grote lijsten kunnen worden ingekort door de profielgroottelimiet. IPv6 split-bypass is beperkt op Windows: IPv6-lijnen hebben mogelijk niet het volledige effect.</sys:String>
+    <sys:String x:Key="IpList_EnableTitle">Gebruik CIDR IP-lijsten</sys:String>
+    <sys:String x:Key="IpList_EnableSubtitle">Download geaggregeerde netwerklijsten voor gesplitste routering en pas deze toe.</sys:String>
+    <sys:String x:Key="IpList_DisabledNotice">IP-lijsten zijn uitgeschakeld. Schakel dit in om bronnen te bewerken en bij te werken.</sys:String>
+    <sys:String x:Key="IpList_SourceTitle">Bronnen</sys:String>
+    <sys:String x:Key="IpList_SourceSubtitle">Eén URL per regel (geaggregeerde IPv4- en/of IPv6-lijsten).</sys:String>
+    <sys:String x:Key="IpList_FrequencyLabel">Frequentie bijwerken</sys:String>
+    <sys:String x:Key="IpList_Freq_6h">Elke 6 uur</sys:String>
+    <sys:String x:Key="IpList_Freq_Daily">Dagelijks</sys:String>
+    <sys:String x:Key="IpList_Freq_Weekly">Wekelijks</sys:String>
+    <sys:String x:Key="IpList_Freq_Manual">Alleen handmatig</sys:String>
+    <sys:String x:Key="IpList_CoverageLabel">Dekking</sys:String>
+    <sys:String x:Key="IpList_CoverageWinNote">Alleen de onderstaande numerieke routelimiet is van toepassing: IPv4-routes worden tot die limiet eerst gekozen met de breedste route. SNEL en VOLLEDIG beïnvloeden het bestellen voordat de limiet wordt toegepast.</sys:String>
+    <sys:String x:Key="IpList_CoverageFast">Snel (minder routes)</sys:String>
+    <sys:String x:Key="IpList_CoverageFull">Volledig (volg de lijstvolgorde)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitLabel">Max. routes in profiel (IPv4-eerst)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitHint">Tussen 50 en 3000. Kleinere waarden houden het profiel kleiner.</sys:String>
+    <sys:String x:Key="IpList_RouteLimitErrorFmt">Voer een routelimiet in tussen {0} en {1}.</sys:String>
+    <sys:String x:Key="IpList_Save">Redden</sys:String>
+    <sys:String x:Key="IpList_UpdateNow">Nu bijwerken</sys:String>
+    <sys:String x:Key="IpList_Saved">Opgeslagen.</sys:String>
+    <sys:String x:Key="IpList_StatusTitle">Status</sys:String>
+    <sys:String x:Key="IpList_LastUpdated">Laatst bijgewerkt:</sys:String>
+    <sys:String x:Key="IpList_LastUpdatedNever">nooit</sys:String>
+    <sys:String x:Key="IpList_LoadedRoutesFmt">Geparseerde routes: {0}</sys:String>
+    <sys:String x:Key="IpList_SourceListTruncated">De gecombineerde lijst was groter dan de lader volledig ondersteunt; extra vermeldingen zijn overgeslagen.</sys:String>
+    <sys:String x:Key="IpList_LastError">Laatste fout:</sys:String>
+    <sys:String x:Key="IpList_LastErrorNone">geen</sys:String>
+    <sys:String x:Key="IpList_UpdateReadyFmt">Lijsten bijgewerkt. Routes: {0}.</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFmt">Update mislukt: {0}</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Update mislukt ({0}). Gebruik van gecachte of gebundelde fallback.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingTitle">Motor niet gevonden</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">De VPN-engine (engine.exe) ontbreekt. Installeer DataGate opnieuw om het te herstellen.&#x0a;&#x0a;Downloadpagina: {0}&#x0a;&#x0a;Ja — voer het installatieprogramma uit dat bij deze app is geleverd (aanbevolen).&#x0a;Nee — open de downloadpagina in uw browser.&#x0a;Annuleren — sluit dit bericht.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">De VPN-engine (engine.exe) ontbreekt. Installeer DataGate opnieuw.&#x0a;&#x0a;Downloadpagina: {0}&#x0a;&#x0a;De downloadpagina nu in uw browser openen?</sys:String>
+    <sys:String x:Key="Home_Status_EngineMissing">Stationair - opnieuw installeren vereist (motor ontbreekt)</sys:String>
+    <sys:String x:Key="Home_Log_EngineMissing">FOUT: VPN-engine niet gevonden. Installeer de applicatie opnieuw of voer het installatieprogramma uit.</sys:String>
 </ResourceDictionary>
 

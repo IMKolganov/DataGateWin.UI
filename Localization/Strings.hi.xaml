@@ -176,5 +176,52 @@
     <sys:String x:Key="Tray_Exit">Exit</sys:String>
     <sys:String x:Key="Tray_Open">Open</sys:String>
     <sys:String x:Key="Tray_Tooltip">DataGate</sys:String>
+
+    <!-- Missing keys synced from en (machine-translated) -->
+    <sys:String x:Key="Err_EngineExit_HeadFmt">इंजन तुरंत बंद हो गया. ExitCode={0}. LastOut={1}. LastErr={2}</sys:String>
+    <sys:String x:Key="Err_EngineExit_HintDllNotFound">निकास कोड 0xC0000135 का अर्थ है कि विंडोज़ लोडर इंजन.एक्सई शुरू होने से पहले एक आश्रित डीएलएल को हल नहीं कर सका - इंजन कभी नहीं चलता है, इसलिए stdout/stderr खाली रहता है और यूआई गुम फ़ाइल नाम नहीं पढ़ सकता है। इंजन.exe के बगल में\x64-windows\bin इंस्टॉल करें (या Build-Engine.ps1 चलाएं - यह उन्हें कॉपी करता है)। डीबग बिल्ड के लिए मशीन पर MSVC की आवश्यकता हो सकती है।</sys:String>
+    <sys:String x:Key="Home_Log_DllMissingHint">संकेत: एक आवश्यक DLL लोड नहीं किया जा सका (ऊपर की पंक्ति देखें)। गुम फ़ाइलों को पुनर्स्थापित करने के लिए आधिकारिक इंस्टॉलर से एप्लिकेशन को पुनः इंस्टॉल करें।</sys:String>
+    <sys:String x:Key="Settings_IpLists">आईपी ​​सूचियाँ (वीपीएन को बायपास करें)</sys:String>
+    <sys:String x:Key="Settings_IpLists_Subtitle">OpenVPN प्रोफ़ाइल में विभाजित मार्गों को जोड़कर वीपीएन सुरंग के बाहर सूचीबद्ध नेटवर्क के लिए ट्रैफ़िक भेजें।</sys:String>
+    <sys:String x:Key="Settings_IpLists_Enable">आईपी ​​सूचियों का प्रयोग करें</sys:String>
+    <sys:String x:Key="Settings_IpLists_EnableSubtitle">बंद होने पर, सारा ट्रैफ़िक वीपीएन का उपयोग करता है।</sys:String>
+    <sys:String x:Key="Settings_IpLists_Open">IP सूचियाँ कॉन्फ़िगर करें...</sys:String>
+    <sys:String x:Key="IpList_Title">आईपी ​​सूचियाँ</sys:String>
+    <sys:String x:Key="IpList_WindowsNotice">सूचियाँ क्लाइंट प्रोफ़ाइल में मर्ज कर दी जाती हैं: IPv4 मार्गों को आपकी रूट सीमा तक प्राथमिकता दी जाती है; बहुत बड़ी सूचियों को प्रोफ़ाइल आकार सीमा द्वारा छोटा किया जा सकता है। IPv6 स्प्लिट-बायपास विंडोज़ पर सीमित है—IPv6 लाइनें पूर्ण रूप से प्रभावी नहीं हो सकती हैं।</sys:String>
+    <sys:String x:Key="IpList_EnableTitle">सीआईडीआर आईपी सूचियों का प्रयोग करें</sys:String>
+    <sys:String x:Key="IpList_EnableSubtitle">स्प्लिट रूटिंग के लिए एकत्रित नेटवर्क सूचियाँ डाउनलोड करें और लागू करें।</sys:String>
+    <sys:String x:Key="IpList_DisabledNotice">आईपी ​​सूचियाँ अक्षम हैं. स्रोतों को संपादित करने और अद्यतन करने के लिए चालू करें।</sys:String>
+    <sys:String x:Key="IpList_SourceTitle">सूत्रों का कहना है</sys:String>
+    <sys:String x:Key="IpList_SourceSubtitle">प्रति पंक्ति एक URL (IPv4 और/या IPv6 एकत्रित सूचियाँ)।</sys:String>
+    <sys:String x:Key="IpList_FrequencyLabel">अद्यतन आवृत्ति</sys:String>
+    <sys:String x:Key="IpList_Freq_6h">हर 6 घंटे में</sys:String>
+    <sys:String x:Key="IpList_Freq_Daily">दैनिक</sys:String>
+    <sys:String x:Key="IpList_Freq_Weekly">साप्ताहिक</sys:String>
+    <sys:String x:Key="IpList_Freq_Manual">केवल मैनुअल</sys:String>
+    <sys:String x:Key="IpList_CoverageLabel">कवरेज</sys:String>
+    <sys:String x:Key="IpList_CoverageWinNote">केवल नीचे दी गई संख्यात्मक मार्ग सीमा लागू होती है: IPv4 मार्गों को उस सीमा तक सबसे पहले व्यापक रूप से चुना जाता है। सीमा लागू होने से पहले तेज़ और पूर्ण ऑर्डर देने को प्रभावित करते हैं।</sys:String>
+    <sys:String x:Key="IpList_CoverageFast">तेज़ (कम मार्ग)</sys:String>
+    <sys:String x:Key="IpList_CoverageFull">पूर्ण (सूची क्रम का पालन करें)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitLabel">प्रोफ़ाइल में अधिकतम रूट (IPv4-प्रथम)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitHint">50 और 3000 के बीच। छोटे मान प्रोफ़ाइल को छोटा रखते हैं।</sys:String>
+    <sys:String x:Key="IpList_RouteLimitErrorFmt">{0} और {1} के बीच एक मार्ग सीमा दर्ज करें।</sys:String>
+    <sys:String x:Key="IpList_Save">बचाना</sys:String>
+    <sys:String x:Key="IpList_UpdateNow">अभी अद्यतन करें</sys:String>
+    <sys:String x:Key="IpList_Saved">सहेजा गया.</sys:String>
+    <sys:String x:Key="IpList_StatusTitle">स्थिति</sys:String>
+    <sys:String x:Key="IpList_LastUpdated">आखरी अपडेट:</sys:String>
+    <sys:String x:Key="IpList_LastUpdatedNever">कभी नहीं</sys:String>
+    <sys:String x:Key="IpList_LoadedRoutesFmt">मार्गों को पार्स किया गया: {0}</sys:String>
+    <sys:String x:Key="IpList_SourceListTruncated">संयुक्त सूची लोडर के पूर्ण समर्थन से बड़ी थी; अतिरिक्त प्रविष्टियाँ छोड़ दी गईं।</sys:String>
+    <sys:String x:Key="IpList_LastError">अंतिम त्रुटि:</sys:String>
+    <sys:String x:Key="IpList_LastErrorNone">कोई नहीं</sys:String>
+    <sys:String x:Key="IpList_UpdateReadyFmt">सूचियाँ अद्यतन की गईं। रूट: {0}.</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFmt">अपडेट विफल: {0}</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFallbackFmt">अपडेट विफल ({0}). कैश्ड या बंडल्ड फ़ॉलबैक का उपयोग करना।</sys:String>
+    <sys:String x:Key="Msg_EngineMissingTitle">इंजन नहीं मिला</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">वीपीएन इंजन (इंजन.exe) गायब है। इसे पुनर्स्थापित करने के लिए डेटागेट को पुनर्स्थापित करें।</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">वीपीएन इंजन (इंजन.exe) गायब है। कृपया DataGate.&#x0a;&#x0a;डाउनलोड पृष्ठ को पुनः स्थापित करें: {0}&#x0a;&#x0a;अभी अपने ब्राउज़र में डाउनलोड पृष्ठ खोलें?</sys:String>
+    <sys:String x:Key="Home_Status_EngineMissing">निष्क्रिय - पुनः स्थापित करना आवश्यक (इंजन अनुपलब्ध)</sys:String>
+    <sys:String x:Key="Home_Log_EngineMissing">त्रुटि: वीपीएन इंजन नहीं मिला। एप्लिकेशन को पुनः इंस्टॉल करें या इंस्टॉलर चलाएँ।</sys:String>
 </ResourceDictionary>
 

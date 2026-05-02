@@ -176,5 +176,52 @@
     <sys:String x:Key="Tray_Exit">Exit</sys:String>
     <sys:String x:Key="Tray_Open">Open</sys:String>
     <sys:String x:Key="Tray_Tooltip">DataGate</sys:String>
+
+    <!-- Missing keys synced from en (machine-translated) -->
+    <sys:String x:Key="Err_EngineExit_HeadFmt">Motorn stannade omedelbart. ExitCode={0}. LastOut={1}. LastErr={2}</sys:String>
+    <sys:String x:Key="Err_EngineExit_HintDllNotFound">Utgångskod 0xC0000135 betyder att Windows-laddaren inte kunde lösa en beroende DLL innan engine.exe startade — motorn körs aldrig, så stdout/stderr förblir tom och gränssnittet kan inte läsa det saknade filnamnet. vcpkg installerad\x64-windows\bin bredvid engine.exe (eller kör Build-Engine.ps1 — den kopierar dem).&#x0a;• Om CRT saknas, installera "Microsoft Visual C++ 2015–2022 Redistributable (x64)". Felsökningsbyggen kan behöva MSVC på maskinen.&#x0a;&#x0a;Om du installerade från ett paket, installera om programmet från det officiella installationsprogrammet så att alla komponent-DLL:er (till exempel bredvid engine.exe) återställs.</sys:String>
+    <sys:String x:Key="Home_Log_DllMissingHint">Tips: en obligatorisk DLL kunde inte laddas (se raden ovan). Installera om programmet från det officiella installationsprogrammet för att återställa saknade filer.</sys:String>
+    <sys:String x:Key="Settings_IpLists">IP-listor (förbigå VPN)</sys:String>
+    <sys:String x:Key="Settings_IpLists_Subtitle">Skicka trafik för listade nätverk utanför VPN-tunneln genom att lägga till delade rutter till OpenVPN-profilen.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Enable">Använd IP-listor</sys:String>
+    <sys:String x:Key="Settings_IpLists_EnableSubtitle">När den är avstängd använder all trafik VPN.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Open">Konfigurera IP-listor...</sys:String>
+    <sys:String x:Key="IpList_Title">IP-listor</sys:String>
+    <sys:String x:Key="IpList_WindowsNotice">Listor slås samman i klientprofilen: IPv4-rutter föredras upp till din ruttgräns; mycket stora listor kan trimmas av profilstorlekslocket. IPv6 split-bypass är begränsad på Windows – IPv6-linjer kanske inte får full effekt.</sys:String>
+    <sys:String x:Key="IpList_EnableTitle">Använd CIDR IP-listor</sys:String>
+    <sys:String x:Key="IpList_EnableSubtitle">Ladda ner och använd aggregerade nätverkslistor för delad routing.</sys:String>
+    <sys:String x:Key="IpList_DisabledNotice">IP-listor är inaktiverade. Slå på för att redigera källor och uppdatera.</sys:String>
+    <sys:String x:Key="IpList_SourceTitle">Källor</sys:String>
+    <sys:String x:Key="IpList_SourceSubtitle">En URL per rad (IPv4 och/eller IPv6 aggregerade listor).</sys:String>
+    <sys:String x:Key="IpList_FrequencyLabel">Uppdateringsfrekvens</sys:String>
+    <sys:String x:Key="IpList_Freq_6h">Var 6:e ​​timme</sys:String>
+    <sys:String x:Key="IpList_Freq_Daily">Dagligen</sys:String>
+    <sys:String x:Key="IpList_Freq_Weekly">Varje vecka</sys:String>
+    <sys:String x:Key="IpList_Freq_Manual">Endast manuell</sys:String>
+    <sys:String x:Key="IpList_CoverageLabel">Rapportering</sys:String>
+    <sys:String x:Key="IpList_CoverageWinNote">Endast den numeriska ruttgränsen nedan gäller: IPv4-rutter väljs bredast först upp till det taket. FAST och FULL påverkar beställningen innan gränsen tillämpas.</sys:String>
+    <sys:String x:Key="IpList_CoverageFast">Snabb (färre rutter)</sys:String>
+    <sys:String x:Key="IpList_CoverageFull">Fullständig (följ listordning)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitLabel">Max rutter i profilen (IPv4-first)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitHint">Mellan 50 och 3000. Mindre värden håller profilen mindre.</sys:String>
+    <sys:String x:Key="IpList_RouteLimitErrorFmt">Ange en ruttgräns mellan {0} och {1}.</sys:String>
+    <sys:String x:Key="IpList_Save">Spara</sys:String>
+    <sys:String x:Key="IpList_UpdateNow">Uppdatera nu</sys:String>
+    <sys:String x:Key="IpList_Saved">Sparad.</sys:String>
+    <sys:String x:Key="IpList_StatusTitle">Status</sys:String>
+    <sys:String x:Key="IpList_LastUpdated">Senast uppdaterad:</sys:String>
+    <sys:String x:Key="IpList_LastUpdatedNever">aldrig</sys:String>
+    <sys:String x:Key="IpList_LoadedRoutesFmt">Rutter analyserade: {0}</sys:String>
+    <sys:String x:Key="IpList_SourceListTruncated">Den kombinerade listan var större än vad lastaren stöder fullt ut; extra poster hoppades över.</sys:String>
+    <sys:String x:Key="IpList_LastError">Senaste felet:</sys:String>
+    <sys:String x:Key="IpList_LastErrorNone">ingen</sys:String>
+    <sys:String x:Key="IpList_UpdateReadyFmt">Listor uppdaterade. Rutter: {0}.</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFmt">Uppdatering misslyckades: {0}</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Uppdateringen misslyckades ({0}). Använder cachad eller buntad reserv.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingTitle">Motorn hittades inte</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">VPN-motorn (engine.exe) saknas. Installera om DataGate för att återställa den.&#x0a;&#x0a;Nedladdningssida: {0}&#x0a;&#x0a;Ja — kör installationsprogrammet som medföljer den här appen (rekommenderas).&#x0a;Nej — öppna nedladdningssidan i din webbläsare.⟦lBR⟧Cance.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">VPN-motorn (engine.exe) saknas. Vänligen installera om DataGate.&#x0a;&#x0a;Nedladdningssida: {0}&#x0a;&#x0a;Öppna nedladdningssidan i din webbläsare nu?</sys:String>
+    <sys:String x:Key="Home_Status_EngineMissing">Tomgång – ominstallation krävs (motor saknas)</sys:String>
+    <sys:String x:Key="Home_Log_EngineMissing">FEL: VPN-motorn hittades inte. Installera om programmet eller kör installationsprogrammet.</sys:String>
 </ResourceDictionary>
 

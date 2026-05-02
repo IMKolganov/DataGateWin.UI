@@ -176,5 +176,52 @@
     <sys:String x:Key="Tray_Exit">Exit</sys:String>
     <sys:String x:Key="Tray_Open">Open</sys:String>
     <sys:String x:Key="Tray_Tooltip">DataGate</sys:String>
+
+    <!-- Missing keys synced from en (machine-translated) -->
+    <sys:String x:Key="Err_EngineExit_HeadFmt">发动机立即停止。退出代码={0}。最后出局={1}。最后错误={2}</sys:String>
+    <sys:String x:Key="Err_EngineExit_HintDllNotFound">退出代码 0xC0000135 意味着 Windows 加载程序无法在 engine.exe 启动之前解析依赖的 DLL - 引擎永远不会运行，因此 stdout/stderr 保持为空，并且 UI 无法读取丢失的文件名。&#x0a;&#x0a;• 通常 OpenSSL：将 libcrypto-3-x64.dll 和 libssl-3-x64.dll 从安装的 vcpkg\x64-windows\bin 旁边复制到engine.exe（或运行 Build-Engine.ps1 — 它会复制它们）。&#x0a;• 如果缺少 CRT，请安装“Microsoft Visual C++ 2015–2022 Redistributable (x64)”。调试版本可能需要计算机上的 MSVC。&#x0a;&#x0a;如果您从软件包安装，请从官方安装程序重新安装应用程序，以便恢复所有组件 DLL（例如，engine.exe 旁边）。</sys:String>
+    <sys:String x:Key="Home_Log_DllMissingHint">提示：无法加载所需的 DLL（请参阅上面的行）。从官方安装程序重新安装应用程序以恢复丢失的文件。</sys:String>
+    <sys:String x:Key="Settings_IpLists">IP 列表（绕过 VPN）</sys:String>
+    <sys:String x:Key="Settings_IpLists_Subtitle">通过将分割路由附加到 OpenVPN 配置文件，将所列网络的流量发送到 VPN 隧道之外。</sys:String>
+    <sys:String x:Key="Settings_IpLists_Enable">使用 IP 列表</sys:String>
+    <sys:String x:Key="Settings_IpLists_EnableSubtitle">关闭时，所有流量都使用 VPN。</sys:String>
+    <sys:String x:Key="Settings_IpLists_Open">配置 IP 列表...</sys:String>
+    <sys:String x:Key="IpList_Title">IP列表</sys:String>
+    <sys:String x:Key="IpList_WindowsNotice">列表将合并到客户端配置文件中：首选 IPv4 路由，直至达到您的路由限制；非常大的列表可以通过配置文件大小上限进行修剪。 IPv6 分割旁路在 Windows 上受到限制 - IPv6 线路可能无法完全生效。</sys:String>
+    <sys:String x:Key="IpList_EnableTitle">使用 CIDR IP 列表</sys:String>
+    <sys:String x:Key="IpList_EnableSubtitle">下载并应用聚合网络列表以进行分割路由。</sys:String>
+    <sys:String x:Key="IpList_DisabledNotice">IP 列表已禁用。打开以编辑源并更新。</sys:String>
+    <sys:String x:Key="IpList_SourceTitle">来源</sys:String>
+    <sys:String x:Key="IpList_SourceSubtitle">每行一个 URL（IPv4 和/或 IPv6 聚合列表）。</sys:String>
+    <sys:String x:Key="IpList_FrequencyLabel">更新频率</sys:String>
+    <sys:String x:Key="IpList_Freq_6h">每 6 小时</sys:String>
+    <sys:String x:Key="IpList_Freq_Daily">日常的</sys:String>
+    <sys:String x:Key="IpList_Freq_Weekly">每周</sys:String>
+    <sys:String x:Key="IpList_Freq_Manual">仅手动</sys:String>
+    <sys:String x:Key="IpList_CoverageLabel">覆盖范围</sys:String>
+    <sys:String x:Key="IpList_CoverageWinNote">仅以下数字路由限制适用：IPv4 路由将按最广泛的优先方式选择，直至达到该上限。 FAST 和 FULL 会影响应用限制之前的排序。</sys:String>
+    <sys:String x:Key="IpList_CoverageFast">快速（更少的路线）</sys:String>
+    <sys:String x:Key="IpList_CoverageFull">已满（按列表顺序）</sys:String>
+    <sys:String x:Key="IpList_RouteLimitLabel">配置文件中的最大路由（IPv4 优先）</sys:String>
+    <sys:String x:Key="IpList_RouteLimitHint">50 到 3000 之间。值越小，轮廓越小。</sys:String>
+    <sys:String x:Key="IpList_RouteLimitErrorFmt">输入 {0} 和 {1} 之间的路线限制。</sys:String>
+    <sys:String x:Key="IpList_Save">节省</sys:String>
+    <sys:String x:Key="IpList_UpdateNow">立即更新</sys:String>
+    <sys:String x:Key="IpList_Saved">已保存。</sys:String>
+    <sys:String x:Key="IpList_StatusTitle">地位</sys:String>
+    <sys:String x:Key="IpList_LastUpdated">最后更新：</sys:String>
+    <sys:String x:Key="IpList_LastUpdatedNever">绝不</sys:String>
+    <sys:String x:Key="IpList_LoadedRoutesFmt">解析的路由：{0}</sys:String>
+    <sys:String x:Key="IpList_SourceListTruncated">组合列表大于加载器完全支持的范围；额外的条目被跳过。</sys:String>
+    <sys:String x:Key="IpList_LastError">最后一个错误：</sys:String>
+    <sys:String x:Key="IpList_LastErrorNone">没有任何</sys:String>
+    <sys:String x:Key="IpList_UpdateReadyFmt">列表已更新。路线：{0}。</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFmt">更新失败：{0}</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFallbackFmt">更新失败（{0}）。使用缓存或捆绑后备。</sys:String>
+    <sys:String x:Key="Msg_EngineMissingTitle">未找到引擎</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">VPN 引擎 (engine.exe) 丢失。重新安装 DataGate 即可恢复。&#x0a;&#x0a;下载页面：{0}&#x0a;&#x0a;是 — 运行与此应用程序捆绑的安装程序（推荐）。&#x0a;否 — 在浏览器中打开下载页面。&#x0a;取消 — 关闭此消息。</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">VPN 引擎 (engine.exe) 丢失。请重新安装DataGate。&#x0a;&#x0a;下载页面：{0}&#x0a;&#x0a;现在在浏览器中打开下载页面吗？</sys:String>
+    <sys:String x:Key="Home_Status_EngineMissing">空闲 — 需要重新安装（引擎丢失）</sys:String>
+    <sys:String x:Key="Home_Log_EngineMissing">错误：找不到 VPN 引擎。重新安装应用程序或运行安装程序。</sys:String>
 </ResourceDictionary>
 

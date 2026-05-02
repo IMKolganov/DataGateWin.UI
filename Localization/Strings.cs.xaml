@@ -176,5 +176,52 @@
     <sys:String x:Key="Tray_Exit">Exit</sys:String>
     <sys:String x:Key="Tray_Open">Open</sys:String>
     <sys:String x:Key="Tray_Tooltip">DataGate</sys:String>
+
+    <!-- Missing keys synced from en (machine-translated) -->
+    <sys:String x:Key="Err_EngineExit_HeadFmt">Motor se okamžitě zastavil. ExitCode={0}. LastOut={1}. LastErr={2}</sys:String>
+    <sys:String x:Key="Err_EngineExit_HintDllNotFound">Kód ukončení 0xC0000135 znamená, že zavaděč systému Windows nedokázal vyřešit závislou knihovnu DLL před spuštěním engine.exe – motor se nikdy nespustí, takže stdout/stderr zůstane prázdný a uživatelské rozhraní nemůže přečíst chybějící název souboru.&#x0a;&#x0a;• Často OpenSSL: zkopírujte libcrypto-3-x64.lckg z libxs.dll install\x64-windows\bin vedle engine.exe (nebo spusťte Build-Engine.ps1 – zkopíruje je).&#x0a;• Pokud CRT chybí, nainstalujte „Microsoft Visual C++ 2015–2022 Redistributable (x64)“. Sestavení ladění může vyžadovat MSVC na počítači.&#x0a;&#x0a;Pokud jste instalovali z balíčku, přeinstalujte aplikaci z oficiálního instalačního programu, aby byly obnoveny všechny knihovny DLL komponent (například vedle engine.exe).</sys:String>
+    <sys:String x:Key="Home_Log_DllMissingHint">Tip: Nelze načíst požadovanou knihovnu DLL (viz řádek výše). Přeinstalujte aplikaci z oficiálního instalačního programu a obnovte chybějící soubory.</sys:String>
+    <sys:String x:Key="Settings_IpLists">Seznamy IP (obejít VPN)</sys:String>
+    <sys:String x:Key="Settings_IpLists_Subtitle">Odesílejte provoz pro uvedené sítě mimo tunel VPN připojením rozdělených tras k profilu OpenVPN.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Enable">Použijte seznamy IP adres</sys:String>
+    <sys:String x:Key="Settings_IpLists_EnableSubtitle">Když je vypnuto, veškerý provoz používá VPN.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Open">Konfigurovat seznamy IP…</sys:String>
+    <sys:String x:Key="IpList_Title">seznamy IP adres</sys:String>
+    <sys:String x:Key="IpList_WindowsNotice">Seznamy jsou sloučeny do profilu klienta: IPv4 trasy jsou preferovány až do vašeho limitu trasy; velmi velké seznamy mohou být oříznuty uzávěrem velikosti profilu. IPv6 split-bypass je omezen na Windows – IPv6 linky nemusí mít plný účinek.</sys:String>
+    <sys:String x:Key="IpList_EnableTitle">Použijte seznamy IP adres CIDR</sys:String>
+    <sys:String x:Key="IpList_EnableSubtitle">Stáhněte a použijte agregované seznamy sítí pro rozdělené směrování.</sys:String>
+    <sys:String x:Key="IpList_DisabledNotice">Seznamy IP jsou zakázány. Zapněte, chcete-li upravit zdroje a aktualizovat.</sys:String>
+    <sys:String x:Key="IpList_SourceTitle">Zdroje</sys:String>
+    <sys:String x:Key="IpList_SourceSubtitle">Jedna adresa URL na řádek (agregované seznamy IPv4 a/nebo IPv6).</sys:String>
+    <sys:String x:Key="IpList_FrequencyLabel">Frekvence aktualizace</sys:String>
+    <sys:String x:Key="IpList_Freq_6h">Každých 6 hodin</sys:String>
+    <sys:String x:Key="IpList_Freq_Daily">Denní</sys:String>
+    <sys:String x:Key="IpList_Freq_Weekly">Týdně</sys:String>
+    <sys:String x:Key="IpList_Freq_Manual">Pouze manuální</sys:String>
+    <sys:String x:Key="IpList_CoverageLabel">Krytí</sys:String>
+    <sys:String x:Key="IpList_CoverageWinNote">Platí pouze níže uvedený číselný limit tras: Trasy IPv4 se vybírají nejširší – první až do tohoto limitu. FAST a FULL ovlivňují objednávání před uplatněním limitu.</sys:String>
+    <sys:String x:Key="IpList_CoverageFast">Rychlé (méně tras)</sys:String>
+    <sys:String x:Key="IpList_CoverageFull">Úplné (postupujte podle pořadí seznamu)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitLabel">Max trasy v profilu (IPv4-first)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitHint">Mezi 50 a 3000. Menší hodnoty udržují profil menší.</sys:String>
+    <sys:String x:Key="IpList_RouteLimitErrorFmt">Zadejte limit trasy mezi {0} a {1}.</sys:String>
+    <sys:String x:Key="IpList_Save">Uložit</sys:String>
+    <sys:String x:Key="IpList_UpdateNow">Aktualizujte nyní</sys:String>
+    <sys:String x:Key="IpList_Saved">Uloženo.</sys:String>
+    <sys:String x:Key="IpList_StatusTitle">Postavení</sys:String>
+    <sys:String x:Key="IpList_LastUpdated">Poslední aktualizace:</sys:String>
+    <sys:String x:Key="IpList_LastUpdatedNever">nikdy</sys:String>
+    <sys:String x:Key="IpList_LoadedRoutesFmt">Analyzované trasy: {0}</sys:String>
+    <sys:String x:Key="IpList_SourceListTruncated">Kombinovaný seznam byl větší, než zavaděč plně podporuje; další záznamy byly přeskočeny.</sys:String>
+    <sys:String x:Key="IpList_LastError">Poslední chyba:</sys:String>
+    <sys:String x:Key="IpList_LastErrorNone">žádný</sys:String>
+    <sys:String x:Key="IpList_UpdateReadyFmt">Seznamy aktualizovány. Trasy: {0}.</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFmt">Aktualizace se nezdařila: {0}</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Aktualizace se nezdařila ({0}). Použití zálohy uložené v mezipaměti nebo v balíčku.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingTitle">Motor nenalezen</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">Chybí modul VPN (engine.exe). Přeinstalujte DataGate a obnovte jej.&#x0a;&#x0a;Stránka ke stažení: {0}&#x0a;&#x0a;Ano – spusťte instalační program dodávaný s touto aplikací (doporučeno).&#x0a;Ne – otevřete stránku stahování ve vašem prohlížeči.⟦BR — zavřít⟧Zrušit.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">Chybí modul VPN (engine.exe). Prosím přeinstalujte DataGate.&#x0a;&#x0a;Stránka ke stažení: {0}&#x0a;&#x0a;Otevřít stránku pro stahování ve vašem prohlížeči?</sys:String>
+    <sys:String x:Key="Home_Status_EngineMissing">Nečinný – nutná reinstalace (chybí motor)</sys:String>
+    <sys:String x:Key="Home_Log_EngineMissing">CHYBA: Modul VPN nebyl nalezen. Přeinstalujte aplikaci nebo spusťte instalační program.</sys:String>
 </ResourceDictionary>
 

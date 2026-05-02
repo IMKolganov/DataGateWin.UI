@@ -176,5 +176,52 @@
     <sys:String x:Key="Tray_Exit">Exit</sys:String>
     <sys:String x:Key="Tray_Open">Open</sys:String>
     <sys:String x:Key="Tray_Tooltip">DataGate</sys:String>
+
+    <!-- Missing keys synced from en (machine-translated) -->
+    <sys:String x:Key="Err_EngineExit_HeadFmt">Двигателят спря веднага. Изходен код={0}. LastOut={1}. LastErr={2}</sys:String>
+    <sys:String x:Key="Err_EngineExit_HintDllNotFound">Изходен код 0xC0000135 означава, че програмата за зареждане на Windows не може да разреши зависим DLL преди стартирането на engine.exe — двигателят никога не работи, така че stdout/stderr остава празен и потребителският интерфейс не може да прочете липсващото име на файл.&#x0a;&#x0a;• Често OpenSSL: копирайте libcrypto-3-x64.dll и libssl-3-x64.dll от вашия vcpkg инсталиран\x64-windows\bin до engine.exe (или стартирайте Build-Engine.ps1 — той ги копира).&#x0a;• Ако CRT липсва, инсталирайте „Microsoft Visual C++ 2015–2022 Redistributable (x64)“. Компилациите за отстраняване на грешки може да се нуждаят от MSVC на машината.&#x0a;&#x0a;Ако сте инсталирали от пакет, преинсталирайте приложението от официалния инсталатор, така че всички компонентни DLL файлове (например до engine.exe) да бъдат възстановени.</sys:String>
+    <sys:String x:Key="Home_Log_DllMissingHint">Подсказка: необходим DLL не може да бъде зареден (вижте реда по-горе). Преинсталирайте приложението от официалния инсталатор, за да възстановите липсващите файлове.</sys:String>
+    <sys:String x:Key="Settings_IpLists">IP списъци (байпас VPN)</sys:String>
+    <sys:String x:Key="Settings_IpLists_Subtitle">Изпращайте трафик за изброените мрежи извън VPN тунела чрез добавяне на разделени маршрути към OpenVPN профила.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Enable">Използвайте IP списъци</sys:String>
+    <sys:String x:Key="Settings_IpLists_EnableSubtitle">Когато е изключено, целият трафик използва VPN.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Open">Конфигуриране на IP списъци...</sys:String>
+    <sys:String x:Key="IpList_Title">IP списъци</sys:String>
+    <sys:String x:Key="IpList_WindowsNotice">Списъците се обединяват в клиентския профил: IPv4 маршрутите са предпочитани до вашето ограничение за маршрути; много големите списъци могат да бъдат съкратени от ограничението за размер на профила. IPv6 split-bypass е ограничен в Windows—IPv6 линиите може да не действат напълно.</sys:String>
+    <sys:String x:Key="IpList_EnableTitle">Използвайте CIDR IP списъци</sys:String>
+    <sys:String x:Key="IpList_EnableSubtitle">Изтеглете и приложете обобщени мрежови списъци за разделно маршрутизиране.</sys:String>
+    <sys:String x:Key="IpList_DisabledNotice">IP списъците са деактивирани. Включете за редактиране на източници и актуализиране.</sys:String>
+    <sys:String x:Key="IpList_SourceTitle">Източници</sys:String>
+    <sys:String x:Key="IpList_SourceSubtitle">Един URL на ред (IPv4 и/или IPv6 обобщени списъци).</sys:String>
+    <sys:String x:Key="IpList_FrequencyLabel">Честота на актуализиране</sys:String>
+    <sys:String x:Key="IpList_Freq_6h">На всеки 6 часа</sys:String>
+    <sys:String x:Key="IpList_Freq_Daily">Ежедневно</sys:String>
+    <sys:String x:Key="IpList_Freq_Weekly">Ежеседмично</sys:String>
+    <sys:String x:Key="IpList_Freq_Manual">Само ръчно</sys:String>
+    <sys:String x:Key="IpList_CoverageLabel">Покритие</sys:String>
+    <sys:String x:Key="IpList_CoverageWinNote">Прилага се само числовото ограничение на маршрута по-долу: IPv4 маршрутите се избират най-широко - първо до това ограничение. БЪРЗО и ПЪЛНО влияят върху подреждането, преди да се приложи ограничението.</sys:String>
+    <sys:String x:Key="IpList_CoverageFast">Бързо (по-малко маршрути)</sys:String>
+    <sys:String x:Key="IpList_CoverageFull">Пълен (следвайте реда в списъка)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitLabel">Макс. маршрути в профила (IPv4-първо)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitHint">Между 50 и 3000. По-малките стойности поддържат профила по-малък.</sys:String>
+    <sys:String x:Key="IpList_RouteLimitErrorFmt">Въведете ограничение на маршрута между {0} и {1}.</sys:String>
+    <sys:String x:Key="IpList_Save">Запазване</sys:String>
+    <sys:String x:Key="IpList_UpdateNow">Актуализирайте сега</sys:String>
+    <sys:String x:Key="IpList_Saved">Запазено.</sys:String>
+    <sys:String x:Key="IpList_StatusTitle">Статус</sys:String>
+    <sys:String x:Key="IpList_LastUpdated">Последна актуализация:</sys:String>
+    <sys:String x:Key="IpList_LastUpdatedNever">никога</sys:String>
+    <sys:String x:Key="IpList_LoadedRoutesFmt">Анализирани маршрути: {0}</sys:String>
+    <sys:String x:Key="IpList_SourceListTruncated">Комбинираният списък беше по-голям, отколкото товарачът напълно поддържа; допълнителните записи бяха пропуснати.</sys:String>
+    <sys:String x:Key="IpList_LastError">Последна грешка:</sys:String>
+    <sys:String x:Key="IpList_LastErrorNone">няма</sys:String>
+    <sys:String x:Key="IpList_UpdateReadyFmt">Актуализирани списъци. Маршрути: {0}.</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFmt">Неуспешна актуализация: {0}</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Неуспешна актуализация ({0}). Използване на кеширан или пакетен резервен вариант.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingTitle">Двигателят не е намерен</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">VPN машината (engine.exe) липсва. Преинсталирайте DataGate, за да го възстановите.&#x0a;&#x0a;Страница за изтегляне: {0}&#x0a;&#x0a;Да — стартирайте инсталатора, включен в това приложение (препоръчително).&#x0a;Не — отворете страницата за изтегляне във вашия браузър.&#x0a;Отказ — затворете това съобщение.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">VPN машината (engine.exe) липсва. Моля, преинсталирайте DataGate.&#x0a;&#x0a;Страница за изтегляне: {0}&#x0a;&#x0a;Отворете ли страницата за изтегляне в браузъра си сега?</sys:String>
+    <sys:String x:Key="Home_Status_EngineMissing">Празен ход — изисква се преинсталиране (липсва двигател)</sys:String>
+    <sys:String x:Key="Home_Log_EngineMissing">ГРЕШКА: VPN машината не е намерена. Преинсталирайте приложението или стартирайте инсталатора.</sys:String>
 </ResourceDictionary>
 

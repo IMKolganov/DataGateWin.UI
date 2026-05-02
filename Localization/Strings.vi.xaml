@@ -176,5 +176,52 @@
     <sys:String x:Key="Tray_Exit">Exit</sys:String>
     <sys:String x:Key="Tray_Open">Open</sys:String>
     <sys:String x:Key="Tray_Tooltip">DataGate</sys:String>
+
+    <!-- Missing keys synced from en (machine-translated) -->
+    <sys:String x:Key="Err_EngineExit_HeadFmt">Động cơ dừng ngay lập tức. Mã thoát={0}. LastOut={1}. Lỗi cuối cùng={2}</sys:String>
+    <sys:String x:Key="Err_EngineExit_HintDllNotFound">Mã thoát 0xC0000135 có nghĩa là trình tải Windows không thể phân giải một DLL phụ thuộc trước khi engine.exe khởi động — công cụ không bao giờ chạy, vì vậy thiết bị xuất chuẩn/stderr vẫn trống và giao diện người dùng không thể đọc tên tệp bị thiếu.&#x0a;&#x0a; Thường OpenSSL: sao chép libcrypto-3-x64.dll và libssl-3-x64.dll từ vcpkg đã cài đặt\x64-windows\bin tiếp theo của bạn vào engine.exe (hoặc chạy Build-Engine.ps1 — nó sao chép chúng).&#x0a; Nếu thiếu CRT, hãy cài đặt “Microsoft Visual C++ 2015–2022 Redistributable (x64)”. Bản dựng gỡ lỗi có thể cần MSVC trên máy.&#x0a;&#x0a;Nếu bạn đã cài đặt từ một gói, hãy cài đặt lại ứng dụng từ trình cài đặt chính thức để tất cả các DLL thành phần (ví dụ: bên cạnh engine.exe) được khôi phục.</sys:String>
+    <sys:String x:Key="Home_Log_DllMissingHint">Gợi ý: không thể tải một DLL được yêu cầu (xem dòng trên). Cài đặt lại ứng dụng từ trình cài đặt chính thức để khôi phục các tệp bị thiếu.</sys:String>
+    <sys:String x:Key="Settings_IpLists">Danh sách IP (bỏ qua VPN)</sys:String>
+    <sys:String x:Key="Settings_IpLists_Subtitle">Gửi lưu lượng truy cập cho các mạng được liệt kê bên ngoài đường hầm VPN bằng cách thêm các tuyến phân chia vào cấu hình OpenVPN.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Enable">Sử dụng danh sách IP</sys:String>
+    <sys:String x:Key="Settings_IpLists_EnableSubtitle">Khi tắt, tất cả lưu lượng truy cập đều sử dụng VPN.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Open">Định cấu hình danh sách IP…</sys:String>
+    <sys:String x:Key="IpList_Title">danh sách IP</sys:String>
+    <sys:String x:Key="IpList_WindowsNotice">Danh sách được hợp nhất vào hồ sơ khách hàng: Các tuyến IPv4 được ưu tiên theo giới hạn tuyến đường của bạn; danh sách rất lớn có thể được cắt bớt theo giới hạn kích thước hồ sơ. Bỏ qua phân chia IPv6 bị hạn chế trên Windows—các dòng IPv6 có thể không có hiệu lực đầy đủ.</sys:String>
+    <sys:String x:Key="IpList_EnableTitle">Sử dụng danh sách IP CIDR</sys:String>
+    <sys:String x:Key="IpList_EnableSubtitle">Tải xuống và áp dụng danh sách mạng tổng hợp để định tuyến phân chia.</sys:String>
+    <sys:String x:Key="IpList_DisabledNotice">Danh sách IP bị vô hiệu hóa. Bật để chỉnh sửa nguồn và cập nhật.</sys:String>
+    <sys:String x:Key="IpList_SourceTitle">Nguồn</sys:String>
+    <sys:String x:Key="IpList_SourceSubtitle">Một URL trên mỗi dòng (danh sách tổng hợp IPv4 và/hoặc IPv6).</sys:String>
+    <sys:String x:Key="IpList_FrequencyLabel">Tần suất cập nhật</sys:String>
+    <sys:String x:Key="IpList_Freq_6h">Cứ sau 6 giờ</sys:String>
+    <sys:String x:Key="IpList_Freq_Daily">Hằng ngày</sys:String>
+    <sys:String x:Key="IpList_Freq_Weekly">hàng tuần</sys:String>
+    <sys:String x:Key="IpList_Freq_Manual">Chỉ thủ công</sys:String>
+    <sys:String x:Key="IpList_CoverageLabel">Bảo hiểm</sys:String>
+    <sys:String x:Key="IpList_CoverageWinNote">Chỉ áp dụng giới hạn tuyến số bên dưới: Các tuyến IPv4 được chọn rộng nhất trước tiên cho đến giới hạn đó. NHANH CHÓNG và ĐẦY ĐỦ ảnh hưởng đến việc đặt hàng trước khi áp dụng giới hạn.</sys:String>
+    <sys:String x:Key="IpList_CoverageFast">Nhanh (ít tuyến đường hơn)</sys:String>
+    <sys:String x:Key="IpList_CoverageFull">Đầy đủ (theo thứ tự danh sách)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitLabel">Các tuyến đường tối đa trong hồ sơ (IPv4-first)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitHint">Từ 50 đến 3000. Giá trị nhỏ hơn sẽ giữ cho cấu hình nhỏ hơn.</sys:String>
+    <sys:String x:Key="IpList_RouteLimitErrorFmt">Nhập giới hạn tuyến đường giữa {0} và {1}.</sys:String>
+    <sys:String x:Key="IpList_Save">Cứu</sys:String>
+    <sys:String x:Key="IpList_UpdateNow">Cập nhật ngay bây giờ</sys:String>
+    <sys:String x:Key="IpList_Saved">Đã lưu.</sys:String>
+    <sys:String x:Key="IpList_StatusTitle">Trạng thái</sys:String>
+    <sys:String x:Key="IpList_LastUpdated">Cập nhật lần cuối:</sys:String>
+    <sys:String x:Key="IpList_LastUpdatedNever">không bao giờ</sys:String>
+    <sys:String x:Key="IpList_LoadedRoutesFmt">Các tuyến được phân tích cú pháp: {0}</sys:String>
+    <sys:String x:Key="IpList_SourceListTruncated">Danh sách kết hợp lớn hơn mức hỗ trợ đầy đủ của trình tải; các mục bổ sung đã bị bỏ qua.</sys:String>
+    <sys:String x:Key="IpList_LastError">Lỗi cuối cùng:</sys:String>
+    <sys:String x:Key="IpList_LastErrorNone">không có</sys:String>
+    <sys:String x:Key="IpList_UpdateReadyFmt">Danh sách được cập nhật. Lộ trình: {0}.</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFmt">Cập nhật không thành công: {0}</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Cập nhật không thành công ({0}). Sử dụng dự phòng được lưu trong bộ nhớ đệm hoặc theo gói.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingTitle">Không tìm thấy động cơ</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">Công cụ VPN (engine.exe) bị thiếu. Cài đặt lại DataGate để khôi phục nó.&#x0a;&#x0a;Trang tải xuống: {0}&#x0a;&#x0a;Có — chạy trình cài đặt đi kèm với ứng dụng này (được khuyến nghị).&#x0a;Không — mở trang tải xuống trong trình duyệt của bạn.&#x0a;Hủy — đóng thông báo này.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">Công cụ VPN (engine.exe) bị thiếu. Vui lòng cài đặt lại DataGate.&#x0a;&#x0a;Trang tải xuống: {0}&#x0a;&#x0a;Mở trang tải xuống trong trình duyệt của bạn ngay bây giờ?</sys:String>
+    <sys:String x:Key="Home_Status_EngineMissing">Nhàn rỗi - yêu cầu cài đặt lại (thiếu động cơ)</sys:String>
+    <sys:String x:Key="Home_Log_EngineMissing">LỖI: Không tìm thấy công cụ VPN. Cài đặt lại ứng dụng hoặc chạy trình cài đặt.</sys:String>
 </ResourceDictionary>
 

@@ -176,5 +176,52 @@
     <sys:String x:Key="Tray_Exit">Exit</sys:String>
     <sys:String x:Key="Tray_Open">Open</sys:String>
     <sys:String x:Key="Tray_Tooltip">DataGate</sys:String>
+
+    <!-- Missing keys synced from en (machine-translated) -->
+    <sys:String x:Key="Err_EngineExit_HeadFmt">Motorul sa oprit imediat. ExitCode={0}. LastOut={1}. LastErr={2}</sys:String>
+    <sys:String x:Key="Err_EngineExit_HintDllNotFound">Codul de ieșire 0xC0000135 înseamnă că încărcătorul Windows nu a putut rezolva un DLL dependent înainte de pornirea engine.exe — motorul nu rulează niciodată, așa că stdout/stderr rămân goale, iar interfața de utilizare nu poate citi numele fișierului lipsă.&#x0a;&#x0a;• Adesea OpenSSL: copiați libcrypto-3-x64.dll și libs64.dll-vs64.dll-x64.dll instalat\x64-windows\bin lângă engine.exe (sau rulați Build-Engine.ps1 — le copiază).&#x0a;• Dacă CRT-ul lipsește, instalați „Microsoft Visual C++ 2015–2022 Redistributable (x64)”. Build-urile de depanare pot avea nevoie de MSVC pe mașină.&#x0a;&#x0a;Dacă ați instalat dintr-un pachet, reinstalați aplicația din programul de instalare oficial, astfel încât toate DLL-urile componente (de exemplu, lângă engine.exe) să fie restaurate.</sys:String>
+    <sys:String x:Key="Home_Log_DllMissingHint">Sugestie: un DLL necesar nu a putut fi încărcat (vezi linia de mai sus). Reinstalați aplicația din programul de instalare oficial pentru a restaura fișierele lipsă.</sys:String>
+    <sys:String x:Key="Settings_IpLists">Liste IP (ocolire VPN)</sys:String>
+    <sys:String x:Key="Settings_IpLists_Subtitle">Trimiteți trafic pentru rețelele listate în afara tunelului VPN, adăugând rute divizate la profilul OpenVPN.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Enable">Folosiți liste de IP</sys:String>
+    <sys:String x:Key="Settings_IpLists_EnableSubtitle">Când este oprit, tot traficul utilizează VPN-ul.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Open">Configurați liste de IP...</sys:String>
+    <sys:String x:Key="IpList_Title">liste de IP</sys:String>
+    <sys:String x:Key="IpList_WindowsNotice">Listele sunt îmbinate în profilul client: rutele IPv4 sunt preferate până la limita dvs. de rută; Listele foarte mari pot fi tăiate de capacul dimensiunii profilului. Bypass-ul IPv6 este limitat pe Windows — este posibil ca liniile IPv6 să nu aibă efect complet.</sys:String>
+    <sys:String x:Key="IpList_EnableTitle">Utilizați liste CIDR IP</sys:String>
+    <sys:String x:Key="IpList_EnableSubtitle">Descărcați și aplicați liste de rețele agregate pentru rutarea divizată.</sys:String>
+    <sys:String x:Key="IpList_DisabledNotice">Listele de IP sunt dezactivate. Activați pentru a edita sursele și a actualiza.</sys:String>
+    <sys:String x:Key="IpList_SourceTitle">Surse</sys:String>
+    <sys:String x:Key="IpList_SourceSubtitle">O adresă URL pe linie (liste agregate IPv4 și/sau IPv6).</sys:String>
+    <sys:String x:Key="IpList_FrequencyLabel">Frecvența actualizării</sys:String>
+    <sys:String x:Key="IpList_Freq_6h">La fiecare 6 ore</sys:String>
+    <sys:String x:Key="IpList_Freq_Daily">Zilnic</sys:String>
+    <sys:String x:Key="IpList_Freq_Weekly">Săptămânal</sys:String>
+    <sys:String x:Key="IpList_Freq_Manual">Numai manual</sys:String>
+    <sys:String x:Key="IpList_CoverageLabel">Acoperire</sys:String>
+    <sys:String x:Key="IpList_CoverageWinNote">Se aplică doar limita numerică de rută de mai jos: rutele IPv4 sunt alese cel mai largi, mai întâi până la limita respectivă. FAST și FULL afectează comanda înainte ca limita să fie aplicată.</sys:String>
+    <sys:String x:Key="IpList_CoverageFast">Rapid (mai puține rute)</sys:String>
+    <sys:String x:Key="IpList_CoverageFull">Complet (urmați ordinea listei)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitLabel">Rute maxime în profil (în primul rând IPv4)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitHint">Între 50 și 3000. Valorile mai mici mențin profilul mai mic.</sys:String>
+    <sys:String x:Key="IpList_RouteLimitErrorFmt">Introduceți o limită de rută între {0} și {1}.</sys:String>
+    <sys:String x:Key="IpList_Save">Salva</sys:String>
+    <sys:String x:Key="IpList_UpdateNow">Actualizați acum</sys:String>
+    <sys:String x:Key="IpList_Saved">Salvat.</sys:String>
+    <sys:String x:Key="IpList_StatusTitle">Stare</sys:String>
+    <sys:String x:Key="IpList_LastUpdated">Ultima actualizare:</sys:String>
+    <sys:String x:Key="IpList_LastUpdatedNever">nu</sys:String>
+    <sys:String x:Key="IpList_LoadedRoutesFmt">Rute analizate: {0}</sys:String>
+    <sys:String x:Key="IpList_SourceListTruncated">Lista combinată a fost mai mare decât suportă complet încărcătorul; intrările suplimentare au fost omise.</sys:String>
+    <sys:String x:Key="IpList_LastError">Ultima eroare:</sys:String>
+    <sys:String x:Key="IpList_LastErrorNone">nici unul</sys:String>
+    <sys:String x:Key="IpList_UpdateReadyFmt">Liste actualizate. Trasee: {0}.</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFmt">Actualizarea a eșuat: {0}</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Actualizarea nu a reușit ({0}). Folosind rezerva stocată în cache sau grupată.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingTitle">Motorul nu a fost găsit</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">Motorul VPN (engine.exe) lipsește. Reinstalați DataGate pentru a-l restaura.&#x0a;&#x0a;Pagină de descărcare: {0}&#x0a;&#x0a;Da — rulați programul de instalare inclus cu această aplicație (recomandat).&#x0a;Nu — deschideți pagina de descărcare în browser.&#x0a;⟧&#x0a;.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">Motorul VPN (engine.exe) lipsește. Vă rugăm să reinstalați DataGate.&#x0a;&#x0a;Pagină de descărcare: {0}&#x0a;&#x0a;Deschideți pagina de descărcare în browser acum?</sys:String>
+    <sys:String x:Key="Home_Status_EngineMissing">Inactiv — este necesară reinstalarea (lipsește motorul)</sys:String>
+    <sys:String x:Key="Home_Log_EngineMissing">EROARE: motorul VPN nu a fost găsit. Reinstalați aplicația sau rulați programul de instalare.</sys:String>
 </ResourceDictionary>
 

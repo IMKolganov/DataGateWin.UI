@@ -176,5 +176,52 @@
     <sys:String x:Key="Tray_Exit">Exit</sys:String>
     <sys:String x:Key="Tray_Open">Open</sys:String>
     <sys:String x:Key="Tray_Tooltip">DataGate</sys:String>
+
+    <!-- Missing keys synced from en (machine-translated) -->
+    <sys:String x:Key="Err_EngineExit_HeadFmt">Agad na huminto ang makina. ExitCode={0}. LastOut={1}. LastErr={2}</sys:String>
+    <sys:String x:Key="Err_EngineExit_HintDllNotFound">Ang ibig sabihin ng exit code 0xC0000135 ay hindi maresolba ng Windows loader ang isang nakadependeng DLL bago magsimula ang engine.exe — hindi kailanman gumagana ang makina, kaya manatiling walang laman ang stdout/stderr at hindi mabasa ng UI ang nawawalang pangalan ng file.&#x0a;&#x0a;• Madalas OpenSSL: kopyahin ang libcrypto-3-x64.dll-dll at ang libcrypto-3-x64.dlldll naka-install\x64-windows\bin sa tabi ng engine.exe (o patakbuhin ang Build-Engine.ps1 — kinokopya nito ang mga ito).&#x0a;• Kung nawawala ang CRT, i-install ang “Microsoft Visual C++ 2015–2022 Redistributable (x64)”. Maaaring kailanganin ng mga build ng debug ang MSVC sa makina.&#x0a;&#x0a;Kung nag-install ka mula sa isang package, muling i-install ang application mula sa opisyal na installer upang maibalik ang lahat ng component DLL (halimbawa sa tabi ng engine.exe).</sys:String>
+    <sys:String x:Key="Home_Log_DllMissingHint">Hint: hindi ma-load ang isang kinakailangang DLL (tingnan ang linya sa itaas). I-install muli ang application mula sa opisyal na installer upang maibalik ang mga nawawalang file.</sys:String>
+    <sys:String x:Key="Settings_IpLists">Mga listahan ng IP (bypass VPN)</sys:String>
+    <sys:String x:Key="Settings_IpLists_Subtitle">Magpadala ng trapiko para sa mga nakalistang network sa labas ng VPN tunnel sa pamamagitan ng pagdaragdag ng mga split route sa OpenVPN profile.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Enable">Gumamit ng mga listahan ng IP</sys:String>
+    <sys:String x:Key="Settings_IpLists_EnableSubtitle">Kapag off, lahat ng trapiko ay gumagamit ng VPN.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Open">I-configure ang mga listahan ng IP...</sys:String>
+    <sys:String x:Key="IpList_Title">Mga listahan ng IP</sys:String>
+    <sys:String x:Key="IpList_WindowsNotice">Ang mga listahan ay pinagsama sa profile ng kliyente: Ang mga ruta ng IPv4 ay mas gusto hanggang sa iyong limitasyon sa ruta; ang napakalaking listahan ay maaaring i-trim ng cap ng laki ng profile. Ang IPv6 split-bypass ay limitado sa Windows—maaaring hindi ganap na magkabisa ang mga linya ng IPv6.</sys:String>
+    <sys:String x:Key="IpList_EnableTitle">Gumamit ng mga listahan ng IP ng CIDR</sys:String>
+    <sys:String x:Key="IpList_EnableSubtitle">I-download at ilapat ang mga pinagsama-samang listahan ng network para sa split routing.</sys:String>
+    <sys:String x:Key="IpList_DisabledNotice">Ang mga listahan ng IP ay hindi pinagana. I-on para i-edit ang mga source at i-update.</sys:String>
+    <sys:String x:Key="IpList_SourceTitle">Mga pinagmumulan</sys:String>
+    <sys:String x:Key="IpList_SourceSubtitle">Isang URL bawat linya (mga IPv4 at/o IPv6 na pinagsama-samang listahan).</sys:String>
+    <sys:String x:Key="IpList_FrequencyLabel">Dalas ng pag-update</sys:String>
+    <sys:String x:Key="IpList_Freq_6h">Bawat 6 na oras</sys:String>
+    <sys:String x:Key="IpList_Freq_Daily">Araw-araw</sys:String>
+    <sys:String x:Key="IpList_Freq_Weekly">Linggu-linggo</sys:String>
+    <sys:String x:Key="IpList_Freq_Manual">Manual lang</sys:String>
+    <sys:String x:Key="IpList_CoverageLabel">Saklaw</sys:String>
+    <sys:String x:Key="IpList_CoverageWinNote">Tanging ang numeric na limitasyon ng ruta sa ibaba ang nalalapat: Ang mga ruta ng IPv4 ay pinipili ang pinakamalawak-una hanggang sa cap na iyon. Ang FAST at FULL ay nakakaapekto sa pag-order bago ilapat ang limitasyon.</sys:String>
+    <sys:String x:Key="IpList_CoverageFast">Mabilis (mas kaunting ruta)</sys:String>
+    <sys:String x:Key="IpList_CoverageFull">Puno (sundin ang pagkakasunod-sunod ng listahan)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitLabel">Max na ruta sa profile (IPv4-una)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitHint">Sa pagitan ng 50 at 3000. Ang mas maliliit na halaga ay nagpapanatili sa profile na mas maliit.</sys:String>
+    <sys:String x:Key="IpList_RouteLimitErrorFmt">Maglagay ng limitasyon sa ruta sa pagitan ng {0} at {1}.</sys:String>
+    <sys:String x:Key="IpList_Save">I-save</sys:String>
+    <sys:String x:Key="IpList_UpdateNow">Update ngayon</sys:String>
+    <sys:String x:Key="IpList_Saved">Nai-save.</sys:String>
+    <sys:String x:Key="IpList_StatusTitle">Katayuan</sys:String>
+    <sys:String x:Key="IpList_LastUpdated">Huling na-update:</sys:String>
+    <sys:String x:Key="IpList_LastUpdatedNever">hindi kailanman</sys:String>
+    <sys:String x:Key="IpList_LoadedRoutesFmt">Mga na-parse na ruta: {0}</sys:String>
+    <sys:String x:Key="IpList_SourceListTruncated">Ang pinagsamang listahan ay mas malaki kaysa sa ganap na sinusuportahan ng loader; ang mga dagdag na entry ay nilaktawan.</sys:String>
+    <sys:String x:Key="IpList_LastError">Huling error:</sys:String>
+    <sys:String x:Key="IpList_LastErrorNone">wala</sys:String>
+    <sys:String x:Key="IpList_UpdateReadyFmt">Na-update ang mga listahan. Mga Ruta: {0}.</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFmt">Nabigo ang pag-update: {0}</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Nabigo ang pag-update ({0}). Paggamit ng naka-cache o naka-bundle na fallback.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingTitle">Hindi nahanap ang makina</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">Ang VPN engine (engine.exe) ay nawawala. I-install muli ang DataGate para i-restore ito.&#x0a;&#x0a;Download page: {0}&#x0a;&#x0a;Yes — patakbuhin ang installer na kasama ng app na ito (inirerekomenda).&#x0a;No — buksan ang download page sa iyong browser.&#x0a;Cancel — isara ang mensaheng ito</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">Ang VPN engine (engine.exe) ay nawawala. Paki-install muli ang DataGate.&#x0a;&#x0a;Download page: {0}&#x0a;&#x0a;Buksan ang download page sa iyong browser ngayon?</sys:String>
+    <sys:String x:Key="Home_Status_EngineMissing">Idle — kinakailangang muling i-install (nawawala ang makina)</sys:String>
+    <sys:String x:Key="Home_Log_EngineMissing">ERROR: Hindi nahanap ang VPN engine. I-install muli ang application o patakbuhin ang installer.</sys:String>
 </ResourceDictionary>
 

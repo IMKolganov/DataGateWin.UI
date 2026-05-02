@@ -186,10 +186,14 @@ function Publish-InstallerToUiRelease {
     }
 
     Write-Host "dotnet publish installer -> $outDir"
-    dotnet publish $installerProj -c Release -o $outDir
+    dotnet publish $installerProj -c Release -o $outDir `
+        -p:DebugType=none `
+        -p:DebugSymbols=false
     if ($LASTEXITCODE -ne 0) {
         throw "dotnet publish installer failed with exit code $LASTEXITCODE."
     }
+
+    Get-ChildItem -LiteralPath $outDir -Filter '*.pdb' -ErrorAction SilentlyContinue | Remove-Item -Force -ErrorAction SilentlyContinue
 }
 
 if (-not (Get-Command cmake -ErrorAction SilentlyContinue)) {

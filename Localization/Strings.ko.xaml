@@ -176,5 +176,52 @@
     <sys:String x:Key="Tray_Exit">Exit</sys:String>
     <sys:String x:Key="Tray_Open">Open</sys:String>
     <sys:String x:Key="Tray_Tooltip">DataGate</sys:String>
+
+    <!-- Missing keys synced from en (machine-translated) -->
+    <sys:String x:Key="Err_EngineExit_HeadFmt">엔진이 즉시 정지되었습니다. 종료코드={0}. 마지막 출력={1}. 마지막Err={2}</sys:String>
+    <sys:String x:Key="Err_EngineExit_HintDllNotFound">종료 코드 0xC0000135는 Engine.exe가 시작되기 전에 Windows 로더가 종속 DLL을 확인할 수 없음을 의미합니다. 엔진이 실행되지 않으므로 stdout/stderr은 비어 있고 UI는 누락된 파일 이름을 읽을 수 없습니다.&#x0a;&#x0a;• 종종 OpenSSL: vcpkg에 설치된\x64-windows\bin에서 libcrypto-3-x64.dll 및 libssl-3-x64.dll을 복사합니다. Engine.exe(또는 Build-Engine.ps1 실행 - 복사).&#x0a;• CRT가 누락된 경우 “Microsoft Visual C++ 2015–2022 Redistributable(x64)”를 설치하세요. 디버그 빌드에는 컴퓨터에 MSVC가 필요할 수 있습니다.&#x0a;&#x0a;패키지에서 설치한 경우 공식 설치 프로그램에서 애플리케이션을 다시 설치하면 모든 구성 요소 DLL(예:engine.exe 옆)이 복원됩니다.</sys:String>
+    <sys:String x:Key="Home_Log_DllMissingHint">힌트: 필수 DLL을 로드할 수 없습니다(위 줄 참조). 누락된 파일을 복원하려면 공식 설치 프로그램에서 애플리케이션을 다시 설치하세요.</sys:String>
+    <sys:String x:Key="Settings_IpLists">IP 목록(VPN 우회)</sys:String>
+    <sys:String x:Key="Settings_IpLists_Subtitle">OpenVPN 프로필에 분할 경로를 추가하여 VPN 터널 외부에 나열된 네트워크에 대한 트래픽을 보냅니다.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Enable">IP 목록 사용</sys:String>
+    <sys:String x:Key="Settings_IpLists_EnableSubtitle">꺼져 있으면 모든 트래픽이 VPN을 사용합니다.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Open">IP 목록 구성…</sys:String>
+    <sys:String x:Key="IpList_Title">IP 목록</sys:String>
+    <sys:String x:Key="IpList_WindowsNotice">목록은 클라이언트 프로필에 병합됩니다. 경로 한도까지는 IPv4 경로가 선호됩니다. 매우 큰 목록은 프로필 크기 제한으로 인해 잘릴 수 있습니다. Windows에서는 IPv6 분할 우회가 제한되어 있습니다. IPv6 회선이 완전히 적용되지 않을 수 있습니다.</sys:String>
+    <sys:String x:Key="IpList_EnableTitle">CIDR IP 목록 사용</sys:String>
+    <sys:String x:Key="IpList_EnableSubtitle">분할 라우팅을 위해 집계된 네트워크 목록을 다운로드하고 적용합니다.</sys:String>
+    <sys:String x:Key="IpList_DisabledNotice">IP 목록이 비활성화되었습니다. 소스를 수정하고 업데이트하려면 사용 설정하세요.</sys:String>
+    <sys:String x:Key="IpList_SourceTitle">출처</sys:String>
+    <sys:String x:Key="IpList_SourceSubtitle">한 줄에 하나의 URL(IPv4 및/또는 IPv6 집계 목록)</sys:String>
+    <sys:String x:Key="IpList_FrequencyLabel">업데이트 빈도</sys:String>
+    <sys:String x:Key="IpList_Freq_6h">6시간마다</sys:String>
+    <sys:String x:Key="IpList_Freq_Daily">일일</sys:String>
+    <sys:String x:Key="IpList_Freq_Weekly">주간</sys:String>
+    <sys:String x:Key="IpList_Freq_Manual">수동으로만</sys:String>
+    <sys:String x:Key="IpList_CoverageLabel">적용 범위</sys:String>
+    <sys:String x:Key="IpList_CoverageWinNote">아래의 숫자 경로 제한만 적용됩니다. IPv4 경로는 해당 한도까지 가장 넓은 범위부터 선택됩니다. FAST 및 FULL은 제한이 적용되기 전 순서에 영향을 미칩니다.</sys:String>
+    <sys:String x:Key="IpList_CoverageFast">빠름(경로 수가 적음)</sys:String>
+    <sys:String x:Key="IpList_CoverageFull">전체(목록 순서 따르기)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitLabel">프로필의 최대 경로(IPv4 우선)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitHint">50에서 3000 사이입니다. 값이 작을수록 프로필이 더 작아집니다.</sys:String>
+    <sys:String x:Key="IpList_RouteLimitErrorFmt">{0}~{1} 사이의 경로 제한을 입력하세요.</sys:String>
+    <sys:String x:Key="IpList_Save">구하다</sys:String>
+    <sys:String x:Key="IpList_UpdateNow">지금 업데이트</sys:String>
+    <sys:String x:Key="IpList_Saved">저장되었습니다.</sys:String>
+    <sys:String x:Key="IpList_StatusTitle">상태</sys:String>
+    <sys:String x:Key="IpList_LastUpdated">마지막 업데이트:</sys:String>
+    <sys:String x:Key="IpList_LastUpdatedNever">절대</sys:String>
+    <sys:String x:Key="IpList_LoadedRoutesFmt">파싱된 경로: {0}</sys:String>
+    <sys:String x:Key="IpList_SourceListTruncated">결합된 목록은 로더가 완전히 지원하는 것보다 컸습니다. 추가 항목을 건너뛰었습니다.</sys:String>
+    <sys:String x:Key="IpList_LastError">마지막 오류:</sys:String>
+    <sys:String x:Key="IpList_LastErrorNone">없음</sys:String>
+    <sys:String x:Key="IpList_UpdateReadyFmt">목록이 업데이트되었습니다. 경로: {0}.</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFmt">업데이트 실패: {0}</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFallbackFmt">업데이트에 실패했습니다({0}). 캐시되거나 번들로 제공되는 대체를 사용합니다.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingTitle">엔진을 찾을 수 없습니다</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">VPN 엔진(engine.exe)이 없습니다. 복원하려면 DataGate를 다시 설치하세요.&#x0a;&#x0a;다운로드 페이지: {0}&#x0a;&#x0a;예 — 이 앱과 함께 번들로 제공되는 설치 프로그램을 실행합니다(권장).&#x0a;아니요 — 브라우저에서 다운로드 페이지를 엽니다.&#x0a;취소 — 이 메시지를 닫습니다.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">VPN 엔진(engine.exe)이 없습니다. DataGate를 다시 설치하십시오.&#x0a;&#x0a;다운로드 페이지: {0}&#x0a;&#x0a;지금 브라우저에서 다운로드 페이지를 여시겠습니까?</sys:String>
+    <sys:String x:Key="Home_Status_EngineMissing">유휴 - 재설치 필요(엔진 없음)</sys:String>
+    <sys:String x:Key="Home_Log_EngineMissing">오류: VPN 엔진을 찾을 수 없습니다. 응용 프로그램을 다시 설치하거나 설치 프로그램을 실행하십시오.</sys:String>
 </ResourceDictionary>
 

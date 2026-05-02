@@ -176,5 +176,52 @@
     <sys:String x:Key="Tray_Exit">Exit</sys:String>
     <sys:String x:Key="Tray_Open">Open</sys:String>
     <sys:String x:Key="Tray_Tooltip">DataGate</sys:String>
+
+    <!-- Missing keys synced from en (machine-translated) -->
+    <sys:String x:Key="Err_EngineExit_HeadFmt">Moottori pysähtyi välittömästi. ExitCode={0}. LastOut={1}. LastErr={2}</sys:String>
+    <sys:String x:Key="Err_EngineExit_HintDllNotFound">Poistumiskoodi 0xC0000135 tarkoittaa, että Windows-lataaja ei pystynyt ratkaisemaan riippuvaista DLL-tiedostoa ennen engine.exe-tiedoston käynnistymistä – moottori ei koskaan käynnisty, joten stdout/stderr pysyy tyhjinä eikä käyttöliittymä voi lukea puuttuvaa tiedostonimeä.&#x0a;&#x0a;• Usein OpenSSL: kopioi libscrypto-3-x64.dll.dll-tiedostosta vxccrypto-3-x64.dll ja-3. install\x64-windows\bin engine.exe-tiedoston viereen (tai suorita Build-Engine.ps1 – se kopioi ne).&#x0a;• Jos CRT puuttuu, asenna "Microsoft Visual C++ 2015–2022 Redistributable (x64)". Virheenkorjauskoonnukset saattavat tarvita MSVC:tä koneessa.&#x0a;&#x0a;Jos asensit paketista, asenna sovellus uudelleen virallisesta asennusohjelmasta, jotta kaikki komponenttien DLL-tiedostot (esimerkiksi engine.exe:n viereen) palautetaan.</sys:String>
+    <sys:String x:Key="Home_Log_DllMissingHint">Vihje: vaadittua DLL:tä ei voitu ladata (katso yllä oleva rivi). Palauta puuttuvat tiedostot asentamalla sovellus uudelleen virallisesta asennusohjelmasta.</sys:String>
+    <sys:String x:Key="Settings_IpLists">IP-luettelot (ohita VPN)</sys:String>
+    <sys:String x:Key="Settings_IpLists_Subtitle">Lähetä listattujen verkkojen liikenne VPN-tunnelin ulkopuolella liittämällä jaetut reitit OpenVPN-profiiliin.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Enable">Käytä IP-luetteloita</sys:String>
+    <sys:String x:Key="Settings_IpLists_EnableSubtitle">Kun se on pois päältä, kaikki liikenne käyttää VPN:ää.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Open">Määritä IP-luettelot…</sys:String>
+    <sys:String x:Key="IpList_Title">IP-luettelot</sys:String>
+    <sys:String x:Key="IpList_WindowsNotice">Listat yhdistetään asiakasprofiiliin: IPv4-reitit ovat suositeltavia reittirajoitukseen asti; erittäin suuria listoja voidaan leikata profiilin kokokortilla. IPv6:n split-bypass on rajoitettu Windowsissa – IPv6-linjat eivät välttämättä toimi täysin.</sys:String>
+    <sys:String x:Key="IpList_EnableTitle">Käytä CIDR-IP-luetteloita</sys:String>
+    <sys:String x:Key="IpList_EnableSubtitle">Lataa ja käytä koottuja verkkoluetteloita jaetun reitityksen yhteydessä.</sys:String>
+    <sys:String x:Key="IpList_DisabledNotice">IP-luettelot on poistettu käytöstä. Ota käyttöön, jos haluat muokata lähteitä ja päivittää.</sys:String>
+    <sys:String x:Key="IpList_SourceTitle">Lähteet</sys:String>
+    <sys:String x:Key="IpList_SourceSubtitle">Yksi URL-osoite riviä kohden (IPv4- ja/tai IPv6-koosteluettelot).</sys:String>
+    <sys:String x:Key="IpList_FrequencyLabel">Päivitä taajuus</sys:String>
+    <sys:String x:Key="IpList_Freq_6h">6 tunnin välein</sys:String>
+    <sys:String x:Key="IpList_Freq_Daily">Päivittäin</sys:String>
+    <sys:String x:Key="IpList_Freq_Weekly">Viikoittain</sys:String>
+    <sys:String x:Key="IpList_Freq_Manual">Vain manuaalinen</sys:String>
+    <sys:String x:Key="IpList_CoverageLabel">Kattavuus</sys:String>
+    <sys:String x:Key="IpList_CoverageWinNote">Vain alla oleva numeerinen reittirajoitus on voimassa: IPv4-reitit valitaan leveimmiksi ensin kyseiseen enimmäismäärään asti. NOPEA ja TÄYSI vaikuttavat tilaukseen ennen kuin raja tulee voimaan.</sys:String>
+    <sys:String x:Key="IpList_CoverageFast">Nopea (vähemmän reittejä)</sys:String>
+    <sys:String x:Key="IpList_CoverageFull">Täysi (seuraa listan järjestystä)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitLabel">Enimmäisreitit profiilissa (IPv4-ensin)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitHint">50 ja 3000 välillä. Pienemmät arvot pitävät profiilin pienempänä.</sys:String>
+    <sys:String x:Key="IpList_RouteLimitErrorFmt">Anna reitin raja {0} ja {1} välille.</sys:String>
+    <sys:String x:Key="IpList_Save">Tallentaa</sys:String>
+    <sys:String x:Key="IpList_UpdateNow">Päivitä nyt</sys:String>
+    <sys:String x:Key="IpList_Saved">Tallennettu.</sys:String>
+    <sys:String x:Key="IpList_StatusTitle">Status</sys:String>
+    <sys:String x:Key="IpList_LastUpdated">Viimeksi päivitetty:</sys:String>
+    <sys:String x:Key="IpList_LastUpdatedNever">ei koskaan</sys:String>
+    <sys:String x:Key="IpList_LoadedRoutesFmt">Jäsennetyt reitit: {0}</sys:String>
+    <sys:String x:Key="IpList_SourceListTruncated">Yhdistetty lista oli suurempi kuin kuormaaja täysin tukee; ylimääräiset merkinnät ohitettiin.</sys:String>
+    <sys:String x:Key="IpList_LastError">Viimeisin virhe:</sys:String>
+    <sys:String x:Key="IpList_LastErrorNone">ei yhtään</sys:String>
+    <sys:String x:Key="IpList_UpdateReadyFmt">Listat päivitetty. Reitit: {0}.</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFmt">Päivitys epäonnistui: {0}</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Päivitys epäonnistui ({0}). Käytä välimuistissa tai niputettua varavaihtoehtoa.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingTitle">Moottoria ei löydy</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">VPN-moottori (engine.exe) puuttuu. Asenna DataGate uudelleen sen palauttamiseksi.&#x0a;&#x0a;Lataussivu: {0}&#x0a;&#x0a;Kyllä – suorita tämän sovelluksen mukana toimitettu asennusohjelma (suositus).&#x0a;Ei – avaa lataussivu selaimessasi.&#x0a;Peruuta tämä viesti.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">VPN-moottori (engine.exe) puuttuu. Asenna DataGate uudelleen.&#x0a;&#x0a;Lataussivu: {0}&#x0a;&#x0a;Avaako lataussivu selaimessasi nyt?</sys:String>
+    <sys:String x:Key="Home_Status_EngineMissing">Tyhjäkäynti - vaaditaan uudelleenasennus (moottori puuttuu)</sys:String>
+    <sys:String x:Key="Home_Log_EngineMissing">VIRHE: VPN-moottoria ei löydy. Asenna sovellus uudelleen tai suorita asennusohjelma.</sys:String>
 </ResourceDictionary>
 

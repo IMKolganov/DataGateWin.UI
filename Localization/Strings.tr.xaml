@@ -176,5 +176,52 @@
     <sys:String x:Key="Tray_Exit">Exit</sys:String>
     <sys:String x:Key="Tray_Open">Open</sys:String>
     <sys:String x:Key="Tray_Tooltip">DataGate</sys:String>
+
+    <!-- Missing keys synced from en (machine-translated) -->
+    <sys:String x:Key="Err_EngineExit_HeadFmt">Motor hemen durduruldu. Çıkış Kodu={0}. LastOut={1}. SonErr={2}</sys:String>
+    <sys:String x:Key="Err_EngineExit_HintDllNotFound">Çıkış kodu 0xC0000135, Windows yükleyicinin motor.exe başlatılmadan önce bağımlı bir DLL'yi çözemediği anlamına gelir; motor asla çalışmaz, bu nedenle stdout/stderr boş kalır ve kullanıcı arayüzü eksik dosya adını okuyamaz.&#x0a;&#x0a;• Çoğunlukla OpenSSL: libcrypto-3-x64.dll ve libssl-3-x64.dll dosyasını vcpkg'nizden kopyalayın Engine.exe'nin yanına\x64-windows\bin kurulu (veya Build-Engine.ps1'i çalıştırın; bunları kopyalar).&#x0a;• CRT eksikse, “Microsoft Visual C++ 2015–2022 Yeniden Dağıtılabilir (x64)” yükleyin. Hata ayıklama derlemeleri makinede MSVC'ye ihtiyaç duyabilir.&#x0a;&#x0a;Bir paketten yüklediyseniz uygulamayı resmi yükleyiciden yeniden yükleyin, böylece tüm bileşen DLL'leri (örneğin, Engine.exe'nin yanındaki) geri yüklenir.</sys:String>
+    <sys:String x:Key="Home_Log_DllMissingHint">İpucu: gerekli bir DLL yüklenemedi (yukarıdaki satıra bakın). Eksik dosyaları geri yüklemek için uygulamayı resmi yükleyiciden yeniden yükleyin.</sys:String>
+    <sys:String x:Key="Settings_IpLists">IP listeleri (VPN'i atlayın)</sys:String>
+    <sys:String x:Key="Settings_IpLists_Subtitle">OpenVPN profiline bölünmüş yollar ekleyerek listelenen ağlar için trafiği VPN tüneli dışına gönderin.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Enable">IP listelerini kullan</sys:String>
+    <sys:String x:Key="Settings_IpLists_EnableSubtitle">Kapalıyken tüm trafik VPN'i kullanır.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Open">IP listelerini yapılandırın…</sys:String>
+    <sys:String x:Key="IpList_Title">IP listeleri</sys:String>
+    <sys:String x:Key="IpList_WindowsNotice">Listeler istemci profiliyle birleştirilir: Rota sınırınıza kadar IPv4 rotaları tercih edilir; çok büyük listeler profil boyutu sınırıyla kırpılabilir. IPv6 bölme atlaması Windows'ta sınırlıdır; IPv6 hatları tam etkili olmayabilir.</sys:String>
+    <sys:String x:Key="IpList_EnableTitle">CIDR IP listelerini kullanma</sys:String>
+    <sys:String x:Key="IpList_EnableSubtitle">Bölünmüş yönlendirme için toplu ağ listelerini indirin ve uygulayın.</sys:String>
+    <sys:String x:Key="IpList_DisabledNotice">IP listeleri devre dışı. Kaynakları düzenlemek ve güncellemek için açın.</sys:String>
+    <sys:String x:Key="IpList_SourceTitle">Kaynaklar</sys:String>
+    <sys:String x:Key="IpList_SourceSubtitle">Her satıra bir URL (IPv4 ve/veya IPv6 toplu listeleri).</sys:String>
+    <sys:String x:Key="IpList_FrequencyLabel">Güncelleme sıklığı</sys:String>
+    <sys:String x:Key="IpList_Freq_6h">Her 6 saatte bir</sys:String>
+    <sys:String x:Key="IpList_Freq_Daily">Günlük</sys:String>
+    <sys:String x:Key="IpList_Freq_Weekly">Haftalık</sys:String>
+    <sys:String x:Key="IpList_Freq_Manual">Yalnızca manuel</sys:String>
+    <sys:String x:Key="IpList_CoverageLabel">Kapsam</sys:String>
+    <sys:String x:Key="IpList_CoverageWinNote">Yalnızca aşağıdaki sayısal yol sınırı geçerlidir: IPv4 yolları bu sınıra kadar en geniş öncelikli olarak seçilir. HIZLI ve TAM limit uygulanmadan önce sıralamayı etkiler.</sys:String>
+    <sys:String x:Key="IpList_CoverageFast">Hızlı (daha az rota)</sys:String>
+    <sys:String x:Key="IpList_CoverageFull">Tam (liste sırasını takip edin)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitLabel">Profildeki maksimum rotalar (IPv4-first)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitHint">50 ile 3000 arasında. Daha küçük değerler profili daha küçük tutar.</sys:String>
+    <sys:String x:Key="IpList_RouteLimitErrorFmt">{0} ile {1} arasında bir rota sınırı girin.</sys:String>
+    <sys:String x:Key="IpList_Save">Kaydetmek</sys:String>
+    <sys:String x:Key="IpList_UpdateNow">Şimdi güncelle</sys:String>
+    <sys:String x:Key="IpList_Saved">Kaydedildi.</sys:String>
+    <sys:String x:Key="IpList_StatusTitle">Durum</sys:String>
+    <sys:String x:Key="IpList_LastUpdated">Son güncelleme:</sys:String>
+    <sys:String x:Key="IpList_LastUpdatedNever">Asla</sys:String>
+    <sys:String x:Key="IpList_LoadedRoutesFmt">Ayrıştırılan rotalar: {0}</sys:String>
+    <sys:String x:Key="IpList_SourceListTruncated">Birleştirilmiş liste, yükleyicinin tam olarak desteklediğinden daha büyüktü; ekstra girişler atlandı.</sys:String>
+    <sys:String x:Key="IpList_LastError">Son hata:</sys:String>
+    <sys:String x:Key="IpList_LastErrorNone">hiçbiri</sys:String>
+    <sys:String x:Key="IpList_UpdateReadyFmt">Listeler güncellendi. Rotalar: {0}.</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFmt">Güncelleme başarısız oldu: {0}</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Güncelleme başarısız oldu ({0}). Önbelleğe alınmış veya paketlenmiş geri dönüş kullanma.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingTitle">Motor bulunamadı</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">VPN motoru (engine.exe) eksik. Geri yüklemek için DataGate'i yeniden yükleyin.&#x0a;&#x0a;İndirme sayfası: {0}&#x0a;&#x0a;Evet — bu uygulamayla birlikte gelen yükleyiciyi çalıştırın (önerilir).&#x0a;Hayır — indirme sayfasını tarayıcınızda açın.&#x0a;İptal — bu mesajı kapatın.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">VPN motoru (engine.exe) eksik. Lütfen DataGate'i yeniden yükleyin.&#x0a;&#x0a;İndirme sayfası: {0}&#x0a;&#x0a;İndirme sayfasını tarayıcınızda şimdi açmak ister misiniz?</sys:String>
+    <sys:String x:Key="Home_Status_EngineMissing">Boşta — yeniden yükleme gerekli (motor eksik)</sys:String>
+    <sys:String x:Key="Home_Log_EngineMissing">HATA: VPN motoru bulunamadı. Uygulamayı yeniden yükleyin veya yükleyiciyi çalıştırın.</sys:String>
 </ResourceDictionary>
 

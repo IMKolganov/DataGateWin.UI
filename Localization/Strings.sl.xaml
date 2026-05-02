@@ -176,5 +176,52 @@
     <sys:String x:Key="Tray_Exit">Exit</sys:String>
     <sys:String x:Key="Tray_Open">Open</sys:String>
     <sys:String x:Key="Tray_Tooltip">DataGate</sys:String>
+
+    <!-- Missing keys synced from en (machine-translated) -->
+    <sys:String x:Key="Err_EngineExit_HeadFmt">Motor se je takoj ustavil. Izhodna koda={0}. LastOut={1}. LastErr={2}</sys:String>
+    <sys:String x:Key="Err_EngineExit_HintDllNotFound">Izhodna koda 0xC0000135 pomeni, da nalagalnik sistema Windows ni mogel razrešiti odvisnega DLL-ja, preden se je zagnal engine.exe — motor se nikoli ne zažene, zato sta stdout/stderr prazna in uporabniški vmesnik ne more prebrati imena manjkajoče datoteke.&#x0a;&#x0a;• Pogosto OpenSSL: kopirajte libcrypto-3-x64.dll in libssl-3-x64.dll iz vašega vcpkg Install\x64-windows\bin zraven engine.exe (ali zaženite Build-Engine.ps1 — skopira jih).&#x0a;• Če CRT manjka, namestite »Microsoft Visual C++ 2015–2022 Redistributable (x64)«. Zgradbe za odpravljanje napak bodo morda potrebovale MSVC na napravi.&#x0a;&#x0a;Če ste namestili iz paketa, znova namestite aplikacijo iz uradnega namestitvenega programa, da se obnovijo vse komponente DLL (na primer poleg engine.exe).</sys:String>
+    <sys:String x:Key="Home_Log_DllMissingHint">Namig: zahtevanega DLL-ja ni bilo mogoče naložiti (glejte zgornjo vrstico). Znova namestite aplikacijo iz uradnega namestitvenega programa, da obnovite manjkajoče datoteke.</sys:String>
+    <sys:String x:Key="Settings_IpLists">Seznami IP (bypass VPN)</sys:String>
+    <sys:String x:Key="Settings_IpLists_Subtitle">Pošljite promet za navedena omrežja zunaj tunela VPN tako, da dodate razdeljene poti v profil OpenVPN.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Enable">Uporabite sezname IP</sys:String>
+    <sys:String x:Key="Settings_IpLists_EnableSubtitle">Ko je izklopljen, ves promet uporablja VPN.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Open">Konfiguriraj sezname IP ...</sys:String>
+    <sys:String x:Key="IpList_Title">IP seznami</sys:String>
+    <sys:String x:Key="IpList_WindowsNotice">Seznami so združeni v profil odjemalca: poti IPv4 so prednostne do vaše omejitve poti; zelo velike sezname lahko skrajša omejitev velikosti profila. IPv6 split-bypass je v sistemu Windows omejen – vrstice IPv6 morda ne bodo imele polnega učinka.</sys:String>
+    <sys:String x:Key="IpList_EnableTitle">Uporabite sezname IP CIDR</sys:String>
+    <sys:String x:Key="IpList_EnableSubtitle">Prenesite in uporabite združene omrežne sezname za razdeljeno usmerjanje.</sys:String>
+    <sys:String x:Key="IpList_DisabledNotice">Seznami IP so onemogočeni. Vklopite za urejanje virov in posodobitev.</sys:String>
+    <sys:String x:Key="IpList_SourceTitle">Viri</sys:String>
+    <sys:String x:Key="IpList_SourceSubtitle">En URL na vrstico (zbirni seznami IPv4 in/ali IPv6).</sys:String>
+    <sys:String x:Key="IpList_FrequencyLabel">Pogostost posodabljanja</sys:String>
+    <sys:String x:Key="IpList_Freq_6h">Vsakih 6 ur</sys:String>
+    <sys:String x:Key="IpList_Freq_Daily">Dnevno</sys:String>
+    <sys:String x:Key="IpList_Freq_Weekly">Tedensko</sys:String>
+    <sys:String x:Key="IpList_Freq_Manual">Samo ročno</sys:String>
+    <sys:String x:Key="IpList_CoverageLabel">Pokritost</sys:String>
+    <sys:String x:Key="IpList_CoverageWinNote">Velja le spodnja številčna omejitev poti: poti IPv4 so izbrane najprej najširše do te omejitve. HITRO in POLNO vplivata na naročanje, preden se uporabi omejitev.</sys:String>
+    <sys:String x:Key="IpList_CoverageFast">Hitro (manj poti)</sys:String>
+    <sys:String x:Key="IpList_CoverageFull">Polno (upoštevajte vrstni red seznama)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitLabel">Največje število poti v profilu (IPv4-prvi)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitHint">Med 50 in 3000. Manjše vrednosti ohranjajo profil manjši.</sys:String>
+    <sys:String x:Key="IpList_RouteLimitErrorFmt">Vnesite omejitev poti med {0} in {1}.</sys:String>
+    <sys:String x:Key="IpList_Save">Shrani</sys:String>
+    <sys:String x:Key="IpList_UpdateNow">Posodobite zdaj</sys:String>
+    <sys:String x:Key="IpList_Saved">Shranjeno.</sys:String>
+    <sys:String x:Key="IpList_StatusTitle">Stanje</sys:String>
+    <sys:String x:Key="IpList_LastUpdated">Zadnja posodobitev:</sys:String>
+    <sys:String x:Key="IpList_LastUpdatedNever">nikoli</sys:String>
+    <sys:String x:Key="IpList_LoadedRoutesFmt">Razčlenjene poti: {0}</sys:String>
+    <sys:String x:Key="IpList_SourceListTruncated">Kombinirani seznam je bil večji, kot ga nalagalnik v celoti podpira; dodatni vnosi so bili preskočeni.</sys:String>
+    <sys:String x:Key="IpList_LastError">Zadnja napaka:</sys:String>
+    <sys:String x:Key="IpList_LastErrorNone">nobeden</sys:String>
+    <sys:String x:Key="IpList_UpdateReadyFmt">Seznami posodobljeni. Poti: {0}.</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFmt">Posodobitev ni uspela: {0}</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Posodobitev ni uspela ({0}). Uporaba predpomnjene ali združene nadomestne možnosti.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingTitle">Motorja ni bilo mogoče najti</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">Motor VPN (engine.exe) manjka. Ponovno namestite DataGate, da ga obnovite.&#x0a;&#x0a;Stran za prenos: {0}&#x0a;&#x0a;Da — zaženite namestitveni program, ki je priložen tej aplikaciji (priporočeno).&#x0a;Ne — odprite stran za prenos v brskalniku.&#x0a;Prekliči — zaprite to sporočilo.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">Motor VPN (engine.exe) manjka. Prosimo, znova namestite DataGate.&#x0a;&#x0a;Stran za prenos: {0}&#x0a;&#x0a;Želite zdaj odpreti stran za prenos v brskalniku?</sys:String>
+    <sys:String x:Key="Home_Status_EngineMissing">V prostem teku — potrebna ponovna namestitev (manjka motor)</sys:String>
+    <sys:String x:Key="Home_Log_EngineMissing">NAPAKA: mehanizma VPN ni bilo mogoče najti. Znova namestite aplikacijo ali zaženite namestitveni program.</sys:String>
 </ResourceDictionary>
 

@@ -176,5 +176,52 @@
     <sys:String x:Key="Tray_Exit">Exit</sys:String>
     <sys:String x:Key="Tray_Open">Open</sys:String>
     <sys:String x:Key="Tray_Tooltip">DataGate</sys:String>
+
+    <!-- Missing keys synced from en (machine-translated) -->
+    <sys:String x:Key="Err_EngineExit_HeadFmt">エンジンはすぐに停止しました。終了コード={0}。 LastOut={1}。 LastErr={2}</sys:String>
+    <sys:String x:Key="Err_EngineExit_HintDllNotFound">終了コード 0xC0000135 は、Windows ローダーが Engine.exe の開始前に依存 DLL を解決できなかったことを意味します。エンジンは決して実行されないため、stdout/stderr は空のままで、UI は欠落しているファイル名を読み取ることができません。&#x0a;&#x0a;• 多くの場合、OpenSSL: libcrypto-3-x64.dll と libssl-3-x64.dll を vcpkg からコピーします。 &#x0a;• CRT が見つからない場合は、「Microsoft Visual C++ 2015–2022 Redistributable (x64)」をインストールしてください。デバッグ ビルドにはマシン上に MSVC が必要な場合があります。&#x0a;&#x0a;パッケージからインストールした場合は、公式インストーラーからアプリケーションを再インストールして、すべてのコンポーネント DLL (たとえば、engine.exe の隣) が復元されるようにします。</sys:String>
+    <sys:String x:Key="Home_Log_DllMissingHint">ヒント: 必要な DLL をロードできませんでした (上記の行を参照)。不足しているファイルを復元するには、公式インストーラーからアプリケーションを再インストールします。</sys:String>
+    <sys:String x:Key="Settings_IpLists">IP リスト (VPN をバイパス)</sys:String>
+    <sys:String x:Key="Settings_IpLists_Subtitle">OpenVPN プロファイルに分割ルートを追加することで、リストされたネットワークのトラフィックを VPN トンネルの外側に送信します。</sys:String>
+    <sys:String x:Key="Settings_IpLists_Enable">IPリストを使用する</sys:String>
+    <sys:String x:Key="Settings_IpLists_EnableSubtitle">オフの場合、すべてのトラフィックは VPN を使用します。</sys:String>
+    <sys:String x:Key="Settings_IpLists_Open">IP リストを構成します…</sys:String>
+    <sys:String x:Key="IpList_Title">IPリスト</sys:String>
+    <sys:String x:Key="IpList_WindowsNotice">リストはクライアント プロファイルにマージされます。ルート制限までは IPv4 ルートが優先されます。非常に大きなリストは、プロファイル サイズの上限によってトリミングされる場合があります。 IPv6 スプリットバイパスは Windows では制限されており、IPv6 回線は完全には効果を発揮しない可能性があります。</sys:String>
+    <sys:String x:Key="IpList_EnableTitle">CIDR IP リストを使用する</sys:String>
+    <sys:String x:Key="IpList_EnableSubtitle">分割ルーティング用の集約ネットワーク リストをダウンロードして適用します。</sys:String>
+    <sys:String x:Key="IpList_DisabledNotice">IP リストは無効になっています。ソースを編集して更新するにはオンにします。</sys:String>
+    <sys:String x:Key="IpList_SourceTitle">情報源</sys:String>
+    <sys:String x:Key="IpList_SourceSubtitle">1 行に 1 つの URL (IPv4 および/または IPv6 の集約リスト)。</sys:String>
+    <sys:String x:Key="IpList_FrequencyLabel">更新頻度</sys:String>
+    <sys:String x:Key="IpList_Freq_6h">6時間ごと</sys:String>
+    <sys:String x:Key="IpList_Freq_Daily">毎日</sys:String>
+    <sys:String x:Key="IpList_Freq_Weekly">毎週</sys:String>
+    <sys:String x:Key="IpList_Freq_Manual">マニュアルのみ</sys:String>
+    <sys:String x:Key="IpList_CoverageLabel">カバレッジ</sys:String>
+    <sys:String x:Key="IpList_CoverageWinNote">以下の数値ルート制限のみが適用されます。IPv4 ルートは、その上限まで最も広い順に選択されます。 FAST と FULL は、制限が適用される前の順序に影響します。</sys:String>
+    <sys:String x:Key="IpList_CoverageFast">速い（ルートが少ない）</sys:String>
+    <sys:String x:Key="IpList_CoverageFull">完全 (リストの順序に従ってください)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitLabel">プロファイル内の最大ルート (IPv4 ファースト)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitHint">50 ～ 3000 の間。値が小さいほど、プロファイルは小さくなります。</sys:String>
+    <sys:String x:Key="IpList_RouteLimitErrorFmt">ルート制限を {0} と {1} の間で入力します。</sys:String>
+    <sys:String x:Key="IpList_Save">保存</sys:String>
+    <sys:String x:Key="IpList_UpdateNow">今すぐアップデートしてください</sys:String>
+    <sys:String x:Key="IpList_Saved">保存されました。</sys:String>
+    <sys:String x:Key="IpList_StatusTitle">状態</sys:String>
+    <sys:String x:Key="IpList_LastUpdated">最終更新日:</sys:String>
+    <sys:String x:Key="IpList_LastUpdatedNever">一度もない</sys:String>
+    <sys:String x:Key="IpList_LoadedRoutesFmt">解析されたルート: {0}</sys:String>
+    <sys:String x:Key="IpList_SourceListTruncated">結合されたリストは、ローダーが完全にサポートするサイズを超えていました。余分なエントリはスキップされました。</sys:String>
+    <sys:String x:Key="IpList_LastError">最後のエラー:</sys:String>
+    <sys:String x:Key="IpList_LastErrorNone">なし</sys:String>
+    <sys:String x:Key="IpList_UpdateReadyFmt">リストが更新されました。ルート: {0}。</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFmt">アップデートに失敗しました: {0}</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFallbackFmt">アップデートに失敗しました ({0})。キャッシュされたフォールバックまたはバンドルされたフォールバックを使用する。</sys:String>
+    <sys:String x:Key="Msg_EngineMissingTitle">エンジンが見つかりません</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">VPN エンジン (engine.exe) がありません。 DataGate を再インストールして復元します。&#x0a;&#x0a;ダウンロード ページ: {0}&#x0a;&#x0a;はい — このアプリにバンドルされているインストーラーを実行します (推奨)。&#x0a;いいえ — ブラウザでダウンロード ページを開きます。&#x0a;キャンセル — このメッセージを閉じます。</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">VPN エンジン (engine.exe) がありません。 DataGate を再インストールしてください。&#x0a;&#x0a;ダウンロード ページ: {0}&#x0a;&#x0a;ブラウザでダウンロード ページを開きますか?</sys:String>
+    <sys:String x:Key="Home_Status_EngineMissing">アイドル — 再インストールが必要 (エンジンがありません)</sys:String>
+    <sys:String x:Key="Home_Log_EngineMissing">エラー: VPN エンジンが見つかりません。アプリケーションを再インストールするか、インストーラーを実行します。</sys:String>
 </ResourceDictionary>
 

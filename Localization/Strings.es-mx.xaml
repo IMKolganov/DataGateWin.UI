@@ -176,5 +176,52 @@
     <sys:String x:Key="Tray_Exit">Exit</sys:String>
     <sys:String x:Key="Tray_Open">Open</sys:String>
     <sys:String x:Key="Tray_Tooltip">DataGate</sys:String>
+
+    <!-- Missing keys synced from en (machine-translated) -->
+    <sys:String x:Key="Err_EngineExit_HeadFmt">El motor se detuvo inmediatamente. Código de salida={0}. Última salida={1}. ÚltimoErr={2}</sys:String>
+    <sys:String x:Key="Err_EngineExit_HintDllNotFound">El código de salida 0xC0000135 significa que el cargador de Windows no pudo resolver una DLL dependiente antes de que se iniciara Engine.exe; el motor nunca se ejecuta, por lo que stdout/stderr permanecen vacíos y la interfaz de usuario no puede leer el nombre del archivo que falta. install\x64-windows\bin junto a Engine.exe (o ejecute Build-Engine.ps1; los copia).&#x0a;• Si falta el CRT, instale “Microsoft Visual C++ 2015–2022 Redistributable (x64)”. Es posible que las compilaciones de depuración necesiten MSVC en la máquina.&#x0a;&#x0a;Si instaló desde un paquete, reinstale la aplicación desde el instalador oficial para que se restauren todos los archivos DLL de los componentes (por ejemplo, junto a Engine.exe).</sys:String>
+    <sys:String x:Key="Home_Log_DllMissingHint">Sugerencia: no se pudo cargar una DLL requerida (consulte la línea anterior). Reinstale la aplicación desde el instalador oficial para restaurar los archivos faltantes.</sys:String>
+    <sys:String x:Key="Settings_IpLists">Listas de IP (evitar VPN)</sys:String>
+    <sys:String x:Key="Settings_IpLists_Subtitle">Envíe tráfico para las redes enumeradas fuera del túnel VPN agregando rutas divididas al perfil OpenVPN.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Enable">Usar listas de IP</sys:String>
+    <sys:String x:Key="Settings_IpLists_EnableSubtitle">Cuando está apagado, todo el tráfico utiliza la VPN.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Open">Configurar listas de IP…</sys:String>
+    <sys:String x:Key="IpList_Title">listas de IP</sys:String>
+    <sys:String x:Key="IpList_WindowsNotice">Las listas se fusionan en el perfil del cliente: se prefieren las rutas IPv4 hasta su límite de rutas; Las listas muy grandes pueden recortarse mediante el límite de tamaño del perfil. La omisión dividida de IPv6 está limitada en Windows: es posible que las líneas IPv6 no surtan efecto completo.</sys:String>
+    <sys:String x:Key="IpList_EnableTitle">Utilice listas de IP CIDR</sys:String>
+    <sys:String x:Key="IpList_EnableSubtitle">Descargue y aplique listas de redes agregadas para enrutamiento dividido.</sys:String>
+    <sys:String x:Key="IpList_DisabledNotice">Las listas de IP están deshabilitadas. Actívelo para editar fuentes y actualizar.</sys:String>
+    <sys:String x:Key="IpList_SourceTitle">Fuentes</sys:String>
+    <sys:String x:Key="IpList_SourceSubtitle">Una URL por línea (listas agregadas de IPv4 y/o IPv6).</sys:String>
+    <sys:String x:Key="IpList_FrequencyLabel">Frecuencia de actualización</sys:String>
+    <sys:String x:Key="IpList_Freq_6h">Cada 6 horas</sys:String>
+    <sys:String x:Key="IpList_Freq_Daily">A diario</sys:String>
+    <sys:String x:Key="IpList_Freq_Weekly">Semanalmente</sys:String>
+    <sys:String x:Key="IpList_Freq_Manual">Sólo manual</sys:String>
+    <sys:String x:Key="IpList_CoverageLabel">Cobertura</sys:String>
+    <sys:String x:Key="IpList_CoverageWinNote">Solo se aplica el límite de ruta numérico siguiente: las rutas IPv4 se eligen primero como las más amplias hasta ese límite. FAST y FULL afectan los pedidos antes de que se aplique el límite.</sys:String>
+    <sys:String x:Key="IpList_CoverageFast">Rápido (menos rutas)</sys:String>
+    <sys:String x:Key="IpList_CoverageFull">Completo (siga el orden de la lista)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitLabel">Rutas máximas en el perfil (primero IPv4)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitHint">Entre 50 y 3000. Los valores más pequeños mantienen el perfil más pequeño.</sys:String>
+    <sys:String x:Key="IpList_RouteLimitErrorFmt">Ingrese un límite de ruta entre {0} y {1}.</sys:String>
+    <sys:String x:Key="IpList_Save">Ahorrar</sys:String>
+    <sys:String x:Key="IpList_UpdateNow">Actualizar ahora</sys:String>
+    <sys:String x:Key="IpList_Saved">Guardado.</sys:String>
+    <sys:String x:Key="IpList_StatusTitle">Estado</sys:String>
+    <sys:String x:Key="IpList_LastUpdated">Última actualización:</sys:String>
+    <sys:String x:Key="IpList_LastUpdatedNever">nunca</sys:String>
+    <sys:String x:Key="IpList_LoadedRoutesFmt">Rutas analizadas: {0}</sys:String>
+    <sys:String x:Key="IpList_SourceListTruncated">La lista combinada era mayor de lo que el cargador admite por completo; Se omitieron entradas adicionales.</sys:String>
+    <sys:String x:Key="IpList_LastError">Último error:</sys:String>
+    <sys:String x:Key="IpList_LastErrorNone">ninguno</sys:String>
+    <sys:String x:Key="IpList_UpdateReadyFmt">Listas actualizadas. Rutas: {0}.</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFmt">Error en la actualización: {0}</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFallbackFmt">La actualización falló ({0}). Uso de respaldo en caché o empaquetado.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingTitle">Motor no encontrado</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">Falta el motor VPN (engine.exe). Reinstale DataGate para restaurarlo.&#x0a;&#x0a;Página de descarga: {0}&#x0a;&#x0a;Sí, ejecute el instalador incluido con esta aplicación (recomendado).&#x0a;No, abra la página de descarga en su navegador.&#x0a;Cancelar: cierre este mensaje.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">Falta el motor VPN (engine.exe). Reinstale DataGate.&#x0a;&#x0a;Página de descarga: {0}&#x0a;&#x0a;¿Abrir la página de descarga en su navegador ahora?</sys:String>
+    <sys:String x:Key="Home_Status_EngineMissing">Inactivo: se requiere reinstalación (falta el motor)</sys:String>
+    <sys:String x:Key="Home_Log_EngineMissing">ERROR: motor VPN no encontrado. Reinstale la aplicación o ejecute el instalador.</sys:String>
 </ResourceDictionary>
 

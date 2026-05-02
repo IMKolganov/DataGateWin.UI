@@ -176,5 +176,52 @@
     <sys:String x:Key="Tray_Exit">Exit</sys:String>
     <sys:String x:Key="Tray_Open">Open</sys:String>
     <sys:String x:Key="Tray_Tooltip">DataGate</sys:String>
+
+    <!-- Missing keys synced from en (machine-translated) -->
+    <sys:String x:Key="Err_EngineExit_HeadFmt">Двигун одразу зупинився. Код виходу={0}. LastOut={1}. LastErr={2}</sys:String>
+    <sys:String x:Key="Err_EngineExit_HintDllNotFound">Код виходу 0xC0000135 означає, що завантажувач Windows не зміг вирішити залежну DLL до запуску engine.exe — система ніколи не запускається, тому stdout/stderr залишаються порожніми, а інтерфейс користувача не може прочитати відсутнє ім’я файлу.&#x0a;&#x0a;• Часто OpenSSL: скопіюйте libcrypto-3-x64.dll і libssl-3-x64.dll із вашого vcpkg Install\x64-windows\bin поруч із engine.exe (або запустіть Build-Engine.ps1 — він їх копіює).&#x0a;• Якщо CRT відсутній, інсталюйте «Microsoft Visual C++ 2015–2022 Redistributable (x64)». Для збірок налагодження може знадобитися MSVC на машині.&#x0a;&#x0a;Якщо ви інсталювали програму з пакета, повторно інсталюйте програму з офіційного інсталятора, щоб усі компоненти DLL (наприклад, поруч із engine.exe) були відновлені.</sys:String>
+    <sys:String x:Key="Home_Log_DllMissingHint">Підказка: не вдалося завантажити необхідну DLL (див. рядок вище). Перевстановіть програму з офіційного інсталятора, щоб відновити відсутні файли.</sys:String>
+    <sys:String x:Key="Settings_IpLists">Списки IP (обхід VPN)</sys:String>
+    <sys:String x:Key="Settings_IpLists_Subtitle">Надсилайте трафік для перелічених мереж за межі VPN-тунелю, додаючи розділені маршрути до профілю OpenVPN.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Enable">Використовуйте списки IP-адрес</sys:String>
+    <sys:String x:Key="Settings_IpLists_EnableSubtitle">Коли вимкнено, увесь трафік використовує VPN.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Open">Налаштувати списки IP-адрес…</sys:String>
+    <sys:String x:Key="IpList_Title">IP списки</sys:String>
+    <sys:String x:Key="IpList_WindowsNotice">Списки об’єднуються в профіль клієнта: маршрути IPv4 є кращими до вашого ліміту маршрутів; дуже великі списки можуть бути обмежені обмеженням розміру профілю. Функція розділеного обходу IPv6 обмежена в Windows — лінії IPv6 можуть працювати не повністю.</sys:String>
+    <sys:String x:Key="IpList_EnableTitle">Використовуйте списки IP-адрес CIDR</sys:String>
+    <sys:String x:Key="IpList_EnableSubtitle">Завантажте та застосуйте зведені списки мереж для розділеної маршрутизації.</sys:String>
+    <sys:String x:Key="IpList_DisabledNotice">Списки IP-адрес вимкнено. Увімкніть для редагування джерел і оновлення.</sys:String>
+    <sys:String x:Key="IpList_SourceTitle">Джерела</sys:String>
+    <sys:String x:Key="IpList_SourceSubtitle">Одна URL-адреса на рядок (зведені списки IPv4 та/або IPv6).</sys:String>
+    <sys:String x:Key="IpList_FrequencyLabel">Частота оновлення</sys:String>
+    <sys:String x:Key="IpList_Freq_6h">Кожні 6 годин</sys:String>
+    <sys:String x:Key="IpList_Freq_Daily">Щодня</sys:String>
+    <sys:String x:Key="IpList_Freq_Weekly">Щотижня</sys:String>
+    <sys:String x:Key="IpList_Freq_Manual">Тільки вручну</sys:String>
+    <sys:String x:Key="IpList_CoverageLabel">Покриття</sys:String>
+    <sys:String x:Key="IpList_CoverageWinNote">Застосовується лише наведене нижче числове обмеження маршруту: маршрути IPv4 вибираються спочатку найширшими до цього обмеження. FAST і FULL впливають на впорядкування до застосування обмеження.</sys:String>
+    <sys:String x:Key="IpList_CoverageFast">Швидко (менше маршрутів)</sys:String>
+    <sys:String x:Key="IpList_CoverageFull">Повний (дотримуйтеся порядку списку)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitLabel">Максимальна кількість маршрутів у профілі (спочатку IPv4)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitHint">Від 50 до 3000. Менші значення зберігають профіль меншим.</sys:String>
+    <sys:String x:Key="IpList_RouteLimitErrorFmt">Введіть обмеження маршруту між {0} та {1}.</sys:String>
+    <sys:String x:Key="IpList_Save">зберегти</sys:String>
+    <sys:String x:Key="IpList_UpdateNow">Оновіть зараз</sys:String>
+    <sys:String x:Key="IpList_Saved">Збережено.</sys:String>
+    <sys:String x:Key="IpList_StatusTitle">Статус</sys:String>
+    <sys:String x:Key="IpList_LastUpdated">Останнє оновлення:</sys:String>
+    <sys:String x:Key="IpList_LastUpdatedNever">ніколи</sys:String>
+    <sys:String x:Key="IpList_LoadedRoutesFmt">Розібрані маршрути: {0}</sys:String>
+    <sys:String x:Key="IpList_SourceListTruncated">Об’єднаний список був більшим, ніж повністю підтримує завантажувач; додаткові записи були пропущені.</sys:String>
+    <sys:String x:Key="IpList_LastError">Остання помилка:</sys:String>
+    <sys:String x:Key="IpList_LastErrorNone">немає</sys:String>
+    <sys:String x:Key="IpList_UpdateReadyFmt">Списки оновлено. Маршрути: {0}.</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFmt">Помилка оновлення: {0}</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Помилка оновлення ({0}). Використання кешованого або об’єднаного резервного варіанта.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingTitle">Двигун не знайдено</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">Механізм VPN (engine.exe) відсутній. Перевстановіть DataGate, щоб відновити його.&#x0a;&#x0a;Сторінка завантаження: {0}&#x0a;&#x0a;Так — запустіть програму встановлення, що входить до складу цієї програми (рекомендовано).&#x0a;Ні — відкрийте сторінку завантаження у своєму браузері.&#x0a;Скасувати — закрийте це повідомлення.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">Механізм VPN (engine.exe) відсутній. Перевстановіть DataGate.&#x0a;&#x0a;Сторінка завантаження: {0}&#x0a;&#x0a;Відкрити сторінку завантаження у своєму браузері?</sys:String>
+    <sys:String x:Key="Home_Status_EngineMissing">Неактивний — потрібна перевстановлення (відсутній двигун)</sys:String>
+    <sys:String x:Key="Home_Log_EngineMissing">ПОМИЛКА: механізм VPN не знайдено. Перевстановіть програму або запустіть інсталятор.</sys:String>
 </ResourceDictionary>
 

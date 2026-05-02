@@ -176,5 +176,52 @@
     <sys:String x:Key="Tray_Exit">Exit</sys:String>
     <sys:String x:Key="Tray_Open">Open</sys:String>
     <sys:String x:Key="Tray_Tooltip">DataGate</sys:String>
+
+    <!-- Missing keys synced from en (machine-translated) -->
+    <sys:String x:Key="Err_EngineExit_HeadFmt">เครื่องยนต์หยุดทำงานทันที รหัสทางออก={0}. สุดท้ายออก={1}. LastErr={2}</sys:String>
+    <sys:String x:Key="Err_EngineExit_HintDllNotFound">รหัสออก 0xC0000135 หมายความว่าตัวโหลด Windows ไม่สามารถแก้ไข DLL ที่เกี่ยวข้องก่อนที่ engine.exe จะเริ่มทำงาน — กลไกไม่เคยทำงาน ดังนั้น stdout/stderr จึงว่างเปล่าและ UI ไม่สามารถอ่านชื่อไฟล์ที่หายไปได้&#x0a;&#x0a;• OpenSSL บ่อยครั้ง: คัดลอก libcrypto-3-x64.dll และ libssl-3-x64.dll จาก vcpkg ของคุณ ติดตั้ง\x64-windows\bin ถัดจาก engine.exe (หรือเรียกใช้ Build-Engine.ps1 — ซึ่งจะเป็นการคัดลอก)&#x0a;• หากไม่มี CRT หายไป ให้ติดตั้ง “Microsoft Visual C++ 2015–2022 Redistributable (x64)” การสร้างการแก้ไขข้อบกพร่องอาจต้องใช้ MSVC บนเครื่อง&#x0a;&#x0a;หากคุณติดตั้งจากแพ็คเกจ ให้ติดตั้งแอปพลิเคชันใหม่จากโปรแกรมติดตั้งอย่างเป็นทางการ เพื่อให้ DLL ของส่วนประกอบทั้งหมด (เช่น ถัดจาก engine.exe) จะได้รับการกู้คืน</sys:String>
+    <sys:String x:Key="Home_Log_DllMissingHint">คำแนะนำ: ไม่สามารถโหลด DLL ที่จำเป็นได้ (ดูบรรทัดด้านบน) ติดตั้งแอปพลิเคชันใหม่จากตัวติดตั้งอย่างเป็นทางการเพื่อกู้คืนไฟล์ที่หายไป</sys:String>
+    <sys:String x:Key="Settings_IpLists">รายการ IP (บายพาส VPN)</sys:String>
+    <sys:String x:Key="Settings_IpLists_Subtitle">ส่งการรับส่งข้อมูลสำหรับเครือข่ายที่อยู่ในรายการนอกอุโมงค์ VPN โดยการต่อท้ายเส้นทางแยกเข้ากับโปรไฟล์ OpenVPN</sys:String>
+    <sys:String x:Key="Settings_IpLists_Enable">ใช้รายการ IP</sys:String>
+    <sys:String x:Key="Settings_IpLists_EnableSubtitle">เมื่อปิด การรับส่งข้อมูลทั้งหมดจะใช้ VPN</sys:String>
+    <sys:String x:Key="Settings_IpLists_Open">กำหนดค่ารายการ IP...</sys:String>
+    <sys:String x:Key="IpList_Title">รายการ IP</sys:String>
+    <sys:String x:Key="IpList_WindowsNotice">รายการจะถูกรวมเข้ากับโปรไฟล์ไคลเอ็นต์: เส้นทาง IPv4 เป็นที่ต้องการ ขึ้นอยู่กับขีดจำกัดเส้นทางของคุณ รายการที่มีขนาดใหญ่มากอาจถูกตัดแต่งด้วยขนาดโปรไฟล์สูงสุด การบายพาสการแยก IPv6 ถูกจำกัดบน Windows—บรรทัด IPv6 อาจไม่มีผลเต็มรูปแบบ</sys:String>
+    <sys:String x:Key="IpList_EnableTitle">ใช้รายการ CIDR IP</sys:String>
+    <sys:String x:Key="IpList_EnableSubtitle">ดาวน์โหลดและใช้รายการเครือข่ายรวมสำหรับการแบ่งเส้นทาง</sys:String>
+    <sys:String x:Key="IpList_DisabledNotice">รายการ IP ถูกปิดใช้งาน เปิดเพื่อแก้ไขแหล่งที่มาและอัปเดต</sys:String>
+    <sys:String x:Key="IpList_SourceTitle">แหล่งที่มา</sys:String>
+    <sys:String x:Key="IpList_SourceSubtitle">หนึ่ง URL ต่อบรรทัด (รายการรวม IPv4 และ/หรือ IPv6)</sys:String>
+    <sys:String x:Key="IpList_FrequencyLabel">ความถี่ในการอัพเดต</sys:String>
+    <sys:String x:Key="IpList_Freq_6h">ทุก 6 ชั่วโมง</sys:String>
+    <sys:String x:Key="IpList_Freq_Daily">รายวัน</sys:String>
+    <sys:String x:Key="IpList_Freq_Weekly">รายสัปดาห์</sys:String>
+    <sys:String x:Key="IpList_Freq_Manual">คู่มือเท่านั้น</sys:String>
+    <sys:String x:Key="IpList_CoverageLabel">ความคุ้มครอง</sys:String>
+    <sys:String x:Key="IpList_CoverageWinNote">ใช้เฉพาะขีดจำกัดเส้นทางที่เป็นตัวเลขด้านล่างเท่านั้น: เส้นทาง IPv4 จะถูกเลือกให้กว้างที่สุด-มาก่อนจนถึงขีดจำกัดนั้น FAST และ FULL ส่งผลต่อการจัดลำดับก่อนที่จะใช้ขีดจำกัด</sys:String>
+    <sys:String x:Key="IpList_CoverageFast">รวดเร็ว (เส้นทางน้อยลง)</sys:String>
+    <sys:String x:Key="IpList_CoverageFull">เต็ม (ตามลำดับรายการ)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitLabel">เส้นทางสูงสุดในโปรไฟล์ (IPv4-first)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitHint">ระหว่าง 50 ถึง 3000 ค่าที่น้อยกว่าจะทำให้โปรไฟล์เล็กลง</sys:String>
+    <sys:String x:Key="IpList_RouteLimitErrorFmt">ป้อนขีดจำกัดเส้นทางระหว่าง {0} และ {1}</sys:String>
+    <sys:String x:Key="IpList_Save">บันทึก</sys:String>
+    <sys:String x:Key="IpList_UpdateNow">อัปเดตตอนนี้</sys:String>
+    <sys:String x:Key="IpList_Saved">บันทึกแล้ว</sys:String>
+    <sys:String x:Key="IpList_StatusTitle">สถานะ</sys:String>
+    <sys:String x:Key="IpList_LastUpdated">อัปเดตล่าสุด:</sys:String>
+    <sys:String x:Key="IpList_LastUpdatedNever">ไม่เคย</sys:String>
+    <sys:String x:Key="IpList_LoadedRoutesFmt">แยกวิเคราะห์เส้นทาง: {0}</sys:String>
+    <sys:String x:Key="IpList_SourceListTruncated">รายการที่รวมกันมีขนาดใหญ่กว่าตัวโหลดที่รองรับอย่างสมบูรณ์ รายการพิเศษถูกข้ามไป</sys:String>
+    <sys:String x:Key="IpList_LastError">ข้อผิดพลาดครั้งล่าสุด:</sys:String>
+    <sys:String x:Key="IpList_LastErrorNone">ไม่มี</sys:String>
+    <sys:String x:Key="IpList_UpdateReadyFmt">อัปเดตรายการแล้ว เส้นทาง: {0}.</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFmt">การอัปเดตล้มเหลว: {0}</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFallbackFmt">การอัปเดตล้มเหลว ({0}) การใช้ทางเลือกสำรองแบบแคชหรือแบบรวมกลุ่ม</sys:String>
+    <sys:String x:Key="Msg_EngineMissingTitle">ไม่พบเครื่องยนต์</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">กลไก VPN (engine.exe) หายไป ติดตั้ง DataGate อีกครั้งเพื่อคืนค่า&#x0a;&#x0a;หน้าดาวน์โหลด: {0}&#x0a;&#x0a;ใช่ — เรียกใช้โปรแกรมติดตั้งที่มาพร้อมกับแอปนี้ (แนะนำ)&#x0a;ไม่ — เปิดหน้าดาวน์โหลดในเบราว์เซอร์ของคุณ&#x0a;Cancel — ปิดข้อความนี้</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">กลไก VPN (engine.exe) หายไป กรุณาติดตั้ง DataGate ใหม่อีกครั้ง&#x0a;&#x0a;หน้าดาวน์โหลด: {0}&#x0a;&#x0a;เปิดหน้าดาวน์โหลดในเบราว์เซอร์ของคุณตอนนี้หรือไม่?</sys:String>
+    <sys:String x:Key="Home_Status_EngineMissing">ไม่ได้ใช้งาน — จำเป็นต้องติดตั้งใหม่ (เครื่องยนต์หายไป)</sys:String>
+    <sys:String x:Key="Home_Log_EngineMissing">ข้อผิดพลาด: ไม่พบเอ็นจิ้น VPN ติดตั้งแอปพลิเคชันใหม่หรือเรียกใช้โปรแกรมติดตั้ง</sys:String>
 </ResourceDictionary>
 

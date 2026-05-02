@@ -176,5 +176,52 @@
     <sys:String x:Key="Tray_Exit">Exit</sys:String>
     <sys:String x:Key="Tray_Open">Open</sys:String>
     <sys:String x:Key="Tray_Tooltip">DataGate</sys:String>
+
+    <!-- Missing keys synced from en (machine-translated) -->
+    <sys:String x:Key="Err_EngineExit_HeadFmt">Variklis iškart sustojo. ExitCode={0}. LastOut={1}. LastErr={2}</sys:String>
+    <sys:String x:Key="Err_EngineExit_HintDllNotFound">Išėjimo kodas 0xC0000135 reiškia, kad Windows įkroviklis negalėjo išspręsti priklausomo DLL prieš paleidžiant engine.exe – variklis niekada neveikia, todėl stdout/stderr lieka tuščias, o vartotojo sąsaja negali nuskaityti trūkstamo failo pavadinimo.&#x0a;&#x0a;• Dažnai OpenSSL: nukopijuokite libscrypto-3-x64.dll.dll ir-libscslkg ir - įdiegta\x64-windows\bin šalia engine.exe (arba paleiskite Build-Engine.ps1 – jis juos nukopijuoja).&#x0a;• Jei trūksta CRT, įdiekite „Microsoft Visual C++ 2015–2022 Redistributable (x64)“. Derinimo versijose kompiuteryje gali prireikti MSVC.&#x0a;&#x0a;Jei įdiegėte iš paketo, iš naujo įdiekite programą iš oficialios diegimo programos, kad būtų atkurti visi komponentų DLL (pvz., šalia engine.exe).</sys:String>
+    <sys:String x:Key="Home_Log_DllMissingHint">Užuomina: nepavyko įkelti reikiamo DLL (žr. aukščiau esančią eilutę). Iš naujo įdiekite programą iš oficialios diegimo programos, kad atkurtumėte trūkstamus failus.</sys:String>
+    <sys:String x:Key="Settings_IpLists">IP sąrašai (apeiti VPN)</sys:String>
+    <sys:String x:Key="Settings_IpLists_Subtitle">Siųskite srautą į išvardytus tinklus, esančius už VPN tunelio ribų, pridėdami padalintus maršrutus prie OpenVPN profilio.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Enable">Naudokite IP sąrašus</sys:String>
+    <sys:String x:Key="Settings_IpLists_EnableSubtitle">Kai išjungta, visas srautas naudoja VPN.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Open">Konfigūruoti IP sąrašus…</sys:String>
+    <sys:String x:Key="IpList_Title">IP sąrašai</sys:String>
+    <sys:String x:Key="IpList_WindowsNotice">Sąrašai sujungiami į kliento profilį: pirmenybė teikiama IPv4 maršrutams iki maršruto limito; labai dideli sąrašai gali būti apkarpyti profilio dydžio dangteliu. „Windows“ sistemoje IPv6 padalijamas apėjimas ribojamas – IPv6 linijos gali neveikti visiškai.</sys:String>
+    <sys:String x:Key="IpList_EnableTitle">Naudokite CIDR IP sąrašus</sys:String>
+    <sys:String x:Key="IpList_EnableSubtitle">Atsisiųskite ir taikykite apibendrintus tinklų sąrašus, skirtus padalinti maršrutą.</sys:String>
+    <sys:String x:Key="IpList_DisabledNotice">IP sąrašai išjungti. Įjunkite, kad galėtumėte redaguoti šaltinius ir atnaujinti.</sys:String>
+    <sys:String x:Key="IpList_SourceTitle">Šaltiniai</sys:String>
+    <sys:String x:Key="IpList_SourceSubtitle">Vienas URL eilutėje (IPv4 ir (arba) IPv6 sukaupti sąrašai).</sys:String>
+    <sys:String x:Key="IpList_FrequencyLabel">Atnaujinimo dažnis</sys:String>
+    <sys:String x:Key="IpList_Freq_6h">Kas 6 valandas</sys:String>
+    <sys:String x:Key="IpList_Freq_Daily">Kasdien</sys:String>
+    <sys:String x:Key="IpList_Freq_Weekly">Kas savaitę</sys:String>
+    <sys:String x:Key="IpList_Freq_Manual">Tik rankiniu būdu</sys:String>
+    <sys:String x:Key="IpList_CoverageLabel">Aprėptis</sys:String>
+    <sys:String x:Key="IpList_CoverageWinNote">Taikomas tik toliau nurodytas skaitinis maršruto apribojimas: IPv4 maršrutai pasirenkami plačiausiai iki tos ribos. GREITAS ir PILNAS turi įtakos užsakymui prieš pradedant taikyti limitą.</sys:String>
+    <sys:String x:Key="IpList_CoverageFast">Greitas (mažiau maršrutų)</sys:String>
+    <sys:String x:Key="IpList_CoverageFull">Visas (sekite sąrašo tvarką)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitLabel">Maksimalus maršrutų skaičius profilyje (pirmiausia IPv4)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitHint">Nuo 50 iki 3000. Mažesnės vertės sumažina profilį.</sys:String>
+    <sys:String x:Key="IpList_RouteLimitErrorFmt">Įveskite maršruto ribą tarp {0} ir {1}.</sys:String>
+    <sys:String x:Key="IpList_Save">Išsaugoti</sys:String>
+    <sys:String x:Key="IpList_UpdateNow">Atnaujinkite dabar</sys:String>
+    <sys:String x:Key="IpList_Saved">Išsaugota.</sys:String>
+    <sys:String x:Key="IpList_StatusTitle">Būsena</sys:String>
+    <sys:String x:Key="IpList_LastUpdated">Paskutinį kartą atnaujinta:</sys:String>
+    <sys:String x:Key="IpList_LastUpdatedNever">niekada</sys:String>
+    <sys:String x:Key="IpList_LoadedRoutesFmt">Išanalizuoti maršrutai: {0}</sys:String>
+    <sys:String x:Key="IpList_SourceListTruncated">Bendras sąrašas buvo didesnis nei krautuvas visiškai palaiko; papildomi įrašai buvo praleisti.</sys:String>
+    <sys:String x:Key="IpList_LastError">Paskutinė klaida:</sys:String>
+    <sys:String x:Key="IpList_LastErrorNone">jokios</sys:String>
+    <sys:String x:Key="IpList_UpdateReadyFmt">Sąrašai atnaujinti. Maršrutai: {0}.</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFmt">Nepavyko atnaujinti: {0}</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Nepavyko atnaujinti ({0}). Naudojant talpykloje saugomą arba sugrupuotą atsarginę kopiją.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingTitle">Variklis nerastas</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">Trūksta VPN variklio (engine.exe). Iš naujo įdiekite DataGate, kad ją atkurtumėte.&#x0a;&#x0a;Atsisiuntimo puslapis: {0}&#x0a;&#x0a;Taip – ​​paleiskite su šia programa susietą diegimo programą (rekomenduojama).&#x0a;Ne – naršyklėje atidarykite atsisiuntimo puslapį.&#x0a;Atšaukti šį pranešimą.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">Trūksta VPN variklio (engine.exe). Iš naujo įdiekite „DataGate“.&#x0a;&#x0a;Atsisiuntimo puslapis: {0}&#x0a;&#x0a;Ar atidaryti atsisiuntimo puslapį naršyklėje dabar?</sys:String>
+    <sys:String x:Key="Home_Status_EngineMissing">Tuščioji eiga – reikia iš naujo įdiegti (trūksta variklio)</sys:String>
+    <sys:String x:Key="Home_Log_EngineMissing">KLAIDA: VPN variklis nerastas. Iš naujo įdiekite programą arba paleiskite diegimo programą.</sys:String>
 </ResourceDictionary>
 

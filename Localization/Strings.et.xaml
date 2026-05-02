@@ -176,5 +176,52 @@
     <sys:String x:Key="Tray_Exit">Exit</sys:String>
     <sys:String x:Key="Tray_Open">Open</sys:String>
     <sys:String x:Key="Tray_Tooltip">DataGate</sys:String>
+
+    <!-- Missing keys synced from en (machine-translated) -->
+    <sys:String x:Key="Err_EngineExit_HeadFmt">Mootor seiskus kohe. ExitCode={0}. LastOut={1}. LastErr={2}</sys:String>
+    <sys:String x:Key="Err_EngineExit_HintDllNotFound">Väljumiskood 0xC0000135 tähendab, et Windowsi laadur ei saanud sõltuvat DLL-i lahendada enne engine.exe käivitamist – mootor ei käivitu kunagi, nii et stdout/stderr jäävad tühjaks ja kasutajaliides ei saa puuduvat failinime lugeda.&#x0a;&#x0a;• Sageli OpenSSL: kopeerige failist libscrypto-3-x64.dll ja - libscslkg.dll install\x64-windows\bin faili engine.exe kõrvale (või käivitage Build-Engine.ps1 – see kopeerib need).&#x0a;• Kui CRT puudub, installige „Microsoft Visual C++ 2015–2022 Redistributable (x64)”. Silumisjärgud võivad vajada masinas MSVC-d.&#x0a;&#x0a;Kui installisite paketist, installige rakendus uuesti ametliku installija kaudu, et taastataks kõik komponentide DLL-id (nt engine.exe kõrval).</sys:String>
+    <sys:String x:Key="Home_Log_DllMissingHint">Vihje: vajalikku DLL-i ei saanud laadida (vt ülaltoodud rida). Puuduvate failide taastamiseks installige rakendus uuesti ametlikust installiprogrammist.</sys:String>
+    <sys:String x:Key="Settings_IpLists">IP-loendid (VPN-ist möödasõit)</sys:String>
+    <sys:String x:Key="Settings_IpLists_Subtitle">Saatke loetletud võrkude liiklus väljaspool VPN-tunnelit, lisades OpenVPN-i profiilile jagatud marsruudid.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Enable">Kasutage IP-loendeid</sys:String>
+    <sys:String x:Key="Settings_IpLists_EnableSubtitle">Kui see on välja lülitatud, kasutab kogu liiklus VPN-i.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Open">IP-loendite seadistamine…</sys:String>
+    <sys:String x:Key="IpList_Title">IP loendid</sys:String>
+    <sys:String x:Key="IpList_WindowsNotice">Loendid liidetakse kliendiprofiiliga: eelistatakse IPv4 marsruute kuni teie marsruudipiiranguni; väga suuri loendeid saab kärpida profiili suuruse piiriga. IPv6 poolitatud möödaviimine on Windowsis piiratud – IPv6 liinid ei pruugi täielikult toimida.</sys:String>
+    <sys:String x:Key="IpList_EnableTitle">Kasutage CIDR-i IP-loendeid</sys:String>
+    <sys:String x:Key="IpList_EnableSubtitle">Laadige alla ja rakendage jagatud marsruutimiseks koondatud võrguloendeid.</sys:String>
+    <sys:String x:Key="IpList_DisabledNotice">IP-loendid on keelatud. Allikate muutmiseks ja värskendamiseks lülitage see sisse.</sys:String>
+    <sys:String x:Key="IpList_SourceTitle">Allikad</sys:String>
+    <sys:String x:Key="IpList_SourceSubtitle">Üks URL rea kohta (IPv4 ja/või IPv6 koondatud loendid).</sys:String>
+    <sys:String x:Key="IpList_FrequencyLabel">Värskendamise sagedus</sys:String>
+    <sys:String x:Key="IpList_Freq_6h">Iga 6 tunni järel</sys:String>
+    <sys:String x:Key="IpList_Freq_Daily">Igapäevane</sys:String>
+    <sys:String x:Key="IpList_Freq_Weekly">Iganädalane</sys:String>
+    <sys:String x:Key="IpList_Freq_Manual">Ainult käsitsi</sys:String>
+    <sys:String x:Key="IpList_CoverageLabel">Katvus</sys:String>
+    <sys:String x:Key="IpList_CoverageWinNote">Kehtib ainult allolev marsruudi numbriline limiit: IPv4 marsruudid valitakse kõige laiemalt kuni selle ülempiirini. KIIRE ja TÄIELIK mõjutavad tellimist enne limiidi rakendumist.</sys:String>
+    <sys:String x:Key="IpList_CoverageFast">Kiire (vähem marsruute)</sys:String>
+    <sys:String x:Key="IpList_CoverageFull">Täielik (jälgi loendi järjekorda)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitLabel">Maksimaalsed marsruudid profiilis (kõigepealt IPv4)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitHint">50 ja 3000 vahel. Väiksemad väärtused hoiavad profiili väiksemana.</sys:String>
+    <sys:String x:Key="IpList_RouteLimitErrorFmt">Sisestage marsruudi piirang punktide {0} ja {1} vahel.</sys:String>
+    <sys:String x:Key="IpList_Save">Salvesta</sys:String>
+    <sys:String x:Key="IpList_UpdateNow">Värskendage kohe</sys:String>
+    <sys:String x:Key="IpList_Saved">Salvestatud.</sys:String>
+    <sys:String x:Key="IpList_StatusTitle">Olek</sys:String>
+    <sys:String x:Key="IpList_LastUpdated">Viimati värskendatud:</sys:String>
+    <sys:String x:Key="IpList_LastUpdatedNever">mitte kunagi</sys:String>
+    <sys:String x:Key="IpList_LoadedRoutesFmt">Sõelutud marsruudid: {0}</sys:String>
+    <sys:String x:Key="IpList_SourceListTruncated">Kombineeritud loend oli suurem, kui laadur täielikult toetab; lisakanded jäeti vahele.</sys:String>
+    <sys:String x:Key="IpList_LastError">Viimane viga:</sys:String>
+    <sys:String x:Key="IpList_LastErrorNone">mitte ühtegi</sys:String>
+    <sys:String x:Key="IpList_UpdateReadyFmt">Nimekirjad uuendatud. Marsruudid: {0}.</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFmt">Värskendamine ebaõnnestus: {0}</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Värskendamine ebaõnnestus ({0}). Vahemällu salvestatud või komplekteeritud varu kasutamine.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingTitle">Mootorit ei leitud</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">VPN-i mootor (engine.exe) puudub. Selle taastamiseks installige DataGate uuesti.&#x0a;&#x0a;Laadi alla leht: {0}&#x0a;&#x0a;Jah – käivitage selle rakendusega komplektis olev installiprogramm (soovitatav).&#x0a;Ei – avage brauseris allalaadimisleht.&#x0a;Tühista sõnum.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">VPN-i mootor (engine.exe) puudub. Installige DataGate uuesti.&#x0a;&#x0a;Allalaadimisleht: {0}&#x0a;&#x0a;Kas avada brauseris allalaadimisleht kohe?</sys:String>
+    <sys:String x:Key="Home_Status_EngineMissing">Tühikäik – nõutav uuesti installimine (mootor puudub)</sys:String>
+    <sys:String x:Key="Home_Log_EngineMissing">VIGA: VPN-i mootorit ei leitud. Installige rakendus uuesti või käivitage installiprogramm.</sys:String>
 </ResourceDictionary>
 

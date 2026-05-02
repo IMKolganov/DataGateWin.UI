@@ -176,5 +176,52 @@
     <sys:String x:Key="Tray_Exit">Exit</sys:String>
     <sys:String x:Key="Tray_Open">Open</sys:String>
     <sys:String x:Key="Tray_Tooltip">DataGate</sys:String>
+
+    <!-- Missing keys synced from en (machine-translated) -->
+    <sys:String x:Key="Err_EngineExit_HeadFmt">موتور بلافاصله خاموش شد. ExitCode={0}. LastOut={1}. LastErr={2}</sys:String>
+    <sys:String x:Key="Err_EngineExit_HintDllNotFound">کد خروج 0xC0000135 به این معنی است که لودر ویندوز نمی‌تواند یک DLL وابسته را قبل از شروع engine.exe حل کند — موتور هرگز اجرا نمی‌شود، بنابراین stdout/stderr خالی می‌ماند و رابط کاربری نمی‌تواند نام فایل گمشده را بخواند.&#x0a;&#x0a;• اغلب OpenSSL: libcrypto-3-3-x64xl-dll خود را کپی کنید. vcpkg\x64-windows\bin در کنار engine.exe نصب شده است (یا Build-Engine.ps1 را اجرا کنید — آنها را کپی می کند). ساخت‌های اشکال‌زدایی ممکن است به MSVC روی دستگاه نیاز داشته باشند.&#x0a;&#x0a;اگر از یک بسته نصب کرده‌اید، برنامه را از نصب‌کننده رسمی مجدداً نصب کنید تا همه DLL‌های مؤلفه (مثلاً در کنار engine.exe) بازیابی شوند.</sys:String>
+    <sys:String x:Key="Home_Log_DllMissingHint">نکته: یک DLL مورد نیاز بارگیری نمی شود (به خط بالا مراجعه کنید). برای بازیابی فایل های از دست رفته، برنامه را مجدداً از نصب کننده رسمی نصب کنید.</sys:String>
+    <sys:String x:Key="Settings_IpLists">لیست های IP (با عبور از VPN)</sys:String>
+    <sys:String x:Key="Settings_IpLists_Subtitle">با اضافه کردن مسیرهای تقسیم شده به نمایه OpenVPN، ترافیک شبکه های فهرست شده را در خارج از تونل VPN ارسال کنید.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Enable">از لیست های IP استفاده کنید</sys:String>
+    <sys:String x:Key="Settings_IpLists_EnableSubtitle">وقتی خاموش است، تمام ترافیک از VPN استفاده می کند.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Open">پیکربندی لیست های IP…</sys:String>
+    <sys:String x:Key="IpList_Title">لیست های IP</sys:String>
+    <sys:String x:Key="IpList_WindowsNotice">لیست ها در نمایه مشتری ادغام می شوند: مسیرهای IPv4 تا سقف مسیر شما ترجیح داده می شوند. لیست های بسیار بزرگ ممکن است با درپوش اندازه پروفایل کوتاه شوند. IPv6 split-bypass در ویندوز محدود است—خطوط IPv6 ممکن است به طور کامل اعمال نشوند.</sys:String>
+    <sys:String x:Key="IpList_EnableTitle">از لیست های IP CIDR استفاده کنید</sys:String>
+    <sys:String x:Key="IpList_EnableSubtitle">لیست های شبکه انبوه را برای مسیریابی تقسیمی دانلود و اعمال کنید.</sys:String>
+    <sys:String x:Key="IpList_DisabledNotice">لیست های IP غیرفعال هستند. برای ویرایش منابع و به روز رسانی روشن کنید.</sys:String>
+    <sys:String x:Key="IpList_SourceTitle">منابع</sys:String>
+    <sys:String x:Key="IpList_SourceSubtitle">یک نشانی وب در هر خط (فهرست های انبوه IPv4 و/یا IPv6).</sys:String>
+    <sys:String x:Key="IpList_FrequencyLabel">فرکانس به روز رسانی</sys:String>
+    <sys:String x:Key="IpList_Freq_6h">هر 6 ساعت</sys:String>
+    <sys:String x:Key="IpList_Freq_Daily">روزانه</sys:String>
+    <sys:String x:Key="IpList_Freq_Weekly">هفتگی</sys:String>
+    <sys:String x:Key="IpList_Freq_Manual">فقط دستی</sys:String>
+    <sys:String x:Key="IpList_CoverageLabel">پوشش</sys:String>
+    <sys:String x:Key="IpList_CoverageWinNote">فقط محدودیت مسیر عددی زیر اعمال می‌شود: مسیرهای IPv4 گسترده‌ترین و تا آن سقف انتخاب می‌شوند. FAST و FULL بر سفارش قبل از اعمال محدودیت تأثیر می گذارد.</sys:String>
+    <sys:String x:Key="IpList_CoverageFast">سریع (مسیرهای کمتر)</sys:String>
+    <sys:String x:Key="IpList_CoverageFull">کامل (ترتیب لیست را دنبال کنید)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitLabel">حداکثر مسیرها در نمایه (IPv4-first)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitHint">بین 50 تا 3000. مقادیر کوچکتر نمایه را کوچکتر نگه می دارد.</sys:String>
+    <sys:String x:Key="IpList_RouteLimitErrorFmt">یک محدودیت مسیر بین {0} و {1} وارد کنید.</sys:String>
+    <sys:String x:Key="IpList_Save">ذخیره کنید</sys:String>
+    <sys:String x:Key="IpList_UpdateNow">اکنون به روز رسانی کنید</sys:String>
+    <sys:String x:Key="IpList_Saved">ذخیره شد.</sys:String>
+    <sys:String x:Key="IpList_StatusTitle">وضعیت</sys:String>
+    <sys:String x:Key="IpList_LastUpdated">آخرین به روز رسانی:</sys:String>
+    <sys:String x:Key="IpList_LastUpdatedNever">هرگز</sys:String>
+    <sys:String x:Key="IpList_LoadedRoutesFmt">مسیرهای تجزیه شده: {0}</sys:String>
+    <sys:String x:Key="IpList_SourceListTruncated">لیست ترکیبی بزرگتر از آن چیزی بود که لودر به طور کامل پشتیبانی می کند. ورودی های اضافی نادیده گرفته شد.</sys:String>
+    <sys:String x:Key="IpList_LastError">آخرین خطا:</sys:String>
+    <sys:String x:Key="IpList_LastErrorNone">هیچ کدام</sys:String>
+    <sys:String x:Key="IpList_UpdateReadyFmt">لیست ها به روز شد مسیرها: {0}.</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFmt">به روز رسانی انجام نشد: {0}</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFallbackFmt">به روز رسانی انجام نشد ({0}). استفاده از حافظه پنهان یا بسته‌ای بازگشتی.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingTitle">موتور پیدا نشد</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">موتور VPN (engine.exe) وجود ندارد. برای بازیابی DataGate دوباره نصب کنید.&#x0a;&#x0a;صفحه دانلود: {0}&#x0a;&#x0a;بله — نصب کننده همراه با این برنامه را اجرا کنید (توصیه می شود).&#x0a;خیر — صفحه دانلود را در مرورگر خود باز کنید.⟦lBR⟧ این پیام را ببندید.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">موتور VPN (engine.exe) وجود ندارد. لطفاً DataGate را مجدداً نصب کنید.</sys:String>
+    <sys:String x:Key="Home_Status_EngineMissing">در حالت آماده به کار - نیاز به نصب مجدد (موتور وجود ندارد)</sys:String>
+    <sys:String x:Key="Home_Log_EngineMissing">خطا: موتور VPN پیدا نشد. برنامه را دوباره نصب کنید یا نصب کننده را اجرا کنید.</sys:String>
 </ResourceDictionary>
 

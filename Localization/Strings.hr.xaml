@@ -176,5 +176,52 @@
     <sys:String x:Key="Tray_Exit">Exit</sys:String>
     <sys:String x:Key="Tray_Open">Open</sys:String>
     <sys:String x:Key="Tray_Tooltip">DataGate</sys:String>
+
+    <!-- Missing keys synced from en (machine-translated) -->
+    <sys:String x:Key="Err_EngineExit_HeadFmt">Motor se odmah zaustavio. Izlazni kod={0}. LastOut={1}. LastErr={2}</sys:String>
+    <sys:String x:Key="Err_EngineExit_HintDllNotFound">Izlazni kod 0xC0000135 znači da Windows loader nije mogao razriješiti zavisni DLL prije pokretanja engine.exe — motor nikada ne radi, tako da stdout/stderr ostaju prazni i korisničko sučelje ne može pročitati naziv datoteke koji nedostaje.&#x0a;&#x0a;• Često OpenSSL: kopirajte libcrypto-3-x64.dll i libssl-3-x64.dll iz vašeg vcpkg instaliran\x64-windows\bin pokraj engine.exe (ili pokrenite Build-Engine.ps1 — on ih kopira).&#x0a;• Ako CRT nedostaje, instalirajte "Microsoft Visual C++ 2015–2022 Redistributable (x64)". Debug builds možda će trebati MSVC na stroju.&#x0a;&#x0a;Ako ste instalirali iz paketa, ponovo instalirajte aplikaciju iz službenog programa za instalaciju tako da se svi DLL-ovi komponenti (na primjer pored engine.exe) vrate.</sys:String>
+    <sys:String x:Key="Home_Log_DllMissingHint">Savjet: potrebni DLL nije se mogao učitati (pogledajte gornji redak). Ponovno instalirajte aplikaciju iz službenog programa za instalaciju kako biste vratili datoteke koje nedostaju.</sys:String>
+    <sys:String x:Key="Settings_IpLists">IP liste (zaobilaženje VPN-a)</sys:String>
+    <sys:String x:Key="Settings_IpLists_Subtitle">Pošaljite promet za navedene mreže izvan VPN tunela dodavanjem podijeljenih ruta OpenVPN profilu.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Enable">Koristite IP liste</sys:String>
+    <sys:String x:Key="Settings_IpLists_EnableSubtitle">Kada je isključeno, sav promet koristi VPN.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Open">Konfiguriraj IP liste…</sys:String>
+    <sys:String x:Key="IpList_Title">IP liste</sys:String>
+    <sys:String x:Key="IpList_WindowsNotice">Popisi se spajaju u profil klijenta: IPv4 rute imaju prednost do vašeg ograničenja rute; vrlo veliki popisi mogu se smanjiti ograničenjem veličine profila. IPv6 split-bypass ograničen je u sustavu Windows—IPv6 linije možda neće imati puni učinak.</sys:String>
+    <sys:String x:Key="IpList_EnableTitle">Koristite CIDR IP liste</sys:String>
+    <sys:String x:Key="IpList_EnableSubtitle">Preuzmite i primijenite agregirane popise mreža za podijeljeno usmjeravanje.</sys:String>
+    <sys:String x:Key="IpList_DisabledNotice">IP liste su onemogućene. Uključite za uređivanje izvora i ažuriranje.</sys:String>
+    <sys:String x:Key="IpList_SourceTitle">Izvori</sys:String>
+    <sys:String x:Key="IpList_SourceSubtitle">Jedan URL po retku (IPv4 i/ili IPv6 agregirani popisi).</sys:String>
+    <sys:String x:Key="IpList_FrequencyLabel">Učestalost ažuriranja</sys:String>
+    <sys:String x:Key="IpList_Freq_6h">Svakih 6 sati</sys:String>
+    <sys:String x:Key="IpList_Freq_Daily">Dnevno</sys:String>
+    <sys:String x:Key="IpList_Freq_Weekly">Tjedni</sys:String>
+    <sys:String x:Key="IpList_Freq_Manual">Samo ručno</sys:String>
+    <sys:String x:Key="IpList_CoverageLabel">Pokrivenost</sys:String>
+    <sys:String x:Key="IpList_CoverageWinNote">Primjenjuje se samo brojčano ograničenje rute u nastavku: IPv4 rute biraju se prve najšire do tog ograničenja. FAST i FULL utječu na naručivanje prije primjene ograničenja.</sys:String>
+    <sys:String x:Key="IpList_CoverageFast">Brzo (manje ruta)</sys:String>
+    <sys:String x:Key="IpList_CoverageFull">Cijeli (slijedite redoslijed popisa)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitLabel">Maksimalni broj ruta u profilu (IPv4-prvi)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitHint">Između 50 i 3000. Manje vrijednosti čine profil manjim.</sys:String>
+    <sys:String x:Key="IpList_RouteLimitErrorFmt">Unesite ograničenje rute između {0} i {1}.</sys:String>
+    <sys:String x:Key="IpList_Save">Uštedjeti</sys:String>
+    <sys:String x:Key="IpList_UpdateNow">Ažurirajte sada</sys:String>
+    <sys:String x:Key="IpList_Saved">Spremljeno.</sys:String>
+    <sys:String x:Key="IpList_StatusTitle">Status</sys:String>
+    <sys:String x:Key="IpList_LastUpdated">Zadnje ažuriranje:</sys:String>
+    <sys:String x:Key="IpList_LastUpdatedNever">nikada</sys:String>
+    <sys:String x:Key="IpList_LoadedRoutesFmt">Rute raščlanjene: {0}</sys:String>
+    <sys:String x:Key="IpList_SourceListTruncated">Kombinirani popis bio je veći nego što učitavač u potpunosti podržava; dodatni unosi su preskočeni.</sys:String>
+    <sys:String x:Key="IpList_LastError">Zadnja greška:</sys:String>
+    <sys:String x:Key="IpList_LastErrorNone">nikakav</sys:String>
+    <sys:String x:Key="IpList_UpdateReadyFmt">Popisi ažurirani. Rute: {0}.</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFmt">Ažuriranje nije uspjelo: {0}</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Ažuriranje nije uspjelo ({0}). Korištenje predmemorirane ili skupne zamjene.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingTitle">Motor nije pronađen</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">Nedostaje VPN mehanizam (engine.exe). Ponovno instalirajte DataGate da ga vratite.&#x0a;&#x0a;Stranica za preuzimanje: {0}&#x0a;&#x0a;Da — pokrenite instalacijski program u paketu s ovom aplikacijom (preporučeno).&#x0a;Ne — otvorite stranicu za preuzimanje u svom pregledniku.&#x0a;Odustani — zatvorite ovu poruku.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">Nedostaje VPN mehanizam (engine.exe). Molimo ponovno instalirajte DataGate.&#x0a;&#x0a;Stranica za preuzimanje: {0}&#x0a;&#x0a;Otvoriti sada stranicu za preuzimanje u svom pregledniku?</sys:String>
+    <sys:String x:Key="Home_Status_EngineMissing">Prazan hod — potrebna ponovna instalacija (nedostaje motor)</sys:String>
+    <sys:String x:Key="Home_Log_EngineMissing">POGREŠKA: VPN mehanizam nije pronađen. Ponovno instalirajte aplikaciju ili pokrenite instalacijski program.</sys:String>
 </ResourceDictionary>
 

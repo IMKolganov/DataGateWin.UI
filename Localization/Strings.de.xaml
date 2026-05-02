@@ -176,5 +176,52 @@
     <sys:String x:Key="Tray_Exit">Exit</sys:String>
     <sys:String x:Key="Tray_Open">Open</sys:String>
     <sys:String x:Key="Tray_Tooltip">DataGate</sys:String>
+
+    <!-- Missing keys synced from en (machine-translated) -->
+    <sys:String x:Key="Err_EngineExit_HeadFmt">Der Motor blieb sofort stehen. ExitCode={0}. LastOut={1}. LastErr={2}</sys:String>
+    <sys:String x:Key="Err_EngineExit_HintDllNotFound">Exit-Code 0xC0000135 bedeutet, dass der Windows-Loader eine abhängige DLL vor dem Start von engine.exe nicht auflösen konnte – die Engine wird nie ausgeführt, daher bleiben stdout/stderr leer und die Benutzeroberfläche kann den fehlenden Dateinamen nicht lesen.&#x0a;&#x0a;• Häufig OpenSSL: Kopieren Sie libcrypto-3-x64.dll und libssl-3-x64.dll aus Ihrem vcpkg install\x64-windows\bin neben engine.exe (oder führen Sie Build-Engine.ps1 aus – es kopiert sie).&#x0a;• Wenn die CRT fehlt, installieren Sie „Microsoft Visual C++ 2015–2022 Redistributable (x64)“. Für Debug-Builds ist möglicherweise MSVC auf dem Computer erforderlich.&#x0a;&#x0a;Wenn Sie aus einem Paket installiert haben, installieren Sie die Anwendung über das offizielle Installationsprogramm neu, damit alle Komponenten-DLLs (z. B. neben engine.exe) wiederhergestellt werden.</sys:String>
+    <sys:String x:Key="Home_Log_DllMissingHint">Hinweis: Eine erforderliche DLL konnte nicht geladen werden (siehe Zeile oben). Installieren Sie die Anwendung über das offizielle Installationsprogramm neu, um fehlende Dateien wiederherzustellen.</sys:String>
+    <sys:String x:Key="Settings_IpLists">IP-Listen (VPN umgehen)</sys:String>
+    <sys:String x:Key="Settings_IpLists_Subtitle">Senden Sie Datenverkehr für aufgelistete Netzwerke außerhalb des VPN-Tunnels, indem Sie geteilte Routen an das OpenVPN-Profil anhängen.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Enable">Verwenden Sie IP-Listen</sys:String>
+    <sys:String x:Key="Settings_IpLists_EnableSubtitle">Wenn diese Option deaktiviert ist, verwendet der gesamte Datenverkehr das VPN.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Open">IP-Listen konfigurieren…</sys:String>
+    <sys:String x:Key="IpList_Title">IP-Listen</sys:String>
+    <sys:String x:Key="IpList_WindowsNotice">Listen werden im Client-Profil zusammengeführt: IPv4-Routen werden bis zu Ihrem Routenlimit bevorzugt; Sehr große Listen können durch die Profilgrößenbeschränkung gekürzt werden. IPv6-Split-Bypass ist unter Windows eingeschränkt – IPv6-Leitungen entfalten möglicherweise nicht die volle Wirkung.</sys:String>
+    <sys:String x:Key="IpList_EnableTitle">Verwenden Sie CIDR-IP-Listen</sys:String>
+    <sys:String x:Key="IpList_EnableSubtitle">Laden Sie aggregierte Netzwerklisten für geteiltes Routing herunter und wenden Sie sie an.</sys:String>
+    <sys:String x:Key="IpList_DisabledNotice">IP-Listen sind deaktiviert. Aktivieren Sie diese Option, um Quellen zu bearbeiten und zu aktualisieren.</sys:String>
+    <sys:String x:Key="IpList_SourceTitle">Quellen</sys:String>
+    <sys:String x:Key="IpList_SourceSubtitle">Eine URL pro Zeile (aggregierte IPv4- und/oder IPv6-Listen).</sys:String>
+    <sys:String x:Key="IpList_FrequencyLabel">Aktualisierungshäufigkeit</sys:String>
+    <sys:String x:Key="IpList_Freq_6h">Alle 6 Stunden</sys:String>
+    <sys:String x:Key="IpList_Freq_Daily">Täglich</sys:String>
+    <sys:String x:Key="IpList_Freq_Weekly">Wöchentlich</sys:String>
+    <sys:String x:Key="IpList_Freq_Manual">Nur manuell</sys:String>
+    <sys:String x:Key="IpList_CoverageLabel">Abdeckung</sys:String>
+    <sys:String x:Key="IpList_CoverageWinNote">Es gilt nur die unten angegebene numerische Routenbeschränkung: Bis zu dieser Obergrenze werden IPv4-Routen mit der breitesten Priorität zuerst ausgewählt. FAST und FULL wirken sich auf die Bestellung aus, bevor das Limit angewendet wird.</sys:String>
+    <sys:String x:Key="IpList_CoverageFast">Schnell (weniger Routen)</sys:String>
+    <sys:String x:Key="IpList_CoverageFull">Vollständig (Listenreihenfolge befolgen)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitLabel">Maximale Routen im Profil (IPv4-first)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitHint">Zwischen 50 und 3000. Kleinere Werte halten das Profil kleiner.</sys:String>
+    <sys:String x:Key="IpList_RouteLimitErrorFmt">Geben Sie ein Routenlimit zwischen {0} und {1} ein.</sys:String>
+    <sys:String x:Key="IpList_Save">Speichern</sys:String>
+    <sys:String x:Key="IpList_UpdateNow">Jetzt aktualisieren</sys:String>
+    <sys:String x:Key="IpList_Saved">Gespeichert.</sys:String>
+    <sys:String x:Key="IpList_StatusTitle">Status</sys:String>
+    <sys:String x:Key="IpList_LastUpdated">Letzte Aktualisierung:</sys:String>
+    <sys:String x:Key="IpList_LastUpdatedNever">niemals</sys:String>
+    <sys:String x:Key="IpList_LoadedRoutesFmt">Geparste Routen: {0}</sys:String>
+    <sys:String x:Key="IpList_SourceListTruncated">Die kombinierte Liste war größer, als der Loader vollständig unterstützt; Zusätzliche Einträge wurden übersprungen.</sys:String>
+    <sys:String x:Key="IpList_LastError">Letzter Fehler:</sys:String>
+    <sys:String x:Key="IpList_LastErrorNone">keiner</sys:String>
+    <sys:String x:Key="IpList_UpdateReadyFmt">Listen aktualisiert. Routen: {0}.</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFmt">Update fehlgeschlagen: {0}</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Aktualisierung fehlgeschlagen ({0}). Verwendung von zwischengespeichertem oder gebündeltem Fallback.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingTitle">Motor nicht gefunden</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">Die VPN-Engine (engine.exe) fehlt. Installieren Sie DataGate neu, um es wiederherzustellen.&#x0a;&#x0a;Download-Seite: {0}&#x0a;&#x0a;Ja – führen Sie das mit dieser App gebündelte Installationsprogramm aus (empfohlen).&#x0a;Nein – öffnen Sie die Download-Seite in Ihrem Browser.&#x0a;Abbrechen – schließen Sie diese Nachricht.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">Die VPN-Engine (engine.exe) fehlt. Bitte installieren Sie DataGate neu.&#x0a;&#x0a;Download-Seite: {0}&#x0a;&#x0a;Jetzt die Download-Seite in Ihrem Browser öffnen?</sys:String>
+    <sys:String x:Key="Home_Status_EngineMissing">Leerlauf – Neuinstallation erforderlich (Motor fehlt)</sys:String>
+    <sys:String x:Key="Home_Log_EngineMissing">FEHLER: VPN-Engine nicht gefunden. Installieren Sie die Anwendung neu oder führen Sie das Installationsprogramm aus.</sys:String>
 </ResourceDictionary>
 

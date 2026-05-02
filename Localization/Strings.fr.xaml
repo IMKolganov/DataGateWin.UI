@@ -22,7 +22,7 @@
     <sys:String x:Key="Access_OverByFmt">Over by {0}</sys:String>
     <sys:String x:Key="Access_PlanDash">Plan: —</sys:String>
     <sys:String x:Key="Access_PlanFmt">Plan: {0}</sys:String>
-    <sys:String x:Key="Access_PlanQuotas">Your plan &amp;amp; quotas</sys:String>
+    <sys:String x:Key="Access_PlanQuotas">Votre forfait &amp; quotas</sys:String>
     <sys:String x:Key="Access_QuotaErrorFmt">Quota: {0}</sys:String>
     <sys:String x:Key="Access_QuotaMetaThisMonth">This calendar month</sys:String>
     <sys:String x:Key="Access_QuotaMetaToday">Today</sys:String>
@@ -176,5 +176,54 @@
     <sys:String x:Key="Tray_Exit">Exit</sys:String>
     <sys:String x:Key="Tray_Open">Open</sys:String>
     <sys:String x:Key="Tray_Tooltip">DataGate</sys:String>
+
+    <sys:String x:Key="Err_EngineExit_HeadFmt">Le moteur s'est arrêté immédiatement. Code de sortie={0}. LastOut={1}. LastErr={2}</sys:String>
+    <sys:String x:Key="Err_EngineExit_HintDllNotFound">Le code de sortie 0xC0000135 signifie que le chargeur Windows n'a pas pu résoudre une DLL dépendante avant le démarrage d'engine.exe — le moteur ne s'exécute pas, stdout/stderr restent vides et l'interface ne peut pas lire le nom du fichier manquant.&#x0a;&#x0a;• Souvent OpenSSL : copiez libcrypto-3-x64.dll et libssl-3-x64.dll depuis vcpkg installed\x64-windows\bin à côté de engine.exe (ou exécutez Build-Engine.ps1 — il les copie).&#x0a;• Si le CRT manque, installez « Microsoft Visual C++ 2015–2022 Redistributable (x64) ». Les builds Debug peuvent nécessiter MSVC sur la machine.&#x0a;&#x0a;Si vous avez installé depuis un package, réinstallez l'application depuis le programme d'installation officiel afin de restaurer toutes les DLL (par exemple à côté de engine.exe).</sys:String>
+    <sys:String x:Key="Home_Log_DllMissingHint">Indication : une DLL requise n'a pas pu être chargée (voir la ligne ci-dessus). Réinstallez l'application depuis le programme d'installation officiel pour restaurer les fichiers manquants.</sys:String>
+    <sys:String x:Key="Home_Log_EngineMissing">ERREUR : moteur VPN introuvable. Réinstallez l'application ou lancez le programme d'installation.</sys:String>
+    <sys:String x:Key="Home_Status_EngineMissing">Inactif — réinstallation requise (moteur manquant)</sys:String>
+
+    <sys:String x:Key="Settings_IpLists">Listes IP (contournement VPN)</sys:String>
+    <sys:String x:Key="Settings_IpLists_Subtitle">Diriger le trafic des réseaux listés en dehors du tunnel VPN en ajoutant des routes partagées au profil OpenVPN.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Enable">Utiliser les listes IP</sys:String>
+    <sys:String x:Key="Settings_IpLists_EnableSubtitle">Si désactivé, tout le trafic passe par le VPN.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Open">Configurer les listes IP…</sys:String>
+
+    <sys:String x:Key="IpList_Title">Listes IP</sys:String>
+    <sys:String x:Key="IpList_WindowsNotice">Les listes sont fusionnées dans le profil client : les routes IPv4 sont privilégiées jusqu'à la limite de routes ; les très grandes listes peuvent être rognées par la taille du profil. Le contournement IPv6 est limité sous Windows avec OpenVPN — les lignes IPv6 peuvent être partiellement ignorées.</sys:String>
+    <sys:String x:Key="IpList_EnableTitle">Utiliser les listes CIDR</sys:String>
+    <sys:String x:Key="IpList_EnableSubtitle">Télécharger et appliquer des listes de réseaux agrégées pour le routage partagé.</sys:String>
+    <sys:String x:Key="IpList_DisabledNotice">Les listes IP sont désactivées. Activez-les pour modifier les sources et mettre à jour.</sys:String>
+    <sys:String x:Key="IpList_SourceTitle">Sources</sys:String>
+    <sys:String x:Key="IpList_SourceSubtitle">Une URL par ligne (listes agrégées IPv4 et/ou IPv6).</sys:String>
+    <sys:String x:Key="IpList_FrequencyLabel">Fréquence de mise à jour</sys:String>
+    <sys:String x:Key="IpList_Freq_6h">Toutes les 6 heures</sys:String>
+    <sys:String x:Key="IpList_Freq_Daily">Quotidienne</sys:String>
+    <sys:String x:Key="IpList_Freq_Weekly">Hebdomadaire</sys:String>
+    <sys:String x:Key="IpList_Freq_Manual">Manuelle uniquement</sys:String>
+    <sys:String x:Key="IpList_CoverageLabel">Couverture</sys:String>
+    <sys:String x:Key="IpList_CoverageWinNote">Seule la limite numérique de routes ci-dessous s'applique : les routes IPv4 les plus larges sont choisies en premier jusqu'à cette limite. FAST et FULL déterminent l'ordre avant la coupe.</sys:String>
+    <sys:String x:Key="IpList_CoverageFast">Rapide (moins de routes)</sys:String>
+    <sys:String x:Key="IpList_CoverageFull">Complet (ordre de la liste)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitLabel">Nombre max. de routes dans le profil (IPv4 d'abord)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitHint">Entre 50 et 3000. Des valeurs plus petites réduisent la taille du profil.</sys:String>
+    <sys:String x:Key="IpList_RouteLimitErrorFmt">Saisissez une limite entre {0} et {1}.</sys:String>
+    <sys:String x:Key="IpList_Save">Enregistrer</sys:String>
+    <sys:String x:Key="IpList_UpdateNow">Mettre à jour maintenant</sys:String>
+    <sys:String x:Key="IpList_Saved">Enregistré.</sys:String>
+    <sys:String x:Key="IpList_StatusTitle">État</sys:String>
+    <sys:String x:Key="IpList_LastUpdated">Dernière mise à jour :</sys:String>
+    <sys:String x:Key="IpList_LastUpdatedNever">jamais</sys:String>
+    <sys:String x:Key="IpList_LoadedRoutesFmt">Routes analysées : {0}</sys:String>
+    <sys:String x:Key="IpList_SourceListTruncated">La liste combinée dépasse ce que le chargeur peut traiter entièrement ; des entrées supplémentaires ont été ignorées.</sys:String>
+    <sys:String x:Key="IpList_LastError">Dernière erreur :</sys:String>
+    <sys:String x:Key="IpList_LastErrorNone">aucune</sys:String>
+    <sys:String x:Key="IpList_UpdateReadyFmt">Listes mises à jour. Routes : {0}.</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFmt">Échec de la mise à jour : {0}</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Échec de la mise à jour ({0}). Utilisation du cache ou d'une liste de secours intégrée.</sys:String>
+
+    <sys:String x:Key="Msg_EngineMissingTitle">Moteur introuvable</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">Le moteur VPN (engine.exe) est absent. Réinstallez DataGate.&#x0a;&#x0a;Page de téléchargement : {0}&#x0a;&#x0a;Oui — lancer le programme d'installation fourni avec l'application (recommandé).&#x0a;Non — ouvrir la page de téléchargement dans le navigateur.&#x0a;Annuler — fermer ce message.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">Le moteur VPN (engine.exe) est absent. Réinstallez DataGate.&#x0a;&#x0a;Page de téléchargement : {0}&#x0a;&#x0a;Ouvrir la page de téléchargement dans le navigateur ?</sys:String>
 </ResourceDictionary>
 

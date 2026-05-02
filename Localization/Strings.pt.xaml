@@ -176,5 +176,52 @@
     <sys:String x:Key="Tray_Exit">Exit</sys:String>
     <sys:String x:Key="Tray_Open">Open</sys:String>
     <sys:String x:Key="Tray_Tooltip">DataGate</sys:String>
+
+    <!-- Missing keys synced from en (machine-translated) -->
+    <sys:String x:Key="Err_EngineExit_HeadFmt">O motor parou imediatamente. Código de Saída={0}. ÚltimoSaída={1}. ÚltimoErro={2}</sys:String>
+    <sys:String x:Key="Err_EngineExit_HintDllNotFound">O código de saída 0xC0000135 significa que o carregador do Windows não conseguiu resolver uma DLL dependente antes do engine.exe ser iniciado - o mecanismo nunca funciona, então stdout/stderr permanece vazio e a UI não consegue ler o nome do arquivo ausente.&#x0a;&#x0a;• Frequentemente OpenSSL: copie libcrypto-3-x64.dll e libssl-3-x64.dll do seu vcpkg instalado\x64-windows\bin ao lado de engine.exe (ou execute Build-Engine.ps1 — ele os copia).&#x0a;• Se o CRT estiver faltando, instale “Microsoft Visual C++ 2015–2022 Redistributable (x64)”. Compilações de depuração podem precisar de MSVC na máquina.&#x0a;&#x0a;Se você instalou a partir de um pacote, reinstale o aplicativo do instalador oficial para que todas as DLLs do componente (por exemplo, ao lado de engine.exe) sejam restauradas.</sys:String>
+    <sys:String x:Key="Home_Log_DllMissingHint">Dica: uma DLL necessária não pôde ser carregada (veja a linha acima). Reinstale o aplicativo do instalador oficial para restaurar os arquivos ausentes.</sys:String>
+    <sys:String x:Key="Settings_IpLists">Listas de IP (ignorar VPN)</sys:String>
+    <sys:String x:Key="Settings_IpLists_Subtitle">Envie tráfego para redes listadas fora do túnel VPN anexando rotas divididas ao perfil OpenVPN.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Enable">Use listas de IP</sys:String>
+    <sys:String x:Key="Settings_IpLists_EnableSubtitle">Quando desativado, todo o tráfego usa a VPN.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Open">Configurar listas de IP…</sys:String>
+    <sys:String x:Key="IpList_Title">Listas de IP</sys:String>
+    <sys:String x:Key="IpList_WindowsNotice">As listas são mescladas no perfil do cliente: as rotas IPv4 são preferidas até o seu limite de rotas; listas muito grandes podem ser cortadas pelo limite de tamanho do perfil. O desvio dividido de IPv6 é limitado no Windows – as linhas IPv6 podem não ter efeito total.</sys:String>
+    <sys:String x:Key="IpList_EnableTitle">Use listas de IP CIDR</sys:String>
+    <sys:String x:Key="IpList_EnableSubtitle">Baixe e aplique listas de redes agregadas para roteamento dividido.</sys:String>
+    <sys:String x:Key="IpList_DisabledNotice">As listas de IP estão desativadas. Ative para editar fontes e atualizar.</sys:String>
+    <sys:String x:Key="IpList_SourceTitle">Fontes</sys:String>
+    <sys:String x:Key="IpList_SourceSubtitle">Uma URL por linha (listas agregadas IPv4 e/ou IPv6).</sys:String>
+    <sys:String x:Key="IpList_FrequencyLabel">Frequência de atualização</sys:String>
+    <sys:String x:Key="IpList_Freq_6h">A cada 6 horas</sys:String>
+    <sys:String x:Key="IpList_Freq_Daily">Diário</sys:String>
+    <sys:String x:Key="IpList_Freq_Weekly">Semanalmente</sys:String>
+    <sys:String x:Key="IpList_Freq_Manual">Somente manual</sys:String>
+    <sys:String x:Key="IpList_CoverageLabel">Cobertura</sys:String>
+    <sys:String x:Key="IpList_CoverageWinNote">Apenas o limite de rota numérico abaixo se aplica: as rotas IPv4 são escolhidas da forma mais ampla primeiro até esse limite. RÁPIDO e COMPLETO afetam o pedido antes que o limite seja aplicado.</sys:String>
+    <sys:String x:Key="IpList_CoverageFast">Rápido (menos rotas)</sys:String>
+    <sys:String x:Key="IpList_CoverageFull">Completo (seguir a ordem da lista)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitLabel">Máximo de rotas no perfil (IPv4 primeiro)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitHint">Entre 50 e 3.000. Valores menores mantêm o perfil menor.</sys:String>
+    <sys:String x:Key="IpList_RouteLimitErrorFmt">Insira um limite de rota entre {0} e {1}.</sys:String>
+    <sys:String x:Key="IpList_Save">Salvar</sys:String>
+    <sys:String x:Key="IpList_UpdateNow">Atualizar agora</sys:String>
+    <sys:String x:Key="IpList_Saved">Salvo.</sys:String>
+    <sys:String x:Key="IpList_StatusTitle">Status</sys:String>
+    <sys:String x:Key="IpList_LastUpdated">Última atualização:</sys:String>
+    <sys:String x:Key="IpList_LastUpdatedNever">nunca</sys:String>
+    <sys:String x:Key="IpList_LoadedRoutesFmt">Rotas analisadas: {0}</sys:String>
+    <sys:String x:Key="IpList_SourceListTruncated">A lista combinada era maior do que o carregador suporta totalmente; entradas extras foram ignoradas.</sys:String>
+    <sys:String x:Key="IpList_LastError">Último erro:</sys:String>
+    <sys:String x:Key="IpList_LastErrorNone">nenhum</sys:String>
+    <sys:String x:Key="IpList_UpdateReadyFmt">Listas atualizadas. Rotas: {0}.</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFmt">Falha na atualização: {0}</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Falha na atualização ({0}). Usando fallback em cache ou em pacote.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingTitle">Motor não encontrado</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">O mecanismo VPN (engine.exe) está ausente. Reinstale o DataGate para restaurá-lo.&#x0a;&#x0a;Página de download: {0}&#x0a;&#x0a;Sim — execute o instalador que acompanha este aplicativo (recomendado).&#x0a;Não — abra a página de download em seu navegador.&#x0a;Cancelar — feche esta mensagem.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">O mecanismo VPN (engine.exe) está ausente. Por favor reinstale o DataGate.&#x0a;&#x0a;Página de download: {0}&#x0a;&#x0a;Abrir a página de download em seu navegador agora?</sys:String>
+    <sys:String x:Key="Home_Status_EngineMissing">Inativo – reinstalação necessária (motor ausente)</sys:String>
+    <sys:String x:Key="Home_Log_EngineMissing">ERRO: mecanismo VPN não encontrado. Reinstale o aplicativo ou execute o instalador.</sys:String>
 </ResourceDictionary>
 

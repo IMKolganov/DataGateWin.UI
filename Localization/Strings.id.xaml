@@ -176,5 +176,52 @@
     <sys:String x:Key="Tray_Exit">Exit</sys:String>
     <sys:String x:Key="Tray_Open">Open</sys:String>
     <sys:String x:Key="Tray_Tooltip">DataGate</sys:String>
+
+    <!-- Missing keys synced from en (machine-translated) -->
+    <sys:String x:Key="Err_EngineExit_HeadFmt">Mesin langsung mati. Kode Keluar={0}. Keluar Terakhir={1}. Err Terakhir={2}</sys:String>
+    <sys:String x:Key="Err_EngineExit_HintDllNotFound">Kode keluar 0xC0000135 berarti pemuat Windows tidak dapat menyelesaikan DLL dependen sebelum engine.exe dimulai — mesin tidak pernah berjalan, jadi stdout/stderr tetap kosong dan UI tidak dapat membaca nama file yang hilang.&#x0a;&#x0a;• Seringkali OpenSSL: salin libcrypto-3-x64.dll dan libssl-3-x64.dll dari vcpkg Anda diinstal\x64-windows\bin di sebelah engine.exe (atau jalankan Build-Engine.ps1 — ini akan menyalinnya).&#x0a;• Jika CRT tidak ada, instal “Microsoft Visual C++ 2015–2022 Redistributable (x64)”. Pembuatan debug mungkin memerlukan MSVC pada mesin.&#x0a;&#x0a;Jika Anda menginstal dari sebuah paket, instal ulang aplikasi dari penginstal resmi sehingga semua DLL komponen (misalnya di sebelah engine.exe) dipulihkan.</sys:String>
+    <sys:String x:Key="Home_Log_DllMissingHint">Petunjuk: DLL yang diperlukan tidak dapat dimuat (lihat baris di atas). Instal ulang aplikasi dari penginstal resmi untuk memulihkan file yang hilang.</sys:String>
+    <sys:String x:Key="Settings_IpLists">Daftar IP (melewati VPN)</sys:String>
+    <sys:String x:Key="Settings_IpLists_Subtitle">Kirim lalu lintas untuk jaringan yang terdaftar di luar terowongan VPN dengan menambahkan rute terpisah ke profil OpenVPN.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Enable">Gunakan daftar IP</sys:String>
+    <sys:String x:Key="Settings_IpLists_EnableSubtitle">Saat mati, semua lalu lintas menggunakan VPN.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Open">Konfigurasikan daftar IP…</sys:String>
+    <sys:String x:Key="IpList_Title">daftar IP</sys:String>
+    <sys:String x:Key="IpList_WindowsNotice">Daftar digabungkan ke dalam profil klien: Rute IPv4 lebih disukai hingga batas rute Anda; daftar yang sangat besar dapat dipangkas dengan batas ukuran profil. Bypass terpisah IPv6 terbatas pada Windows—jalur IPv6 mungkin tidak berfungsi sepenuhnya.</sys:String>
+    <sys:String x:Key="IpList_EnableTitle">Gunakan daftar IP CIDR</sys:String>
+    <sys:String x:Key="IpList_EnableSubtitle">Unduh dan terapkan daftar jaringan gabungan untuk perutean terpisah.</sys:String>
+    <sys:String x:Key="IpList_DisabledNotice">Daftar IP dinonaktifkan. Aktifkan untuk mengedit sumber dan memperbarui.</sys:String>
+    <sys:String x:Key="IpList_SourceTitle">Sumber</sys:String>
+    <sys:String x:Key="IpList_SourceSubtitle">Satu URL per baris (daftar gabungan IPv4 dan/atau IPv6).</sys:String>
+    <sys:String x:Key="IpList_FrequencyLabel">Frekuensi pembaruan</sys:String>
+    <sys:String x:Key="IpList_Freq_6h">Setiap 6 jam</sys:String>
+    <sys:String x:Key="IpList_Freq_Daily">Sehari-hari</sys:String>
+    <sys:String x:Key="IpList_Freq_Weekly">Mingguan</sys:String>
+    <sys:String x:Key="IpList_Freq_Manual">Hanya panduan saja</sys:String>
+    <sys:String x:Key="IpList_CoverageLabel">Cakupan</sys:String>
+    <sys:String x:Key="IpList_CoverageWinNote">Hanya batas rute numerik di bawah ini yang berlaku: Rute IPv4 dipilih yang terluas terlebih dahulu hingga batas tersebut. FAST dan FULL mempengaruhi pemesanan sebelum limit diterapkan.</sys:String>
+    <sys:String x:Key="IpList_CoverageFast">Cepat (lebih sedikit rute)</sys:String>
+    <sys:String x:Key="IpList_CoverageFull">Lengkap (ikuti urutan daftar)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitLabel">Rute maksimal di profil (IPv4-pertama)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitHint">Antara 50 dan 3000. Nilai yang lebih kecil membuat profil semakin kecil.</sys:String>
+    <sys:String x:Key="IpList_RouteLimitErrorFmt">Masukkan batas rute antara {0} dan {1}.</sys:String>
+    <sys:String x:Key="IpList_Save">Menyimpan</sys:String>
+    <sys:String x:Key="IpList_UpdateNow">Perbarui sekarang</sys:String>
+    <sys:String x:Key="IpList_Saved">Disimpan.</sys:String>
+    <sys:String x:Key="IpList_StatusTitle">Status</sys:String>
+    <sys:String x:Key="IpList_LastUpdated">Terakhir diperbarui:</sys:String>
+    <sys:String x:Key="IpList_LastUpdatedNever">tidak pernah</sys:String>
+    <sys:String x:Key="IpList_LoadedRoutesFmt">Rute diuraikan: {0}</sys:String>
+    <sys:String x:Key="IpList_SourceListTruncated">Daftar gabungan lebih besar dari yang didukung sepenuhnya oleh loader; entri tambahan dilewati.</sys:String>
+    <sys:String x:Key="IpList_LastError">Kesalahan terakhir:</sys:String>
+    <sys:String x:Key="IpList_LastErrorNone">tidak ada</sys:String>
+    <sys:String x:Key="IpList_UpdateReadyFmt">Daftar diperbarui. Rute: {0}.</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFmt">Pembaruan gagal: {0}</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Pembaruan gagal ({0}). Menggunakan fallback yang di-cache atau dibundel.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingTitle">Mesin tidak ditemukan</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">Mesin VPN (engine.exe) tidak ada. Instal ulang DataGate untuk memulihkannya.&#x0a;&#x0a;Halaman unduhan: {0}&#x0a;&#x0a;Ya — jalankan penginstal yang disertakan dengan aplikasi ini (disarankan).&#x0a;Tidak — buka halaman unduh di browser Anda.&#x0a;Batal — tutup pesan ini.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">Mesin VPN (engine.exe) tidak ada. Silakan instal ulang DataGate.&#x0a;&#x0a;Halaman unduhan: {0}&#x0a;&#x0a;Buka halaman unduhan di browser Anda sekarang?</sys:String>
+    <sys:String x:Key="Home_Status_EngineMissing">Idle — perlu diinstal ulang (mesin hilang)</sys:String>
+    <sys:String x:Key="Home_Log_EngineMissing">KESALAHAN: Mesin VPN tidak ditemukan. Instal ulang aplikasi atau jalankan penginstal.</sys:String>
 </ResourceDictionary>
 
