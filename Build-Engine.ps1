@@ -3,17 +3,22 @@
 .SYNOPSIS
   Builds the native engine via CMake (repo root is the parent of DataGateWin.UI)
   and copies engine.exe plus vcpkg runtime DLLs to bin\Debug|Release\<TFM>\engine.
+  For Release (or Both), publishes DataGateWin.Installer into bin\Release\<TFM>\Installer.
 
 .EXAMPLE
   pwsh -File .\Build-Engine.ps1
   pwsh -File .\Build-Engine.ps1 -Configuration Release
   pwsh -File .\Build-Engine.ps1 -SkipConfigure
+  pwsh -File .\Build-Engine.ps1 -SkipInstaller
 #>
 param(
     [ValidateSet('Debug', 'Release', 'Both')]
     [string] $Configuration = 'Both',
 
     [switch] $SkipConfigure,
+
+    # Skip dotnet publish of the Windows installer into bin\Release\<TFM>\Installer.
+    [switch] $SkipInstaller,
 
     # CMake generator (default: VS 2022 x64).
     [string] $Generator = 'Visual Studio 17 2022',
@@ -168,6 +173,25 @@ function Invoke-EngineBuild {
     Copy-EngineToUiBin -EngineExe $built -UiBinConfigFolder $rel -CMakeConfig $Config
 }
 
+function Publish-InstallerToUiRelease {
+    $installerProj = Join-Path $RepoRoot 'DataGateWin.Installer\DataGateWin.Installer.csproj'
+    if (-not (Test-Path -LiteralPath $installerProj)) {
+        Write-Warning "Installer project not found: $installerProj (skipped)."
+        return
+    }
+
+    $outDir = Join-Path $UiDir "bin\Release\$TargetFramework\Installer"
+    if (-not (Get-Command dotnet -ErrorAction SilentlyContinue)) {
+        throw "dotnet not found in PATH (needed to publish the installer)."
+    }
+
+    Write-Host "dotnet publish installer -> $outDir"
+    dotnet publish $installerProj -c Release -o $outDir
+    if ($LASTEXITCODE -ne 0) {
+        throw "dotnet publish installer failed with exit code $LASTEXITCODE."
+    }
+}
+
 if (-not (Get-Command cmake -ErrorAction SilentlyContinue)) {
     throw "cmake not found in PATH. Install CMake and reopen the shell."
 }
@@ -187,6 +211,10 @@ if ($Configuration -eq 'Both') {
 }
 else {
     Invoke-EngineBuild -Config $Configuration
+}
+
+if (-not $SkipInstaller -and ($Configuration -eq 'Release' -or $Configuration -eq 'Both')) {
+    Publish-InstallerToUiRelease
 }
 
 Write-Host 'Done.'
