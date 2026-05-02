@@ -47,8 +47,15 @@ function Find-BuiltEngineExe {
 }
 
 function Resolve-VcpkgBinDirectory {
+    param(
+        [ValidateSet('Debug', 'Release')]
+        [string] $CMakeConfig
+    )
+    # vcpkg MSVC: release DLLs in installed\x64-windows\bin; debug (lz4d.dll, etc.) in installed\x64-windows\debug\bin.
+    $rel = if ($CMakeConfig -eq 'Debug') { 'installed\x64-windows\debug\bin' } else { 'installed\x64-windows\bin' }
+
     if ($env:VCPKG_ROOT) {
-        $p = Join-Path $env:VCPKG_ROOT 'installed\x64-windows\bin'
+        $p = Join-Path $env:VCPKG_ROOT $rel
         if (Test-Path -LiteralPath $p) { return $p }
     }
     $cache = Join-Path $BuildDir 'CMakeCache.txt'
@@ -57,8 +64,8 @@ function Resolve-VcpkgBinDirectory {
             Where-Object { $_ -match '^VCPKG_INSTALLED_DIR:STATIC=(.+)$' } |
             Select-Object -First 1
         if ($line -match '^VCPKG_INSTALLED_DIR:STATIC=(.+)$') {
-            $installed = $Matches[1].Trim()
-            $b = Join-Path $installed 'bin'
+            $installedRoot = $Matches[1].Trim()
+            $b = Join-Path $installedRoot $(if ($CMakeConfig -eq 'Debug') { 'x64-windows\debug\bin' } else { 'x64-windows\bin' })
             if (Test-Path -LiteralPath $b) { return $b }
         }
     }
@@ -72,7 +79,7 @@ function Copy-VcpkgRuntimeDlls {
         [string] $CMakeConfig
     )
 
-    $vcpkgBin = Resolve-VcpkgBinDirectory
+    $vcpkgBin = Resolve-VcpkgBinDirectory -CMakeConfig $CMakeConfig
     if (-not $vcpkgBin) {
         Write-Warning "vcpkg bin not found (VCPKG_ROOT or VCPKG_INSTALLED_DIR in build\CMakeCache.txt). OpenSSL DLLs were not copied — engine may fail with 0xC0000135 if run without them."
         return
