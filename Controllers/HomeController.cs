@@ -1,8 +1,10 @@
 using System.Globalization;
+using System.Windows;
 using DataGateWin.Localization;
 using DataGateWin.Models.Ipc;
 using DataGateWin.Services.Installation;
 using DataGateWin.Services.Ipc;
+using DataGateWin.Services.IpList;
 using DataGateWin.Services.OpenVpnFiles;
 using DataGateWin.Services.VpnServers;
 
@@ -41,7 +43,8 @@ public sealed class HomeController : IDisposable
             wssServerSelector: selector,
             installationIdService: installation,
             filesApi: filesApi,
-            session: App.Session);
+            session: App.Session,
+            ipListRoutes: new IpListRoutesRepository());
 
         _engine = new EngineSessionService(
             enginePathResolver: new EnginePathResolver(),
@@ -98,6 +101,9 @@ public sealed class HomeController : IDisposable
         }
         catch (Exception ex)
         {
+            if (TryHandleEngineMissing(ex))
+                return;
+
             Log(Loc.T("Home_Log_ErrorFmt", ex));
             ApplyUiState(UiState.Idle, Loc.T("Home_Status_AttachFailedFmt", ex.Message));
         }
@@ -158,6 +164,9 @@ public sealed class HomeController : IDisposable
         }
         catch (Exception ex)
         {
+            if (TryHandleEngineMissing(ex))
+                return;
+
             ApplyUiState(UiState.Idle, Loc.T("Home_Status_IdleErrorFmt", ex.Message));
             Log(Loc.T("Home_Log_ErrorFmt", ex));
 
@@ -205,6 +214,19 @@ public sealed class HomeController : IDisposable
             EngineState.IsIdle(state) ? UiState.Idle : UiState.Connected,
             EngineState.IsIdle(state) ? Loc.T("Home_Status_Idle") : Loc.T("Home_Status_ConnectedFmt", label)
         );
+    }
+
+    private bool TryHandleEngineMissing(Exception ex)
+    {
+        if (!EngineMissingUi.IsEngineMissingException(ex))
+            return false;
+
+        EngineMissingUi.ShowDialog(Application.Current?.MainWindow);
+        ApplyUiState(UiState.Idle, Loc.T("Home_Status_EngineMissing"));
+        Log(Loc.T("Home_Log_EngineMissing"));
+        _desiredConnected = false;
+        _reconnectAttempt = 0;
+        return true;
     }
 
     private async Task ScheduleReconnectAsync()

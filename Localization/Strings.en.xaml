@@ -6,6 +6,9 @@
     <sys:String x:Key="Tray_Tooltip">DataGate</sys:String>
     <sys:String x:Key="Tray_Open">Open</sys:String>
     <sys:String x:Key="Tray_Exit">Exit</sys:String>
+    <sys:String x:Key="Telegram_ChannelUrl">https://t.me/datagateapp</sys:String>
+    <sys:String x:Key="Telegram_SubscribeHint">Subscribe to our Telegram channel</sys:String>
+    <sys:String x:Key="Action_Ok">OK</sys:String>
 
     <sys:String x:Key="Msg_AdminTitle">Administrator privileges required</sys:String>
     <sys:String x:Key="Msg_AdminBody">This application must be run with administrator privileges.&#x0a;&#x0a;Please restart the application as an administrator.</sys:String>
@@ -27,6 +30,13 @@
     <sys:String x:Key="Home_ModeManual">Choose server…</sys:String>
     <sys:String x:Key="Home_Server">Server</sys:String>
     <sys:String x:Key="Home_Refresh">Refresh</sys:String>
+    <sys:String x:Key="Home_ReportEmail">Email</sys:String>
+    <sys:String x:Key="Home_ReportEmailSubject">DataGate Windows</sys:String>
+    <sys:String x:Key="Home_ReportGithub">GitHub Issues</sys:String>
+    <sys:String x:Key="Home_ReportIssue">Report a problem</sys:String>
+    <sys:String x:Key="Home_ReportIssueHint">Choose how you want to reach us:</sys:String>
+    <sys:String x:Key="Home_ReportIssueTitle">Contact support</sys:String>
+    <sys:String x:Key="Home_ReportTelegram">Telegram bot @DataGateVPNBot</sys:String>
     <sys:String x:Key="Home_Connect">Connect</sys:String>
     <sys:String x:Key="Home_Disconnect">Disconnect</sys:String>
     <sys:String x:Key="Home_EngineLogs">Engine logs</sys:String>
@@ -42,6 +52,8 @@
     <sys:String x:Key="Home_Log_NoWss">No WSS-enabled VPN servers available for your plan.</sys:String>
     <sys:String x:Key="Home_Log_UiAttached">UI attached.</sys:String>
     <sys:String x:Key="Home_Log_ErrorFmt">ERROR: {0}</sys:String>
+    <sys:String x:Key="Err_EngineExit_HeadFmt">Engine stopped immediately. ExitCode={0}. LastOut={1}. LastErr={2}</sys:String>
+    <sys:String x:Key="Err_EngineExit_HintDllNotFound">Exit code 0xC0000135 means the Windows loader could not resolve a dependent DLL before engine.exe started — the engine never runs, so stdout/stderr stay empty and the UI cannot read the missing file name.&#x0a;&#x0a;• Often OpenSSL: copy libcrypto-3-x64.dll and libssl-3-x64.dll from your vcpkg installed\x64-windows\bin next to engine.exe (or run Build-Engine.ps1 — it copies them).&#x0a;• If the CRT is missing, install “Microsoft Visual C++ 2015–2022 Redistributable (x64)”. Debug builds may need MSVC on the machine.</sys:String>
     <sys:String x:Key="Home_Log_ReconnectScheduledFmt">Reconnect scheduled. Attempt={0}, Delay={1}s</sys:String>
     <sys:String x:Key="Home_Log_DisconnectedLineFmt">Disconnected: {0}</sys:String>
 
@@ -133,10 +145,59 @@
     <sys:String x:Key="Settings_LatestVersionUnavailable">Unable to check</sys:String>
     <sys:String x:Key="Settings_UnknownVersion">Unknown</sys:String>
     <sys:String x:Key="Settings_About">About</sys:String>
+
+    <sys:String x:Key="Settings_IpLists">IP lists (bypass VPN)</sys:String>
+    <sys:String x:Key="Settings_IpLists_Subtitle">Send traffic for listed networks outside the VPN tunnel by appending split routes to the OpenVPN profile.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Enable">Use IP lists</sys:String>
+    <sys:String x:Key="Settings_IpLists_EnableSubtitle">When off, all traffic uses the VPN.</sys:String>
+    <sys:String x:Key="Settings_IpLists_Open">Configure IP lists…</sys:String>
+
+    <sys:String x:Key="IpList_Title">IP lists</sys:String>
+    <sys:String x:Key="IpList_WindowsNotice">Lists are merged into the client profile: IPv4 routes are preferred up to your route limit; very large lists may be trimmed by the profile size cap. IPv6 split-bypass is limited on Windows—IPv6 lines may not take full effect.</sys:String>
+    <sys:String x:Key="IpList_EnableTitle">Use CIDR IP lists</sys:String>
+    <sys:String x:Key="IpList_EnableSubtitle">Download and apply aggregated network lists for split routing.</sys:String>
+    <sys:String x:Key="IpList_DisabledNotice">IP lists are disabled. Turn on to edit sources and update.</sys:String>
+    <sys:String x:Key="IpList_SourceTitle">Sources</sys:String>
+    <sys:String x:Key="IpList_SourceSubtitle">One URL per line (IPv4 and/or IPv6 aggregated lists).</sys:String>
+    <sys:String x:Key="IpList_FrequencyLabel">Update frequency</sys:String>
+    <sys:String x:Key="IpList_Freq_6h">Every 6 hours</sys:String>
+    <sys:String x:Key="IpList_Freq_Daily">Daily</sys:String>
+    <sys:String x:Key="IpList_Freq_Weekly">Weekly</sys:String>
+    <sys:String x:Key="IpList_Freq_Manual">Manual only</sys:String>
+    <sys:String x:Key="IpList_CoverageLabel">Coverage</sys:String>
+    <sys:String x:Key="IpList_CoverageWinNote">Only the numeric route limit below applies: IPv4 routes are chosen broadest-first up to that cap. FAST and FULL affect ordering before the limit is applied.</sys:String>
+    <sys:String x:Key="IpList_CoverageFast">Fast (fewer routes)</sys:String>
+    <sys:String x:Key="IpList_CoverageFull">Full (follow list order)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitLabel">Max routes in profile (IPv4-first)</sys:String>
+    <sys:String x:Key="IpList_RouteLimitHint">Between 50 and 3000. Smaller values keep the profile smaller.</sys:String>
+    <sys:String x:Key="IpList_RouteLimitErrorFmt">Enter a route limit between {0} and {1}.</sys:String>
+    <sys:String x:Key="IpList_Save">Save</sys:String>
+    <sys:String x:Key="IpList_UpdateNow">Update now</sys:String>
+    <sys:String x:Key="IpList_Saved">Saved.</sys:String>
+    <sys:String x:Key="IpList_StatusTitle">Status</sys:String>
+    <sys:String x:Key="IpList_LastUpdated">Last updated:</sys:String>
+    <sys:String x:Key="IpList_LastUpdatedNever">never</sys:String>
+    <sys:String x:Key="IpList_LoadedRoutesFmt">Routes parsed: {0}</sys:String>
+    <sys:String x:Key="IpList_SourceListTruncated">The combined list was larger than the loader fully supports; extra entries were skipped.</sys:String>
+    <sys:String x:Key="IpList_LastError">Last error:</sys:String>
+    <sys:String x:Key="IpList_LastErrorNone">none</sys:String>
+    <sys:String x:Key="IpList_UpdateReadyFmt">Lists updated. Routes: {0}.</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFmt">Update failed: {0}</sys:String>
+    <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Update failed ({0}). Using cached or bundled fallback.</sys:String>
     <sys:String x:Key="Msg_LogoutTitle">Logout</sys:String>
     <sys:String x:Key="Msg_LogoutConfirm">Are you sure you want to log out?</sys:String>
     <sys:String x:Key="Msg_LogoutFailedFmt">Logout failed:&#x0a;{0}</sys:String>
     <sys:String x:Key="Msg_ErrorTitle">Error</sys:String>
+    <sys:String x:Key="Msg_UpdateAvailableTitle">Update available</sys:String>
+    <sys:String x:Key="Msg_UpdateAvailableBody">A new update is available. Do you want to install it now?</sys:String>
+    <sys:String x:Key="Msg_UpdateErrorTitle">Update error</sys:String>
+
+    <sys:String x:Key="Msg_EngineMissingTitle">Engine not found</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">The VPN engine (engine.exe) is missing. Reinstall DataGate to restore it.&#x0a;&#x0a;Download page: {0}&#x0a;&#x0a;Yes — run the installer bundled with this app (recommended).&#x0a;No — open the download page in your browser.&#x0a;Cancel — close this message.</sys:String>
+    <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">The VPN engine (engine.exe) is missing. Please reinstall DataGate.&#x0a;&#x0a;Download page: {0}&#x0a;&#x0a;Open the download page in your browser now?</sys:String>
+    <sys:String x:Key="Home_Status_EngineMissing">Idle — reinstall required (engine missing)</sys:String>
+    <sys:String x:Key="Home_Log_EngineMissing">ERROR: VPN engine not found. Reinstall the application or run the installer.</sys:String>
+    <sys:String x:Key="Msg_UpdateErrorBody">A new update is available, but the update component could not be found.&#x0a;&#x0a;Please reinstall the application or contact support.</sys:String>
 
     <sys:String x:Key="Login_Welcome">Welcome to DataGate</sys:String>
     <sys:String x:Key="Login_SignInToContinue">Sign in to continue</sys:String>
@@ -151,15 +212,26 @@
     <sys:String x:Key="Login_Status_Cancelled">Sign-in cancelled.</sys:String>
     <sys:String x:Key="Login_Status_FailedFmt">Sign-in failed: {0}</sys:String>
 
+    <sys:String x:Key="FirstRun_Title">Connection setup</sys:String>
+    <sys:String x:Key="FirstRun_Subtitle">Enter your DataGate API URL and Google OAuth client ID. Values are saved to appsettings.json next to the application.</sys:String>
+    <sys:String x:Key="FirstRun_ApiBaseUrl">API base URL (https://…)</sys:String>
+    <sys:String x:Key="FirstRun_GoogleClientId">Google OAuth Client ID</sys:String>
+    <sys:String x:Key="FirstRun_RedirectPort">OAuth redirect port (local)</sys:String>
+    <sys:String x:Key="FirstRun_SaveContinue">Save and continue</sys:String>
+    <sys:String x:Key="FirstRun_CancelExit">Cancel and exit</sys:String>
+    <sys:String x:Key="FirstRun_Err_BaseUrl">Enter a valid API URL (http or https).</sys:String>
+    <sys:String x:Key="FirstRun_Err_ClientId">Enter the Google OAuth Client ID.</sys:String>
+    <sys:String x:Key="FirstRun_Err_Port">Enter a valid redirect port (1–65535).</sys:String>
+    <sys:String x:Key="FirstRun_Err_SaveFailedFmt">Could not save configuration:&#x0a;{0}</sys:String>
+    <sys:String x:Key="FirstRun_Placeholder_ApiBaseUrl">https://api.example.com</sys:String>
+    <sys:String x:Key="FirstRun_Placeholder_GoogleClientId">*.apps.googleusercontent.com</sys:String>
+
     <sys:String x:Key="About_Title">About</sys:String>
     <sys:String x:Key="About_ProductName">DataGate Windows Client</sys:String>
     <sys:String x:Key="About_VersionFmt">Version {0}</sys:String>
     <sys:String x:Key="About_Description">Secure VPN client for the DataGate platform.</sys:String>
+    <sys:String x:Key="About_WebsiteUrl">https://datagateapp.com</sys:String>
     <sys:String x:Key="About_Close">Close</sys:String>
 
-    <sys:String x:Key="Lang_Name_system">Same as Windows</sys:String>
-    <sys:String x:Key="Lang_Name_en">English</sys:String>
-    <sys:String x:Key="Lang_Name_fr">Français</sys:String>
-    <sys:String x:Key="Lang_Name_ru">Русский</sys:String>
-    <sys:String x:Key="Lang_Name_el">Ελληνικά</sys:String>
+    <sys:String x:Key="Lang_Name_system">Same as Windows display language</sys:String>
 </ResourceDictionary>

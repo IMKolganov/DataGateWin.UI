@@ -1,0 +1,68 @@
+<ui:FluentWindow x:Class="DataGateWin.Views.ReportIssueDialog"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 Title="{DynamicResource Home_ReportIssueTitle}"
+                 Width="440"
+                 MinHeight="200"
+                 SizeToContent="Height"
+                 WindowStartupLocation="CenterOwner"
+                 ResizeMode="NoResize"
+                 WindowBackdropType="Mica"
+                 ExtendsContentIntoTitleBar="True"
+                 Background="{DynamicResource ApplicationBackgroundBrush}"
+                 UseLayoutRounding="True"
+                 SnapsToDevicePixels="True">
+
+    <Grid Background="{DynamicResource ApplicationBackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0"
+                     Title="{DynamicResource Home_ReportIssueTitle}"
+                     ShowClose="True"
+                     ShowMinimize="False"
+                     ShowMaximize="False"/>
+
+        <Grid Grid.Row="1" Margin="22,12,22,20">
+            <StackPanel>
+                <ui:TextBlock Text="{DynamicResource Home_ReportIssueHint}"
+                              Opacity="0.8"
+                              TextWrapping="Wrap"
+                              Margin="0,0,0,14"/>
+
+                <ui:Button HorizontalAlignment="Stretch"
+                           HorizontalContentAlignment="Left"
+                           Margin="0,0,0,6"
+                           Appearance="Secondary"
+                           Click="Telegram_OnClick">
+                    <ui:TextBlock Text="{DynamicResource Home_ReportTelegram}" TextWrapping="Wrap"/>
+                </ui:Button>
+
+                <ui:Button HorizontalAlignment="Stretch"
+                           HorizontalContentAlignment="Left"
+                           Margin="0,0,0,6"
+                           Appearance="Secondary"
+                           Click="Email_OnClick">
+                    <ui:TextBlock Text="{DynamicResource Home_ReportEmail}" TextWrapping="Wrap"/>
+                </ui:Button>
+
+                <ui:Button HorizontalAlignment="Stretch"
+                           HorizontalContentAlignment="Left"
+                           Margin="0,0,0,16"
+                           Appearance="Secondary"
+                           Click="GitHub_OnClick">
+                    <ui:TextBlock Text="{DynamicResource Home_ReportGithub}" TextWrapping="Wrap"/>
+                </ui:Button>
+
+                <ui:Button HorizontalAlignment="Right"
+                           MinWidth="100"
+                           Appearance="Primary"
+                           Content="{DynamicResource Action_Ok}"
+                           Click="Ok_OnClick"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</ui:FluentWindow>

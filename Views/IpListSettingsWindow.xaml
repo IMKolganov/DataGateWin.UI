@@ -1,0 +1,155 @@
+<ui:FluentWindow x:Class="DataGateWin.Views.IpListSettingsWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 Title="{DynamicResource IpList_Title}"
+                 Width="560"
+                 Height="720"
+                 MinWidth="480"
+                 MinHeight="560"
+                 WindowStartupLocation="CenterOwner"
+                 ResizeMode="CanResize"
+                 WindowBackdropType="Mica"
+                 ExtendsContentIntoTitleBar="True"
+                 Background="{DynamicResource ApplicationBackgroundBrush}"
+                 UseLayoutRounding="True"
+                 SnapsToDevicePixels="True"
+                 Loaded="IpListSettingsWindow_OnLoaded">
+
+    <Grid Background="{DynamicResource ApplicationBackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0"
+                     Title="{DynamicResource IpList_Title}"
+                     ShowClose="True"
+                     ShowMinimize="False"
+                     ShowMaximize="False"/>
+
+        <ScrollViewer Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto"
+                      Padding="20,12,20,20">
+            <StackPanel>
+                <ui:TextBlock Text="{DynamicResource IpList_WindowsNotice}"
+                              TextWrapping="Wrap"
+                              Opacity="0.85"
+                              Margin="0,0,0,14"/>
+
+                <ui:Card Padding="16">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <ui:TextBlock Text="{DynamicResource IpList_EnableTitle}"
+                                              FontWeight="SemiBold"/>
+                                <ui:TextBlock Text="{DynamicResource IpList_EnableSubtitle}"
+                                              Opacity="0.75"
+                                              TextWrapping="Wrap"
+                                              Margin="0,4,0,0"/>
+                            </StackPanel>
+                            <ui:ToggleSwitch Grid.Column="1"
+                                             x:Name="CidrEnabledToggle"
+                                             VerticalAlignment="Center"
+                                             Checked="CidrEnabledToggle_OnChecked"
+                                             Unchecked="CidrEnabledToggle_OnUnchecked"/>
+                        </Grid>
+
+                        <ui:TextBlock x:Name="DisabledNotice"
+                                      Text="{DynamicResource IpList_DisabledNotice}"
+                                      TextWrapping="Wrap"
+                                      Opacity="0.75"
+                                      Margin="0,0,0,10"
+                                      Visibility="Collapsed"/>
+
+                        <ui:TextBlock Text="{DynamicResource IpList_SourceTitle}"
+                                      FontTypography="Subtitle"
+                                      FontWeight="SemiBold"
+                                      Margin="0,8,0,4"/>
+                        <ui:TextBlock Text="{DynamicResource IpList_SourceSubtitle}"
+                                      Opacity="0.75"
+                                      TextWrapping="Wrap"
+                                      Margin="0,0,0,8"/>
+                        <TextBox x:Name="UrlsTextBox"
+                                 AcceptsReturn="True"
+                                 TextWrapping="Wrap"
+                                 VerticalScrollBarVisibility="Auto"
+                                 MinHeight="100"
+                                 MaxHeight="220"
+                                 SpellCheck.IsEnabled="False"/>
+
+                        <ui:TextBlock Text="{DynamicResource IpList_FrequencyLabel}"
+                                      Margin="0,14,0,6"
+                                      FontWeight="SemiBold"/>
+                        <ComboBox x:Name="FrequencyCombo"
+                                  MinWidth="200"
+                                  HorizontalAlignment="Left"/>
+
+                        <ui:TextBlock Text="{DynamicResource IpList_CoverageLabel}"
+                                      Margin="0,14,0,6"
+                                      FontWeight="SemiBold"/>
+                        <ui:TextBlock Text="{DynamicResource IpList_CoverageWinNote}"
+                                      Opacity="0.75"
+                                      TextWrapping="Wrap"
+                                      Margin="0,0,0,8"/>
+                        <StackPanel Orientation="Horizontal">
+                            <RadioButton x:Name="CoverageFastRadio"
+                                         Margin="0,0,16,0"
+                                         GroupName="Cov"
+                                         Content="{DynamicResource IpList_CoverageFast}"/>
+                            <RadioButton x:Name="CoverageFullRadio"
+                                         GroupName="Cov"
+                                         Content="{DynamicResource IpList_CoverageFull}"/>
+                        </StackPanel>
+
+                        <ui:TextBlock Text="{DynamicResource IpList_RouteLimitLabel}"
+                                      Margin="0,14,0,6"
+                                      FontWeight="SemiBold"/>
+                        <ui:TextBlock Text="{DynamicResource IpList_RouteLimitHint}"
+                                      Opacity="0.75"
+                                      TextWrapping="Wrap"
+                                      Margin="0,0,0,6"/>
+                        <TextBox x:Name="RouteLimitTextBox"
+                                 Width="120"
+                                 HorizontalAlignment="Left"
+                                 MaxLength="4"/>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
+                            <ui:Button x:Name="SaveButton"
+                                       Appearance="Primary"
+                                       Margin="0,0,10,0"
+                                       Click="SaveButton_OnClick"
+                                       Content="{DynamicResource IpList_Save}"/>
+                            <ui:Button x:Name="UpdateNowButton"
+                                       Appearance="Secondary"
+                                       Click="UpdateNowButton_OnClick"
+                                       Content="{DynamicResource IpList_UpdateNow}"/>
+                        </StackPanel>
+
+                        <ui:TextBlock x:Name="SaveMessageText"
+                                      Margin="0,10,0,0"
+                                      Opacity="0.85"
+                                      Visibility="Collapsed"/>
+
+                        <Separator Margin="0,18,0,14"/>
+
+                        <ui:TextBlock Text="{DynamicResource IpList_StatusTitle}"
+                                      FontTypography="Subtitle"
+                                      FontWeight="SemiBold"
+                                      Margin="0,0,0,8"/>
+
+                        <StackPanel Margin="0,0,0,4">
+                            <ui:TextBlock x:Name="LastUpdatedText" TextWrapping="Wrap"/>
+                            <ui:TextBlock x:Name="LoadedRoutesText" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                            <ui:TextBlock x:Name="LastErrorText" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                </ui:Card>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</ui:FluentWindow>

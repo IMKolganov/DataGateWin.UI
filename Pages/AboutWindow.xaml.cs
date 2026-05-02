@@ -25,7 +25,7 @@ public partial class AboutWindow
     {
         Process.Start(new ProcessStartInfo
         {
-            FileName = "https://datagateapp.com",
+            FileName = Loc.T("About_WebsiteUrl"),
             UseShellExecute = true
         });
     }

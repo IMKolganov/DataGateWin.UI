@@ -16,6 +16,10 @@
                  UseLayoutRounding="True"
                  SnapsToDevicePixels="True">
 
+    <Window.TaskbarItemInfo>
+        <TaskbarItemInfo x:Name="ShellTaskbarItemInfo"/>
+    </Window.TaskbarItemInfo>
+
     <Grid Background="{DynamicResource ApplicationBackgroundBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -70,7 +74,8 @@
                                IsBackButtonVisible="Collapsed"
                                IsPaneToggleVisible="True"
                                OpenPaneLength="280"
-                               CompactPaneLength="56"
+                               CompactPaneLength="64"
+                               IsFooterSeparatorVisible="True"
                                SelectionChanged="NavView_OnSelectionChanged"
                                Background="{DynamicResource ApplicationBackgroundBrush}">
 
@@ -101,6 +106,205 @@
                         </ui:NavigationViewItem.Icon>
                     </ui:NavigationViewItem>
                 </ui:NavigationView.MenuItems>
+
+                <ui:NavigationView.PaneFooter>
+                    <StackPanel VerticalAlignment="Bottom">
+                    <!-- Visibility on wrappers: a full Button.Style replaces WPF UI theme and yields unstyled chrome. -->
+                    <Grid Margin="10,0,10,8">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Visibility" Value="Visible"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPaneOpen, ElementName=NavView}" Value="False">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+                        <ui:Button x:Name="TelegramChannelPaneButton"
+                                   HorizontalAlignment="Stretch"
+                                   HorizontalContentAlignment="Left"
+                                   Appearance="Secondary"
+                                   Click="TelegramChannel_OnClick">
+                            <StackPanel Orientation="Horizontal">
+                                <ContentControl Width="20"
+                                                Height="20"
+                                                Margin="0,0,8,0"
+                                                VerticalAlignment="Center"
+                                                Content="{StaticResource TelegramLogoMark}"/>
+                                <TextBlock Text="{DynamicResource Telegram_SubscribeHint}"
+                                           VerticalAlignment="Center"
+                                           TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </ui:Button>
+                    </Grid>
+
+                    <Grid Margin="0,0,0,6">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPaneOpen, ElementName=NavView}" Value="False">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+                        <ui:Button x:Name="TelegramChannelCompactButton"
+                                   Width="40"
+                                   Height="40"
+                                   Padding="0"
+                                   HorizontalAlignment="Center"
+                                   Appearance="Transparent"
+                                   ToolTip="{DynamicResource Telegram_SubscribeHint}"
+                                   Click="TelegramChannel_OnClick">
+                            <ContentControl Width="26"
+                                            Height="26"
+                                            Content="{StaticResource TelegramLogoMark}"/>
+                        </ui:Button>
+                    </Grid>
+
+                    <Grid Margin="10,0,10,10">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Visibility" Value="Visible"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPaneOpen, ElementName=NavView}" Value="False">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+                        <ui:Button x:Name="ReportIssuePaneButton"
+                                   HorizontalAlignment="Stretch"
+                                   HorizontalContentAlignment="Left"
+                                   Appearance="Secondary"
+                                   Click="ReportIssue_OnClick">
+                            <StackPanel Orientation="Horizontal">
+                                <Viewbox Width="20"
+                                         Height="20"
+                                         Margin="0,0,8,0"
+                                         VerticalAlignment="Center">
+                                    <ui:SymbolIcon Symbol="ChatHelp24"/>
+                                </Viewbox>
+                                <TextBlock Text="{DynamicResource Home_ReportIssue}"
+                                           VerticalAlignment="Center"
+                                           TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </ui:Button>
+                    </Grid>
+
+                    <Grid Margin="0,0,0,6">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPaneOpen, ElementName=NavView}" Value="False">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+                        <ui:Button x:Name="ReportIssueCompactButton"
+                                   Width="40"
+                                   Height="40"
+                                   Padding="0"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Appearance="Transparent"
+                                   ToolTip="{DynamicResource Home_ReportIssue}"
+                                   Click="ReportIssue_OnClick">
+                            <Viewbox Width="26"
+                                     Height="26">
+                                <ui:SymbolIcon Symbol="ChatHelp24"/>
+                            </Viewbox>
+                        </ui:Button>
+                    </Grid>
+
+                    <Border x:Name="UserProfileRoot"
+                            Background="Transparent">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Padding" Value="12,10,12,14"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPaneOpen, ElementName=NavView}" Value="False">
+                                        <Setter Property="Padding" Value="0,0,0,4"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <Grid x:Name="UserProfileInnerGrid">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Border x:Name="UserAvatarClipBorder"
+                                    Grid.Column="0"
+                                    Width="40"
+                                    Height="40"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Background="{DynamicResource ControlFillColorSecondaryBrush}"
+                                    SnapsToDevicePixels="True"
+                                    UseLayoutRounding="True">
+                                <Border.Clip>
+                                    <EllipseGeometry Center="20,20" RadiusX="20" RadiusY="20"/>
+                                </Border.Clip>
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Grid.ColumnSpan" Value="1"/>
+                                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsPaneOpen, ElementName=NavView}" Value="False">
+                                                <Setter Property="Grid.ColumnSpan" Value="2"/>
+                                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <Grid>
+                                    <Image x:Name="UserAvatarImage"
+                                           Width="40"
+                                           Height="40"
+                                           Stretch="UniformToFill"
+                                           Visibility="Collapsed"
+                                           RenderOptions.BitmapScalingMode="HighQuality">
+                                        <Image.Clip>
+                                            <EllipseGeometry Center="20,20" RadiusX="20" RadiusY="20"/>
+                                        </Image.Clip>
+                                    </Image>
+                                    <TextBlock x:Name="UserAvatarInitials"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontSize="14"
+                                               FontWeight="SemiBold"
+                                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                </Grid>
+                            </Border>
+
+                            <ui:TextBlock x:Name="UserDisplayName"
+                                          Grid.Column="1"
+                                          Margin="12,0,0,0"
+                                          VerticalAlignment="Center"
+                                          FontWeight="SemiBold"
+                                          TextTrimming="CharacterEllipsis"
+                                          Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+                                <ui:TextBlock.Style>
+                                    <Style TargetType="ui:TextBlock">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsPaneOpen, ElementName=NavView}" Value="False">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ui:TextBlock.Style>
+                            </ui:TextBlock>
+                        </Grid>
+                    </Border>
+                    </StackPanel>
+                </ui:NavigationView.PaneFooter>
             </ui:NavigationView>
 
             <!-- Right content host -->

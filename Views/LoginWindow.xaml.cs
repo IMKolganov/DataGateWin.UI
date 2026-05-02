@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using DataGateWin.Configuration;
 using DataGateWin.Localization;
 using DataGateWin.Services.Auth;
+using DataGateWin.Services.Support;
 using DataGateWin.Services.Ui;
 using DataGateWin.ViewModels;
 using Microsoft.Extensions.Configuration;
@@ -47,12 +48,50 @@ public partial class LoginWindow : FluentWindow
         };
 
         DataContext = vm;
+
+        UiLanguageService.LanguageChanged += OnUiLanguageChanged;
+        Closed += (_, _) => UiLanguageService.LanguageChanged -= OnUiLanguageChanged;
+    }
+
+    private void ReportIssue_OnClick(object sender, RoutedEventArgs e)
+    {
+        new ReportIssueDialog { Owner = this }.ShowDialog();
+    }
+
+    private void TelegramChannel_OnClick(object sender, RoutedEventArgs e)
+    {
+        TelegramChannel.OpenPublicChannel();
+    }
+
+    private void OnUiLanguageChanged(object? sender, EventArgs e)
+    {
+        Dispatcher.Invoke(PopulateLoginLanguageCombo);
     }
 
     private void LoginWindow_OnLoaded(object sender, RoutedEventArgs e)
     {
+        PopulateLoginLanguageCombo();
+    }
+
+    private void PopulateLoginLanguageCombo()
+    {
         var pref = UiLanguageService.GetStoredLanguagePreference();
         _suppressLanguageCombo = true;
+        LoginLanguageCombo.Items.Clear();
+        LoginLanguageCombo.Items.Add(new ComboBoxItem
+        {
+            Tag = UiLanguageService.SystemPreference,
+            Content = UiLanguageService.GetLanguageDisplayName(UiLanguageService.SystemPreference),
+        });
+        foreach (var code in UiLanguageService.GetLanguagePickerCodes())
+        {
+            LoginLanguageCombo.Items.Add(new ComboBoxItem
+            {
+                Tag = code,
+                Content = UiLanguageService.GetLanguageDisplayName(code),
+            });
+        }
+
         ComboBoxItem? match = null;
         foreach (ComboBoxItem item in LoginLanguageCombo.Items)
         {

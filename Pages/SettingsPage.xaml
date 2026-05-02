@@ -40,15 +40,10 @@
                                   Margin="0,4,0,12"/>
 
                     <ComboBox x:Name="LanguageCombo"
-                              Width="220"
+                              MinWidth="280"
+                              MaxWidth="420"
                               HorizontalAlignment="Left"
-                              SelectionChanged="LanguageCombo_OnSelectionChanged">
-                        <ComboBoxItem Tag="system" Content="{DynamicResource Lang_Name_system}"/>
-                        <ComboBoxItem Tag="en" Content="{DynamicResource Lang_Name_en}"/>
-                        <ComboBoxItem Tag="fr" Content="{DynamicResource Lang_Name_fr}"/>
-                        <ComboBoxItem Tag="ru" Content="{DynamicResource Lang_Name_ru}"/>
-                        <ComboBoxItem Tag="el" Content="{DynamicResource Lang_Name_el}"/>
-                    </ComboBox>
+                              SelectionChanged="LanguageCombo_OnSelectionChanged"/>
 
                     <Separator Margin="0,16,0,16"/>
 
@@ -83,6 +78,51 @@
                                          Checked="ThemeToggle_OnChecked"
                                          Unchecked="ThemeToggle_OnUnchecked"/>
                     </Grid>
+
+                    <Separator Margin="0,16,0,16"/>
+
+                    <!-- IP lists -->
+                    <ui:TextBlock Text="{DynamicResource Settings_IpLists}"
+                                  FontTypography="Subtitle"
+                                  FontWeight="SemiBold"/>
+
+                    <ui:TextBlock Text="{DynamicResource Settings_IpLists_Subtitle}"
+                                  Opacity="0.75"
+                                  Margin="0,4,0,12"/>
+
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <ui:TextBlock Text="{DynamicResource Settings_IpLists_Enable}"
+                                          FontWeight="SemiBold"/>
+                            <ui:TextBlock Text="{DynamicResource Settings_IpLists_EnableSubtitle}"
+                                          Opacity="0.75"
+                                          Margin="0,2,0,0"/>
+                        </StackPanel>
+
+                        <ui:ToggleSwitch Grid.Column="1"
+                                         x:Name="IpListsMainToggle"
+                                         Width="140"
+                                         VerticalAlignment="Center"
+                                         Checked="IpListsMainToggle_OnChecked"
+                                         Unchecked="IpListsMainToggle_OnUnchecked"/>
+                    </Grid>
+
+                    <ui:Button Height="40"
+                               Appearance="Secondary"
+                               HorizontalAlignment="Left"
+                               Click="IpListsConfigure_OnClick">
+                        <ui:Button.Icon>
+                            <ui:SymbolIcon Symbol="Globe24"/>
+                        </ui:Button.Icon>
+                        <ui:Button.Content>
+                            <TextBlock Text="{DynamicResource Settings_IpLists_Open}"/>
+                        </ui:Button.Content>
+                    </ui:Button>
 
                     <Separator Margin="0,16,0,16"/>
 
