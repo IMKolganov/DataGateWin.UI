@@ -92,7 +92,9 @@ public partial class App : Application
     {
         try
         {
-            if (!IsRunningAsAdministrator())
+            // Release builds always require elevation. Debug + F5: IDE is not elevated, so without this
+            // the app exits immediately after the admin MessageBox and looks like "nothing happens".
+            if (ShouldQuitForMissingAdministrator())
             {
                 MessageBox.Show(
                     Loc.T("Msg_AdminBody"),
@@ -105,21 +107,26 @@ public partial class App : Application
             }
             
             _engineExePath = _enginePathResolver.ResolveEngineExePath();
-            var configPath = Path.Combine(AppContext.BaseDirectory, "appsettings.json");
-            if (!File.Exists(configPath))
-            {
-                MessageBox.Show(
-                    Loc.T("Msg_ConfigMissingBodyFmt", configPath),
-                    Loc.T("Msg_ConfigMissingTitle"),
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+            var configDir = AppContext.BaseDirectory;
+            var configPath = Path.Combine(configDir, "appsettings.json");
 
-                Shutdown();
-                return;
+            while (true)
+            {
+                AppsettingsConnection.TryLoadFile(configPath, out var api, out var google);
+
+                if (AppsettingsConnection.IsComplete(api, google))
+                    break;
+
+                var dlg = new FirstRunConfigurationWindow(api, google);
+                if (dlg.ShowDialog() != true)
+                {
+                    Shutdown();
+                    return;
+                }
             }
 
             AppConfiguration = new ConfigurationBuilder()
-                .SetBasePath(AppContext.BaseDirectory)
+                .SetBasePath(configDir)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
 
@@ -143,7 +150,8 @@ public partial class App : Application
 
             var baseUri = new Uri(apiSettings.BaseUrl, UriKind.Absolute);
 
-            AuthApi = new AuthApiClient(new HttpClient { BaseAddress = baseUri });
+            var startupHttpTimeout = TimeSpan.FromSeconds(30);
+            AuthApi = new AuthApiClient(new HttpClient { BaseAddress = baseUri, Timeout = startupHttpTimeout });
 
             Session = new AuthSession(
                 AuthApi,
@@ -156,10 +164,11 @@ public partial class App : Application
             AuthedApiHttp = new HttpClient(
                 new AuthenticatedHttpHandler(Session, new HttpClientHandler()))
             {
-                BaseAddress = baseUri
+                BaseAddress = baseUri,
+                Timeout = TimeSpan.FromMinutes(2)
             };
 
-            GoogleAuth = new GoogleAuthService(new HttpClient());
+            GoogleAuth = new GoogleAuthService(new HttpClient { Timeout = TimeSpan.FromMinutes(2) });
 
             var authState = new AuthStateStore();
             var token = await Session.GetValidAccessTokenAsync(CancellationToken.None);
@@ -205,6 +214,25 @@ public partial class App : Application
 
             Shutdown();
         }
+    }
+
+    /// <summary>
+    /// Release builds require elevation (see app.manifest). Debug builds use app.manifest.debug.xml (asInvoker)
+    /// and skip this gate so the app can run under the IDE without admin.
+    /// To test a Release build locally without elevation, set env DATAGATE_WIN_SKIP_ADMIN_CHECK=1.
+    /// </summary>
+    private static bool ShouldQuitForMissingAdministrator()
+    {
+#if DEBUG
+        return false;
+#else
+        var skip = Environment.GetEnvironmentVariable("DATAGATE_WIN_SKIP_ADMIN_CHECK");
+        if (string.Equals(skip, "1", StringComparison.Ordinal)
+            || string.Equals(skip, "true", StringComparison.OrdinalIgnoreCase))
+            return false;
+
+        return !IsRunningAsAdministrator();
+#endif
     }
 
     private static bool IsRunningAsAdministrator()

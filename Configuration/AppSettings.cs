@@ -4,7 +4,7 @@ public sealed class AppSettings
 {
     public string Theme { get; set; } = "Dark";
 
-    /// <summary>UI language: <c>system</c> (follow Windows display language) or en, fr, ru, el.</summary>
+    /// <summary>UI language: <c>system</c> (follow Windows display language) or a supported code from <see cref="Localization.UiLocale"/> (same list as the Android app).</summary>
     public string UiLanguage { get; set; } = "system";
 
     public string? InstallationId { get; set; }

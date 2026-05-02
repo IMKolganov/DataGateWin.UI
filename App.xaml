@@ -9,6 +9,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ui:ControlsDictionary />
+                <ResourceDictionary Source="Themes/Icons.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <tray:NotifyIcon x:Key="TrayIcon"
                              TooltipText="{DynamicResource Tray_Tooltip}"

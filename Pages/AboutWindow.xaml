@@ -58,7 +58,7 @@
                                        VerticalAlignment="Center"/>
 
                         <TextBlock Grid.Column="2"
-                                   Text="https://datagateapp.com"
+                                   Text="{DynamicResource About_WebsiteUrl}"
                                    Cursor="Hand"
                                    TextDecorations="Underline"
                                    Foreground="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"

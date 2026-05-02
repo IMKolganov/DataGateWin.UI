@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using DataGateWin.Ipc;
+using DataGateWin.Localization;
 using DataGateWin.Models.Ipc;
 using Newtonsoft.Json.Linq;
 
@@ -278,8 +279,11 @@ public sealed class EngineSessionService(
 
         _client.EngineLogReceived += (_, line) =>
         {
-            if (!string.IsNullOrWhiteSpace(line))
-                log(line);
+            if (string.IsNullOrWhiteSpace(line))
+                return;
+            log(line);
+            if (IsDllLoadFailureLine(line))
+                log(Loc.T("Home_Log_DllMissingHint"));
         };
 
         _client.EngineExited += (_, code) =>
@@ -301,7 +305,12 @@ public sealed class EngineSessionService(
                     return;
 
                 if (mapped.Kind == EngineEventKind.Log && !string.IsNullOrWhiteSpace(mapped.Message))
-                    log(mapped.Message);
+                {
+                    var m = mapped.Message!;
+                    log(m);
+                    if (IsDllLoadFailureLine(m))
+                        log(Loc.T("Home_Log_DllMissingHint"));
+                }
 
                 onEngineEvent(mapped);
             }
@@ -310,5 +319,20 @@ public sealed class EngineSessionService(
                 log($"Event handler error: {ex}");
             }
         };
+    }
+
+    /// <summary>Detects engine log lines like LoadLibraryExW(wintun.dll) failed: 126 …</summary>
+    private static bool IsDllLoadFailureLine(string line)
+    {
+        if (string.IsNullOrEmpty(line))
+            return false;
+        if (!line.Contains(".dll", StringComparison.OrdinalIgnoreCase))
+            return false;
+        if (!line.Contains("LoadLibrary", StringComparison.OrdinalIgnoreCase))
+            return false;
+        return line.Contains("126", StringComparison.Ordinal)
+            || line.Contains("could not be found", StringComparison.OrdinalIgnoreCase)
+            || line.Contains("not be found", StringComparison.OrdinalIgnoreCase)
+            || line.Contains("The specified module", StringComparison.OrdinalIgnoreCase);
     }
 }

@@ -1,7 +1,9 @@
 using System.Text;
+using DataGateWin.Configuration;
 using DataGateWin.Services.Auth;
 using DataGateWin.Services.Identity;
 using DataGateWin.Services.Installation;
+using DataGateWin.Services.IpList;
 using DataGateWin.Services.OpenVpnFiles;
 using DataGateWin.Services.VpnServers;
 using Newtonsoft.Json.Linq;
@@ -12,7 +14,8 @@ public sealed class StartSessionPayloadBuilder(
     WssServerSelector wssServerSelector,
     InstallationIdService installationIdService,
     OpenVpnFilesApiClient filesApi,
-    AuthSession session)
+    AuthSession session,
+    IpListRoutesRepository ipListRoutes)
 {
     public Task<JObject?> BuildAsync(CancellationToken ct) =>
         BuildAsync(autoPickServer: true, manualVpnServerId: null, ct);
@@ -53,6 +56,19 @@ public sealed class StartSessionPayloadBuilder(
             throw new InvalidOperationException("Downloaded OVPN content is empty");
 
         var ovpnContent = Encoding.UTF8.GetString(downloaded.Content);
+
+        var ipSettings = IpListStore.LoadSettings();
+        if (ipSettings.CidrListsEnabled)
+        {
+            var routes = await ipListRoutes.GetRoutesForConnectionAsync(ct).ConfigureAwait(false);
+            var plan = IpListRouteConfig.PrepareConnectionRoutes(
+                ovpnContent,
+                routes,
+                ipSettings.CoverageMode,
+                IpListRouteConfig.SanitizeAndroid12OvpnRouteLimit(ipSettings.OvpnRouteLimit),
+                supportsAndroidRouteExclusion: false);
+            ovpnContent = plan.Config;
+        }
 
         var apiUri = new Uri(server.ApiUrl);
         var host = apiUri.Host;

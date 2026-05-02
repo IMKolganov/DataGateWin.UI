@@ -39,95 +39,131 @@
               Background="{DynamicResource ApplicationBackgroundBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <DockPanel Grid.Row="0" Margin="0,0,0,12" LastChildFill="False">
-                <ui:TextBlock DockPanel.Dock="Left"
+            <Grid Grid.Row="0" Margin="0,0,0,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <DockPanel Grid.Column="0" LastChildFill="False">
+                    <ui:TextBlock DockPanel.Dock="Left"
+                                  VerticalAlignment="Center"
+                                  Text="{DynamicResource Settings_Language}"
+                                  FontWeight="SemiBold"/>
+                    <ComboBox x:Name="LoginLanguageCombo"
+                              DockPanel.Dock="Right"
+                              MinWidth="280"
+                              MaxWidth="420"
                               VerticalAlignment="Center"
-                              Text="{DynamicResource Settings_Language}"
-                              FontWeight="SemiBold"/>
-                <ComboBox x:Name="LoginLanguageCombo"
-                          DockPanel.Dock="Right"
-                          Width="200"
-                          VerticalAlignment="Center"
-                          SelectionChanged="LoginLanguageCombo_OnSelectionChanged">
-                    <ComboBoxItem Tag="system" Content="{DynamicResource Lang_Name_system}"/>
-                    <ComboBoxItem Tag="en" Content="{DynamicResource Lang_Name_en}"/>
-                    <ComboBoxItem Tag="fr" Content="{DynamicResource Lang_Name_fr}"/>
-                    <ComboBoxItem Tag="ru" Content="{DynamicResource Lang_Name_ru}"/>
-                    <ComboBoxItem Tag="el" Content="{DynamicResource Lang_Name_el}"/>
-                </ComboBox>
-            </DockPanel>
+                              SelectionChanged="LoginLanguageCombo_OnSelectionChanged"/>
+                </DockPanel>
+                <ui:Button Grid.Column="1"
+                           VerticalAlignment="Center"
+                           Margin="12,0,0,0"
+                           Padding="0"
+                           MinHeight="32"
+                           MinWidth="32"
+                           Height="{Binding ActualHeight, ElementName=LoginLanguageCombo, Mode=OneWay}"
+                           Width="{Binding ActualHeight, ElementName=LoginLanguageCombo, Mode=OneWay}"
+                           Appearance="Transparent"
+                           ToolTip="{DynamicResource Home_ReportIssue}"
+                           Click="ReportIssue_OnClick">
+                    <ui:SymbolIcon Symbol="ChatHelp24"/>
+                </ui:Button>
+            </Grid>
 
-            <ui:Card Grid.Row="1" Padding="28" VerticalAlignment="Center">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
+            <StackPanel Grid.Row="1"
+                        VerticalAlignment="Top">
+                <ui:Card Padding="28">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
 
-                    <!-- Header -->
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,18">
-                        <ui:SymbolIcon Symbol="Shield24" FontSize="26" Margin="0,2,12,0"/>
-                        <StackPanel>
-                            <ui:TextBlock Text="{DynamicResource Login_Welcome}"
-                                          FontTypography="Title"
-                                          FontWeight="SemiBold"/>
-                            <ui:TextBlock Text="{DynamicResource Login_SignInToContinue}"
-                                          Opacity="0.75"
-                                          Margin="0,4,0,0"/>
+                        <!-- Header -->
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,18">
+                            <ui:SymbolIcon Symbol="Shield24" FontSize="26" Margin="0,2,12,0"/>
+                            <StackPanel>
+                                <ui:TextBlock Text="{DynamicResource Login_Welcome}"
+                                              FontTypography="Title"
+                                              FontWeight="SemiBold"/>
+                                <ui:TextBlock Text="{DynamicResource Login_SignInToContinue}"
+                                              Opacity="0.75"
+                                              Margin="0,4,0,0"/>
+                            </StackPanel>
                         </StackPanel>
+
+                        <!-- Primary -->
+                        <ui:Button Grid.Row="1"
+                                   Height="46"
+                                   Appearance="Primary"
+                                   Command="{Binding SignInCommand}"
+                                   IsEnabled="{Binding IsNotBusy}">
+                            <ui:Button.Icon>
+                                <ui:SymbolIcon Symbol="PersonAccounts24"/>
+                            </ui:Button.Icon>
+                            <ui:Button.Content>
+                                <TextBlock Text="{DynamicResource Login_SignInGoogle}"/>
+                            </ui:Button.Content>
+                        </ui:Button>
+
+                        <!-- Cancel only when busy -->
+                        <ui:Button Grid.Row="2"
+                                   Height="42"
+                                   Margin="0,10,0,0"
+                                   Appearance="Secondary"
+                                   Command="{Binding CancelCommand}"
+                                   Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}">
+                            <ui:Button.Icon>
+                                <ui:SymbolIcon Symbol="Dismiss24"/>
+                            </ui:Button.Icon>
+                            <ui:Button.Content>
+                                <TextBlock Text="{DynamicResource Login_Cancel}"/>
+                            </ui:Button.Content>
+                        </ui:Button>
+
+                        <!-- Status -->
+                        <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,16,0,0">
+                            <ui:ProgressRing Width="18"
+                                             Height="18"
+                                             IsIndeterminate="True"
+                                             Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"/>
+                            <ui:TextBlock Text="{Binding StatusText}"
+                                          Margin="10,0,0,0"
+                                          Opacity="0.85"
+                                          TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Grid>
+                </ui:Card>
+
+                <ui:Button Margin="0,14,0,0"
+                           HorizontalAlignment="Right"
+                           HorizontalContentAlignment="Center"
+                           Padding="12,10"
+                           Appearance="Secondary"
+                           Click="TelegramChannel_OnClick">
+                    <StackPanel Orientation="Horizontal">
+                        <ContentControl Width="20"
+                                        Height="20"
+                                        Margin="0,0,10,0"
+                                        VerticalAlignment="Center"
+                                        Content="{StaticResource TelegramLogoMark}"/>
+                        <TextBlock Text="{DynamicResource Telegram_SubscribeHint}"
+                                   TextWrapping="NoWrap"
+                                   VerticalAlignment="Center"/>
                     </StackPanel>
-
-                    <!-- Primary -->
-                    <ui:Button Grid.Row="1"
-                               Height="46"
-                               Appearance="Primary"
-                               Command="{Binding SignInCommand}"
-                               IsEnabled="{Binding IsNotBusy}">
-                        <ui:Button.Icon>
-                            <ui:SymbolIcon Symbol="PersonAccounts24"/>
-                        </ui:Button.Icon>
-                        <ui:Button.Content>
-                            <TextBlock Text="{DynamicResource Login_SignInGoogle}"/>
-                        </ui:Button.Content>
-                    </ui:Button>
-
-                    <!-- Cancel only when busy -->
-                    <ui:Button Grid.Row="2"
-                               Height="42"
-                               Margin="0,10,0,0"
-                               Appearance="Secondary"
-                               Command="{Binding CancelCommand}"
-                               Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}">
-                        <ui:Button.Icon>
-                            <ui:SymbolIcon Symbol="Dismiss24"/>
-                        </ui:Button.Icon>
-                        <ui:Button.Content>
-                            <TextBlock Text="{DynamicResource Login_Cancel}"/>
-                        </ui:Button.Content>
-                    </ui:Button>
-
-                    <!-- Status -->
-                    <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,16,0,0">
-                        <ui:ProgressRing Width="18"
-                                         Height="18"
-                                         IsIndeterminate="True"
-                                         Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"/>
-                        <ui:TextBlock Text="{Binding StatusText}"
-                                      Margin="10,0,0,0"
-                                      Opacity="0.85"
-                                      TextWrapping="Wrap"/>
-                    </StackPanel>
-                </Grid>
-            </ui:Card>
+                </ui:Button>
+            </StackPanel>
 
             <!-- Footer -->
-            <ui:TextBlock Grid.Row="2"
+            <ui:TextBlock Grid.Row="3"
                           HorizontalAlignment="Stretch"
                           TextAlignment="Center"
                           TextWrapping="Wrap"
