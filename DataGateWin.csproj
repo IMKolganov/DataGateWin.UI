@@ -10,8 +10,8 @@
     <ApplicationManifest Condition="'$(Configuration)'=='Debug'">app.manifest.debug.xml</ApplicationManifest>
     <ApplicationManifest Condition="'$(Configuration)'!='Debug'">app.manifest</ApplicationManifest>
     <ApplicationIcon>Images\favicon.ico</ApplicationIcon>
-    <AssemblyVersion>1.0.5</AssemblyVersion>
-    <FileVersion>1.0.5</FileVersion>
+    <AssemblyVersion>1.0.6</AssemblyVersion>
+    <FileVersion>1.0.6</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
