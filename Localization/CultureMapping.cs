@@ -1,4 +1,5 @@
 using System.Globalization;
+using DataGateWin.CrashReporting;
 
 namespace DataGateWin.Localization;
 
@@ -21,8 +22,9 @@ public static class CultureMapping
                     if (NamesMatchUiCulture(c, target))
                         return loc.Code;
                 }
-                catch (CultureNotFoundException)
+                catch (CultureNotFoundException ex)
                 {
+                    CrashReporter.ReportNonFatal(ex, "CultureMapping.MatchCulture");
                     // ignored
                 }
             }
@@ -37,8 +39,9 @@ public static class CultureMapping
                 if (string.Equals(target.TwoLetterISOLanguageName, two, StringComparison.OrdinalIgnoreCase))
                     return loc.Code;
             }
-            catch (CultureNotFoundException)
+            catch (CultureNotFoundException ex)
             {
+                CrashReporter.ReportNonFatal(ex, "CultureMapping.MatchTwoLetterCulture");
                 // ignored
             }
         }

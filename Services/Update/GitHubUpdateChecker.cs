@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Reflection;
 using System.Text.Json;
 using System.Windows;
+using DataGateWin.CrashReporting;
 using DataGateWin.Localization;
 
 namespace DataGateWin.Services.Update;
@@ -37,8 +38,9 @@ public sealed class GitHubUpdateChecker
 
             StartUpdater();
         }
-        catch
+        catch (Exception ex)
         {
+            CrashReporter.ReportNonFatal(ex, "GitHubUpdateChecker.CheckForUpdate");
             // Silent fail: update check must never break startup
         }
     }
@@ -51,8 +53,9 @@ public sealed class GitHubUpdateChecker
             var latest = await GetLatestReleaseAsync(ct);
             return latest == null ? null : FormatVersionForDisplay(latest.Version);
         }
-        catch
+        catch (Exception ex)
         {
+            CrashReporter.ReportNonFatal(ex, "GitHubUpdateChecker.GetLatestReleaseVersion");
             return null;
         }
     }
@@ -216,7 +219,10 @@ public sealed class GitHubUpdateChecker
                         p.WaitForExit(500);
                     }
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    CrashReporter.ReportNonFatal(ex, "GitHubUpdateChecker.KillEngine.CloseMainWindow");
+                }
 
                 if (!p.HasExited)
                 {
@@ -224,13 +230,14 @@ public sealed class GitHubUpdateChecker
                     p.WaitForExit(1500);
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                CrashReporter.ReportNonFatal(ex, "GitHubUpdateChecker.KillEngine");
                 // ignore single-process failures
             }
             finally
             {
-                try { p.Dispose(); } catch { }
+                try { p.Dispose(); } catch (Exception ex) { CrashReporter.ReportNonFatal(ex, "GitHubUpdateChecker.KillEngine.Dispose"); }
             }
         }
     }

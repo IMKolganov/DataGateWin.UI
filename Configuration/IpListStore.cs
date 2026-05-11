@@ -1,6 +1,7 @@
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using DataGateWin.CrashReporting;
 using DataGateWin.Services.IpList;
 
 namespace DataGateWin.Configuration;
@@ -33,8 +34,9 @@ public static class IpListStore
             var doc = JsonSerializer.Deserialize<IpListStateDocument>(json, JsonOptions);
             return doc ?? new IpListStateDocument();
         }
-        catch
+        catch (Exception ex)
         {
+            CrashReporter.ReportNonFatal(ex, "IpListStore.LoadState");
             return new IpListStateDocument();
         }
     }
@@ -47,8 +49,9 @@ public static class IpListStore
             var json = JsonSerializer.Serialize(doc, JsonOptions);
             File.WriteAllText(StatePath, json);
         }
-        catch
+        catch (Exception ex)
         {
+            CrashReporter.ReportNonFatal(ex, "IpListStore.SaveDocument");
             // ignored
         }
     }
@@ -68,8 +71,9 @@ public static class IpListStore
         {
             return File.Exists(CachedListPath) ? File.ReadAllText(CachedListPath) : null;
         }
-        catch
+        catch (Exception ex)
         {
+            CrashReporter.ReportNonFatal(ex, "IpListStore.ReadCachedList");
             return null;
         }
     }
@@ -90,8 +94,9 @@ public static class IpListStore
             };
             SaveDocument(doc);
         }
-        catch
+        catch (Exception ex)
         {
+            CrashReporter.ReportNonFatal(ex, "IpListStore.WriteCachedList");
             // ignored
         }
     }

@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Security.Principal;
 using System.Windows;
 using DataGateWin.Configuration;
+using DataGateWin.CrashReporting;
 using DataGateWin.Localization;
 using DataGateWin.Services.Auth;
 using DataGateWin.Services.Ipc;
@@ -32,6 +33,7 @@ public partial class App : Application
 
     protected override void OnStartup(StartupEventArgs e)
     {
+        InstallCrashReportingHandlers();
         base.OnStartup(e);
         
         Settings = AppSettingsStore.LoadSafe();
@@ -77,13 +79,14 @@ public partial class App : Application
             if (!string.IsNullOrWhiteSpace(_engineExePath) && File.Exists(_engineExePath))
                 KillEngineProcessesByExactPathOnce(_engineExePath);
         }
-        catch
+        catch (Exception ex)
         {
+            CrashReporter.ReportNonFatal(ex, "App.OnExit.KillEngine");
             // Never throw on exit
         }
 
-        try { AppSettingsStore.SaveSafe(Settings); } catch { }
-        try { _tray?.Unregister(); } catch { }
+        try { AppSettingsStore.SaveSafe(Settings); } catch (Exception ex) { CrashReporter.ReportNonFatal(ex, "App.OnExit.SaveSettings"); }
+        try { _tray?.Unregister(); } catch (Exception ex) { CrashReporter.ReportNonFatal(ex, "App.OnExit.TrayUnregister"); }
 
         base.OnExit(e);
     }
@@ -135,6 +138,9 @@ public partial class App : Application
 
             if (string.IsNullOrWhiteSpace(apiSettings.BaseUrl))
                 throw new InvalidOperationException("Api:BaseUrl is missing.");
+
+            ConfigureCrashReporting(apiSettings.BaseUrl);
+            _ = CrashReporter.FlushPendingAsync(CancellationToken.None);
 
             var googleSettings = AppConfiguration.GetSection("GoogleAuth").Get<GoogleAuthSettings>()
                 ?? throw new InvalidOperationException("GoogleAuth settings are missing.");
@@ -206,6 +212,8 @@ public partial class App : Application
         }
         catch (Exception ex)
         {
+            CrashReporter.ReportNonFatal(ex, "StartupFailed");
+
             MessageBox.Show(
                 Loc.T("Msg_StartupFailedBodyFmt", ex.Message),
                 Loc.T("Msg_StartupFailedTitle"),
@@ -214,6 +222,31 @@ public partial class App : Application
 
             Shutdown();
         }
+    }
+
+    private void InstallCrashReportingHandlers()
+    {
+        CrashReporter.InstallDomainHandlers();
+        DispatcherUnhandledException += (_, args) =>
+        {
+            CrashReporter.HandleDispatcherUnhandled(args.Exception);
+        };
+    }
+
+    private static void ConfigureCrashReporting(string apiBaseUrl)
+    {
+        var crashSettings = AppConfiguration.GetSection("CrashReporting").Get<CrashReportingConfiguration>()
+            ?? AppsettingsConnection.CreateDefaultCrashReporting();
+
+        if (string.IsNullOrWhiteSpace(crashSettings.BaseUrl))
+            crashSettings.BaseUrl = apiBaseUrl;
+
+        if (string.IsNullOrWhiteSpace(crashSettings.ProcessName))
+            crashSettings.ProcessName = CrashReporter.DefaultProcessName;
+
+        crashSettings.CrashToken ??= "";
+
+        CrashReporter.Configure(crashSettings);
     }
 
     /// <summary>
@@ -284,7 +317,10 @@ public partial class App : Application
                         p.WaitForExit(500);
                     }
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    CrashReporter.ReportNonFatal(ex, "App.KillEngineProcesses.CloseMainWindow");
+                }
 
                 if (!p.HasExited)
                 {
@@ -292,13 +328,14 @@ public partial class App : Application
                     p.WaitForExit(1500);
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                CrashReporter.ReportNonFatal(ex, "App.KillEngineProcesses");
                 // ignore single-process failures
             }
             finally
             {
-                try { p.Dispose(); } catch { }
+                try { p.Dispose(); } catch (Exception ex) { CrashReporter.ReportNonFatal(ex, "App.KillEngineProcesses.Dispose"); }
             }
         }
     }

@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Windows;
+using DataGateWin.CrashReporting;
 using DataGateWin.Localization;
 using DataGateWin.Services.Support;
 using DataGateWin.Services.Ui;
@@ -40,8 +41,9 @@ public partial class ReportIssueDialog
         {
             Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true });
         }
-        catch
+        catch (Exception ex)
         {
+            CrashReporter.ReportNonFatal(ex, "ReportIssueDialog.OpenUrl");
             // ignore
         }
     }

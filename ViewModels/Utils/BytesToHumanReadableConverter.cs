@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Windows.Data;
+using DataGateWin.CrashReporting;
 
 namespace DataGateWin.ViewModels.Utils;
 
@@ -64,8 +65,9 @@ public sealed class BytesToHumanReadableConverter : IValueConverter
                     result = System.Convert.ToInt64(value, CultureInfo.InvariantCulture);
                     return true;
                 }
-                catch
+                catch (Exception ex)
                 {
+                    CrashReporter.ReportNonFatal(ex, "BytesToHumanReadableConverter.TryToInt64");
                     result = 0;
                     return false;
                 }

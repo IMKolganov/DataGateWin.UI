@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Windows;
 using DataGateWin.Configuration;
+using DataGateWin.CrashReporting;
 using DataGateWin.Localization;
 using DataGateWin.Services.Ui;
 using Wpf.Ui.Controls;
@@ -65,6 +66,7 @@ public partial class FirstRunConfigurationWindow : FluentWindow
         }
         catch (Exception ex)
         {
+            CrashReporter.ReportNonFatal(ex, "FirstRunConfigurationWindow.Save");
             ShowError(Loc.T("FirstRun_Err_SaveFailedFmt", ex.Message));
             return;
         }

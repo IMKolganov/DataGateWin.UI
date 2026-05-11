@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
 using System.Text;
+using DataGateWin.CrashReporting;
 using DataGateWin.Localization;
 using DataGateWin.Models.Ipc;
 using Newtonsoft.Json;
@@ -229,7 +230,7 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
             EngineExited?.Invoke(this, _process?.ExitCode ?? -1);
 
             FailAllPending(new IOException("Engine process exited."));
-            try { _internalCts?.Cancel(); } catch { }
+            try { _internalCts?.Cancel(); } catch (Exception ex) { CrashReporter.ReportNonFatal(ex, "EngineIpcClient.ProcessExited.Cancel"); }
         };
 
         if (!_process.Start())
@@ -362,6 +363,7 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
                 }
                 catch (Exception ex)
                 {
+                    CrashReporter.ReportNonFatal(ex, "EngineIpcClient.ControlRead");
                     EngineLogReceived?.Invoke(this, $"[ipc][ui] control read failed: {ex.GetType().Name}: {ex.Message}");
                     break;
                 }
@@ -383,6 +385,7 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
                 }
                 catch (Exception ex)
                 {
+                    CrashReporter.ReportNonFatal(ex, "EngineIpcClient.ControlReplyParse");
                     EngineLogReceived?.Invoke(this, $"[ipc][ui] control recv typed parse failed: {ex.GetType().Name}: {ex.Message}");
                 }
 
@@ -431,6 +434,7 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
                     }
                     catch (Exception ex)
                     {
+                        CrashReporter.ReportNonFatal(ex, "EngineIpcClient.ControlFallbackParse");
                         EngineLogReceived?.Invoke(this, $"[ipc][ui] control recv fallback parse failed: {ex.GetType().Name}: {ex.Message}");
                     }
 
@@ -476,6 +480,7 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
                 }
                 catch (Exception ex)
                 {
+                    CrashReporter.ReportNonFatal(ex, "EngineIpcClient.EventsRead");
                     EngineLogReceived?.Invoke(this, $"[ipc][ui] events read failed: {ex.GetType().Name}: {ex.Message}");
                     break;
                 }
@@ -488,8 +493,9 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
 
                 IpcEvent? ev;
                 try { ev = JsonConvert.DeserializeObject<IpcEvent>(line, JsonSettings); }
-                catch
+                catch (Exception ex)
                 {
+                    CrashReporter.ReportNonFatal(ex, "EngineIpcClient.EventParse");
                     EngineLogReceived?.Invoke(this, "[ipc][ui] events recv parse failed");
                     continue;
                 }
@@ -515,8 +521,8 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
 
     private void CleanupPipesOnly()
     {
-        try { _controlPipe?.Dispose(); } catch { }
-        try { _eventsPipe?.Dispose(); } catch { }
+        try { _controlPipe?.Dispose(); } catch (Exception ex) { CrashReporter.ReportNonFatal(ex, "EngineIpcClient.CleanupControlPipe"); }
+        try { _eventsPipe?.Dispose(); } catch (Exception ex) { CrashReporter.ReportNonFatal(ex, "EngineIpcClient.CleanupEventsPipe"); }
 
         _controlPipe = null;
         _eventsPipe = null;
@@ -527,13 +533,13 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
 
     public void ResetConnection()
     {
-        try { _internalCts?.Cancel(); } catch { }
+        try { _internalCts?.Cancel(); } catch (Exception ex) { CrashReporter.ReportNonFatal(ex, "EngineIpcClient.ResetCancel"); }
 
         FailAllPending(new IOException("Connection reset."));
 
         CleanupPipesOnly();
 
-        try { _internalCts?.Dispose(); } catch { }
+        try { _internalCts?.Dispose(); } catch (Exception ex) { CrashReporter.ReportNonFatal(ex, "EngineIpcClient.ResetDisposeCts"); }
         _internalCts = null;
 
         _controlReadLoop = null;
@@ -542,7 +548,7 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
 
     public void Dispose()
     {
-        try { _internalCts?.Cancel(); } catch { }
+        try { _internalCts?.Cancel(); } catch (Exception ex) { CrashReporter.ReportNonFatal(ex, "EngineIpcClient.DisposeCancel"); }
 
         FailAllPending(new ObjectDisposedException(nameof(EngineIpcClient)));
 
@@ -553,11 +559,14 @@ public sealed class EngineIpcClient(string engineExePath, string sessionId) : ID
             if (_ownsProcess && _process != null && !_process.HasExited)
                 _process.Kill(entireProcessTree: true);
         }
-        catch { }
+        catch (Exception ex)
+        {
+            CrashReporter.ReportNonFatal(ex, "EngineIpcClient.DisposeKillProcess");
+        }
 
-        try { _process?.Dispose(); } catch { }
+        try { _process?.Dispose(); } catch (Exception ex) { CrashReporter.ReportNonFatal(ex, "EngineIpcClient.DisposeProcess"); }
 
-        try { _internalCts?.Dispose(); } catch { }
+        try { _internalCts?.Dispose(); } catch (Exception ex) { CrashReporter.ReportNonFatal(ex, "EngineIpcClient.DisposeCts"); }
         _internalCts = null;
     }
 

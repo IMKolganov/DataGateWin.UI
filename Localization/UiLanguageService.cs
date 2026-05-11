@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Windows;
 using DataGateWin.Configuration;
+using DataGateWin.CrashReporting;
 
 namespace DataGateWin.Localization;
 
@@ -76,8 +77,9 @@ public static class UiLanguageService
             CultureInfo.DefaultThreadCurrentUICulture = ci;
             CultureInfo.DefaultThreadCurrentCulture = ci;
         }
-        catch (CultureNotFoundException)
+        catch (CultureNotFoundException ex)
         {
+            CrashReporter.ReportNonFatal(ex, "UiLanguageService.ApplyCulture");
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("en-US");
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.GetCultureInfo("en-US");
         }
@@ -116,8 +118,9 @@ public static class UiLanguageService
                 };
                 merged.Add(_activeOverlay);
             }
-            catch
+            catch (Exception ex)
             {
+                CrashReporter.ReportNonFatal(ex, "UiLanguageService.LoadOverlay");
                 _activeOverlay = null;
             }
         }
@@ -143,8 +146,9 @@ public static class UiLanguageService
             var ci = CultureInfo.GetCultureInfo(loc.CultureName);
             return ci.NativeName;
         }
-        catch (CultureNotFoundException)
+        catch (CultureNotFoundException ex)
         {
+            CrashReporter.ReportNonFatal(ex, "UiLanguageService.GetLanguageDisplayName");
             return code;
         }
     }

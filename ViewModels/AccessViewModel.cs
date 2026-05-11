@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DataGateWin.CrashReporting;
 using DataGateWin.Localization;
 using DataGateWin.Services.Access;
 using DataGateWin.Services.Auth;
@@ -109,6 +110,7 @@ public sealed partial class AccessViewModel : ObservableObject
         }
         catch (Exception ex)
         {
+            CrashReporter.ReportNonFatal(ex, "AccessViewModel.Load");
             ErrorText = ex.Message;
         }
         finally

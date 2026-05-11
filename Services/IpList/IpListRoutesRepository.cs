@@ -1,6 +1,7 @@
 using System.IO;
 using System.Net.Http;
 using DataGateWin.Configuration;
+using DataGateWin.CrashReporting;
 
 namespace DataGateWin.Services.IpList;
 
@@ -154,6 +155,7 @@ public sealed class IpListRoutesRepository
         }
         catch (Exception ex)
         {
+            CrashReporter.ReportNonFatal(ex, "IpListRoutesRepository.FetchList");
             return (false, null, ex.Message);
         }
     }
