@@ -18,9 +18,6 @@ public sealed class BytesAreaSeries : AreaSeries
         var xValue = result.DataPoint.X;
         var yValue = result.DataPoint.Y;
 
-        var xAxisTitle = XAxis?.Title ?? XYAxisSeries.DefaultXAxisTitle;
-        var yAxisTitle = YAxis?.Title ?? XYAxisSeries.DefaultYAxisTitle;
-
         var dt = XAxis is DateTimeAxis dateTimeAxis
             ? dateTimeAxis.ConvertToDateTime(xValue)
             : DateTimeAxis.ToDateTime(xValue, TimeSpan.FromTicks(1));
