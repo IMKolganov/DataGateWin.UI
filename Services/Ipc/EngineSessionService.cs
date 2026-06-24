@@ -25,6 +25,22 @@ public sealed class EngineSessionService(
     // Guard so we don't kill repeatedly if service is used multiple times
     private bool _startupKillDone;
 
+    private static EngineSessionService? s_active;
+
+    /// <summary>
+    /// Gracefully stops the active VPN session if the UI still has a live IPC client.
+    /// Safe to call from <c>OnExit</c> / session-ending handlers.
+    /// </summary>
+    public static async Task TryStopActiveSessionSafeAsync(TimeSpan timeout)
+    {
+        var svc = s_active;
+        if (svc?._client == null)
+            return;
+
+        using var cts = new CancellationTokenSource(timeout);
+        await svc.StopSessionSafeAsync(cts.Token).ConfigureAwait(false);
+    }
+
     /// <summary>
     /// Serialize attach/start so concurrent UI paths (e.g. Home load + Connect) cannot interleave
     /// <see cref="EngineIpcClient.TryConnectExistingAsync"/> with <see cref="EngineIpcClient.ResetConnection"/>.
@@ -33,6 +49,9 @@ public sealed class EngineSessionService(
 
     public void Dispose()
     {
+        if (ReferenceEquals(s_active, this))
+            s_active = null;
+
         try { _client?.Dispose(); } catch (Exception ex) { CrashReporter.ReportNonFatal(ex, "EngineSessionService.DisposeClient"); }
         _client = null;
         _handlersAttached = false;
@@ -230,6 +249,7 @@ public sealed class EngineSessionService(
 
         KillEngineProcessesByExactPathOnce(engineExePath);
 
+        s_active = this;
         _client = new EngineIpcClient(engineExePath, SessionId);
     }
 

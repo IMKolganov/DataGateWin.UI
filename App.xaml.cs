@@ -34,6 +34,7 @@ public partial class App : Application
     protected override void OnStartup(StartupEventArgs e)
     {
         InstallCrashReportingHandlers();
+        SessionEnding += OnSessionEnding;
         base.OnStartup(e);
         
         Settings = AppSettingsStore.LoadSafe();
@@ -74,6 +75,32 @@ public partial class App : Application
 
     protected override void OnExit(ExitEventArgs e)
     {
+        TryGracefulEngineShutdownSync();
+
+        try { AppSettingsStore.SaveSafe(Settings); } catch (Exception ex) { CrashReporter.ReportNonFatal(ex, "App.OnExit.SaveSettings"); }
+        try { _tray?.Unregister(); } catch (Exception ex) { CrashReporter.ReportNonFatal(ex, "App.OnExit.TrayUnregister"); }
+
+        base.OnExit(e);
+    }
+
+    private void OnSessionEnding(object sender, SessionEndingCancelEventArgs e)
+    {
+        TryGracefulEngineShutdownSync();
+    }
+
+    private void TryGracefulEngineShutdownSync()
+    {
+        try
+        {
+            EngineSessionService.TryStopActiveSessionSafeAsync(TimeSpan.FromSeconds(20))
+                .GetAwaiter()
+                .GetResult();
+        }
+        catch (Exception ex)
+        {
+            CrashReporter.ReportNonFatal(ex, "App.TryGracefulEngineShutdown.StopSession");
+        }
+
         try
         {
             if (!string.IsNullOrWhiteSpace(_engineExePath) && File.Exists(_engineExePath))
@@ -81,14 +108,8 @@ public partial class App : Application
         }
         catch (Exception ex)
         {
-            CrashReporter.ReportNonFatal(ex, "App.OnExit.KillEngine");
-            // Never throw on exit
+            CrashReporter.ReportNonFatal(ex, "App.TryGracefulEngineShutdown.KillEngine");
         }
-
-        try { AppSettingsStore.SaveSafe(Settings); } catch (Exception ex) { CrashReporter.ReportNonFatal(ex, "App.OnExit.SaveSettings"); }
-        try { _tray?.Unregister(); } catch (Exception ex) { CrashReporter.ReportNonFatal(ex, "App.OnExit.TrayUnregister"); }
-
-        base.OnExit(e);
     }
     
     private async Task RunStartupAsync()
