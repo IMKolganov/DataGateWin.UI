@@ -1,0 +1,118 @@
+# Build-Release.ps1 — Release app + engine + installer + GitHub ZIP (DataGateWin.vX.Y.Z.zip)
+param(
+    [string]$Configuration = "Release",
+    [string]$Version = "1.0.7",
+    [string]$VcpkgRoot = "F:\C++\vcpkg",
+    [switch]$SkipConfigure,
+    [switch]$SkipInstaller
+)
+
+$ErrorActionPreference = "Stop"
+
+$Root = Split-Path $PSScriptRoot -Parent
+
+$UiDir = Join-Path $Root "DataGateWin.UI"
+$EngineDir = Join-Path $Root "engine"
+$InstallerDir = Join-Path $Root "DataGateWin.Installer"
+$WintunDll = Join-Path $Root "drivers\wintun\wintun.dll"
+$VcpkgBin = Join-Path $VcpkgRoot "installed\x64-windows\bin"
+$OutDir = Join-Path $UiDir "bin\$Configuration\net10.0-windows"
+$EngineOut = Join-Path $OutDir "engine"
+$InstallerOut = Join-Path $OutDir "Installer"
+$ZipPath = Join-Path $OutDir "DataGateWin.v$Version.zip"
+
+function Require-Path([string]$Path, [string]$Label) {
+    if (-not (Test-Path $Path)) {
+        throw "$Label not found: $Path"
+    }
+}
+
+Require-Path $VcpkgBin "vcpkg bin"
+Require-Path $WintunDll "wintun.dll"
+
+Write-Host "=== Configure engine (openvpn3) ===" -ForegroundColor Cyan
+$BuildDir = Join-Path $EngineDir "build"
+if (-not $SkipConfigure) {
+    cmake -S $EngineDir -B $BuildDir `
+        -DCMAKE_TOOLCHAIN_FILE="$VcpkgRoot\scripts\buildsystems\vcpkg.cmake" `
+        -A x64
+}
+
+Write-Host "=== Build engine ($Configuration) ===" -ForegroundColor Cyan
+cmake --build $BuildDir --config $Configuration --target engine -- /m
+
+$EngineExe = Join-Path $BuildDir "$Configuration\engine.exe"
+Require-Path $EngineExe "engine.exe"
+
+Write-Host "=== Build UI ($Configuration) ===" -ForegroundColor Cyan
+dotnet build (Join-Path $UiDir "DataGateWin.csproj") -c $Configuration --no-restore 2>$null
+dotnet build (Join-Path $UiDir "DataGateWin.csproj") -c $Configuration
+
+Require-Path $OutDir "UI output dir"
+New-Item -ItemType Directory -Force -Path $EngineOut | Out-Null
+
+Write-Host "=== Stage engine + runtime DLLs ===" -ForegroundColor Cyan
+Copy-Item -Force $EngineExe (Join-Path $EngineOut "engine.exe")
+foreach ($dll in @(
+        "libcrypto-3-x64.dll",
+        "libssl-3-x64.dll",
+        "lz4.dll",
+        "jsoncpp.dll")) {
+    Copy-Item -Force (Join-Path $VcpkgBin $dll) (Join-Path $EngineOut $dll)
+}
+Copy-Item -Force $WintunDll (Join-Path $EngineOut "wintun.dll")
+
+if (-not $SkipInstaller) {
+    Write-Host "=== Publish installer (single-file) ===" -ForegroundColor Cyan
+    dotnet publish (Join-Path $InstallerDir "DataGateWin.Installer.csproj") `
+        -c $Configuration -r win-x64 `
+        -p:PublishSingleFile=true -p:SelfContained=true `
+        -p:IncludeNativeLibrariesForSelfExtract=true `
+        -p:EnableCompressionInSingleFile=true `
+        -p:DebugType=None -p:DebugSymbols=false
+
+    $PublishedInstaller = Join-Path $InstallerDir "bin\$Configuration\net10.0-windows\win-x64\publish\DataGateWin.Installer.exe"
+    Require-Path $PublishedInstaller "published installer"
+    New-Item -ItemType Directory -Force -Path $InstallerOut | Out-Null
+    Copy-Item -Force $PublishedInstaller (Join-Path $InstallerOut "DataGateWin.Installer.exe")
+}
+
+Write-Host "=== Create release ZIP ===" -ForegroundColor Cyan
+if (Test-Path $ZipPath) { Remove-Item -Force $ZipPath }
+
+# Match GitHub release layout (see DataGateWin.v1.0.6.zip): framework-dependent app
+# with all runtime DLLs, configs, engine/, Installer/, Images/, Assets/.
+$zipNames = @(
+    Get-ChildItem -Path $OutDir -File |
+        Where-Object {
+            $_.Extension -in @(".exe", ".dll", ".json") -and
+            $_.Name -notlike "DataGateWin.v*.zip"
+        } |
+        Select-Object -ExpandProperty Name
+)
+foreach ($dir in @("Images", "Assets", "engine", "Installer")) {
+    $dirPath = Join-Path $OutDir $dir
+    if (Test-Path $dirPath) {
+        $zipNames += $dir
+    }
+}
+
+if ($zipNames.Count -eq 0) {
+    throw "Nothing to pack into release ZIP."
+}
+
+Push-Location $OutDir
+try {
+    Compress-Archive -Path $zipNames -DestinationPath $ZipPath -CompressionLevel Optimal
+}
+finally {
+    Pop-Location
+}
+
+Write-Host "Done." -ForegroundColor Green
+Write-Host "  App:       $OutDir\DataGateWin.exe"
+Write-Host "  Engine:    $EngineOut\engine.exe"
+if (-not $SkipInstaller) {
+    Write-Host "  Installer: $InstallerOut\DataGateWin.Installer.exe"
+}
+Write-Host "  ZIP:       $ZipPath"
