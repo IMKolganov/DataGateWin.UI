@@ -1,6 +1,8 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
+using DataGateWin.CrashReporting;
 using DataGateWin.Ipc;
 using DataGateWin.Localization;
 using DataGateWin.Models.Ipc;
@@ -23,56 +25,98 @@ public sealed class EngineSessionService(
     // Guard so we don't kill repeatedly if service is used multiple times
     private bool _startupKillDone;
 
+    private static EngineSessionService? s_active;
+
+    /// <summary>
+    /// Gracefully stops the active VPN session if the UI still has a live IPC client.
+    /// Safe to call from <c>OnExit</c> / session-ending handlers.
+    /// </summary>
+    public static async Task TryStopActiveSessionSafeAsync(TimeSpan timeout)
+    {
+        var svc = s_active;
+        if (svc?._client == null)
+            return;
+
+        using var cts = new CancellationTokenSource(timeout);
+        await svc.StopSessionSafeAsync(cts.Token).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Serialize attach/start so concurrent UI paths (e.g. Home load + Connect) cannot interleave
+    /// <see cref="EngineIpcClient.TryConnectExistingAsync"/> with <see cref="EngineIpcClient.ResetConnection"/>.
+    /// </summary>
+    private readonly SemaphoreSlim _connectionOps = new(1, 1);
+
     public void Dispose()
     {
-        try { _client?.Dispose(); } catch { }
+        if (ReferenceEquals(s_active, this))
+            s_active = null;
+
+        try { _client?.Dispose(); } catch (Exception ex) { CrashReporter.ReportNonFatal(ex, "EngineSessionService.DisposeClient"); }
         _client = null;
         _handlersAttached = false;
+        _connectionOps.Dispose();
     }
 
     public async Task AttachAsync(CancellationToken ct)
     {
-        EnsureClientCreated();
-        AttachHandlersOnce();
+        await _connectionOps.WaitAsync(ct).ConfigureAwait(false);
+        try
+        {
+            EnsureClientCreated();
+            AttachHandlersOnce();
 
-        if (_client!.IsConnected)
-            return;
+            if (_client!.IsConnected)
+                return;
 
-        using var attachCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
-        attachCts.CancelAfter(TimeSpan.FromSeconds(8));
+            using var attachCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+            attachCts.CancelAfter(TimeSpan.FromSeconds(8));
 
-        var attached = await _client.TryConnectExistingAsync(8000, attachCts.Token).ConfigureAwait(false);
-        if (!attached)
-            throw new InvalidOperationException($"Attach failed: {_client.LastAttachError ?? "unknown"}");
+            var attached = await _client.TryConnectExistingAsync(8000, attachCts.Token).ConfigureAwait(false);
+            if (!attached)
+                throw new InvalidOperationException($"Attach failed: {_client.LastAttachError ?? "unknown"}");
+        }
+        finally
+        {
+            _connectionOps.Release();
+        }
     }
 
     public async Task AttachOrStartAsync(CancellationToken ct)
     {
-        EnsureClientCreated();
-        AttachHandlersOnce();
-
-        if (_client!.IsConnected)
-            return;
-
-        using var attachCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
-        attachCts.CancelAfter(TimeSpan.FromSeconds(10));
-
-        var attached = await _client.TryConnectExistingAsync(1000, attachCts.Token).ConfigureAwait(false);
-        if (attached)
+        await _connectionOps.WaitAsync(ct).ConfigureAwait(false);
+        try
         {
-            log("Engine attached (existing).");
-            return;
+            EnsureClientCreated();
+            AttachHandlersOnce();
+
+            if (_client!.IsConnected)
+                return;
+
+            using var attachCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+            attachCts.CancelAfter(TimeSpan.FromSeconds(10));
+
+            var attached = await _client.TryConnectExistingAsync(1000, attachCts.Token).ConfigureAwait(false);
+            if (attached)
+            {
+                log("Engine attached (existing).");
+                return;
+            }
+
+            log($"Attach failed: {_client.LastAttachError ?? "unknown"}. Starting/attaching engine process...");
+
+            _client.ResetConnection();
+
+            using var startCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+            startCts.CancelAfter(TimeSpan.FromSeconds(12));
+            await _client.StartOrAttachAsync(startCts.Token).ConfigureAwait(false);
+
+            log("Engine connected.");
         }
-
-        log($"Attach failed: {_client.LastAttachError ?? "unknown"}. Starting/attaching engine process...");
-
-        _client.ResetConnection();
-
-        using var startCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
-        startCts.CancelAfter(TimeSpan.FromSeconds(12));
-        await _client.StartOrAttachAsync(startCts.Token).ConfigureAwait(false);
-
-        log("Engine connected.");
+        finally
+        {
+            _connectionOps.Release();
+        }
     }
 
     public async Task<bool> IsAttachedAsync(CancellationToken ct)
@@ -116,6 +160,7 @@ public sealed class EngineSessionService(
         }
         catch (Exception ex)
         {
+            CrashReporter.ReportNonFatal(ex, "EngineSessionService.StartSessionPayload");
             log($"BuildAsync failed: {ex.Message}");
             return false;
         }
@@ -133,7 +178,12 @@ public sealed class EngineSessionService(
 
         if (!reply.Ok)
         {
-            log($"StartSession failed: {reply.Code ?? "?"} - {reply.Message ?? "?"}");
+            var code = reply.Code ?? "?";
+            var message = reply.Message ?? "?";
+            CrashReporter.ReportNonFatal(
+                new InvalidOperationException($"StartSession failed: {code} - {message}"),
+                "EngineSessionService.StartSessionReply");
+            log($"StartSession failed: {code} - {message}");
             return false;
         }
 
@@ -179,6 +229,7 @@ public sealed class EngineSessionService(
         }
         catch (Exception ex)
         {
+            CrashReporter.ReportNonFatal(ex, "EngineSessionService.StopSession");
             log($"[ui][disconnect] StopSession ERROR: {ex}");
         }
         finally
@@ -198,6 +249,7 @@ public sealed class EngineSessionService(
 
         KillEngineProcessesByExactPathOnce(engineExePath);
 
+        s_active = this;
         _client = new EngineIpcClient(engineExePath, SessionId);
     }
 
@@ -243,8 +295,9 @@ public sealed class EngineSessionService(
                     {
                         p.Kill(entireProcessTree: true);
                     }
-                    catch
+                    catch (Exception ex)
                     {
+                        CrashReporter.ReportNonFatal(ex, "EngineSessionService.KillEnginePrimary");
                         // Fallback
                         p.Kill();
                     }
@@ -253,19 +306,21 @@ public sealed class EngineSessionService(
                     {
                         p.WaitForExit(2000);
                     }
-                    catch
+                    catch (Exception ex)
                     {
+                        CrashReporter.ReportNonFatal(ex, "EngineSessionService.KillEngineWait");
                         // Ignore
                     }
                 }
                 finally
                 {
-                    try { p.Dispose(); } catch { }
+                    try { p.Dispose(); } catch (Exception ex) { CrashReporter.ReportNonFatal(ex, "EngineSessionService.KillEngineDisposeProcess"); }
                 }
             }
         }
         catch (Exception ex)
         {
+            CrashReporter.ReportNonFatal(ex, "EngineSessionService.KillEngineProcesses");
             log($"[ui][startup] KillEngineProcesses failed (ignored): {ex.Message}");
         }
     }
@@ -289,6 +344,14 @@ public sealed class EngineSessionService(
         _client.EngineExited += (_, code) =>
         {
             log($"Engine exited with code: {code}");
+            if (code != 0)
+            {
+                CrashReporter.ReportNonFatal(
+                    new InvalidOperationException($"Engine exited with non-zero code: {code}"),
+                    "EngineSessionService.EngineExited");
+            }
+
+            _ = CrashReporter.FlushPendingAsync(CancellationToken.None);
             onEngineEvent(new EngineEvent
             {
                 Kind = EngineEventKind.EngineExited,
@@ -316,6 +379,7 @@ public sealed class EngineSessionService(
             }
             catch (Exception ex)
             {
+                CrashReporter.ReportNonFatal(ex, "EngineSessionService.EventHandler");
                 log($"Event handler error: {ex}");
             }
         };

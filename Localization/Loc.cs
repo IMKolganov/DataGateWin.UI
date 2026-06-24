@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Windows;
+using DataGateWin.CrashReporting;
 
 namespace DataGateWin.Localization;
 
@@ -21,8 +22,9 @@ public static class Loc
         {
             return string.Format(CultureInfo.CurrentUICulture, template, args);
         }
-        catch (FormatException)
+        catch (FormatException ex)
         {
+            CrashReporter.ReportNonFatal(ex, "Loc.Format");
             return template;
         }
     }

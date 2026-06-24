@@ -1,4 +1,5 @@
 using System.IO;
+using DataGateWin.CrashReporting;
 using Newtonsoft.Json;
 
 namespace DataGateWin.Configuration;
@@ -14,6 +15,7 @@ public static class AppsettingsConnection
     {
         public ApiSettings? Api { get; set; }
         public GoogleAuthSettings? GoogleAuth { get; set; }
+        public CrashReportingConfiguration CrashReporting { get; set; } = CreateDefaultCrashReporting();
     }
 
     public static bool TryLoadFile(string path, out ApiSettings? api, out GoogleAuthSettings? google)
@@ -35,8 +37,9 @@ public static class AppsettingsConnection
             google = dto.GoogleAuth;
             return true;
         }
-        catch
+        catch (Exception ex)
         {
+            CrashReporter.ReportNonFatal(ex, "AppsettingsConnection.TryLoadFile");
             return false;
         }
     }
@@ -44,9 +47,22 @@ public static class AppsettingsConnection
     public static void SaveFile(string directory, ApiSettings api, GoogleAuthSettings google)
     {
         var path = Path.Combine(directory, "appsettings.json");
-        var dto = new DocumentDto { Api = api, GoogleAuth = google };
+        var dto = new DocumentDto
+        {
+            Api = api,
+            GoogleAuth = google,
+            CrashReporting = CreateDefaultCrashReporting()
+        };
         File.WriteAllText(path, JsonConvert.SerializeObject(dto, Formatting.Indented));
     }
+
+    public static CrashReportingConfiguration CreateDefaultCrashReporting() =>
+        new()
+        {
+            Enabled = true,
+            ProcessName = CrashReporter.DefaultProcessName,
+            CrashToken = ""
+        };
 
     public static bool IsComplete(ApiSettings? api, GoogleAuthSettings? google)
     {

@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.Input;
+using DataGateWin.CrashReporting;
 using DataGateWin.Localization;
 using DataGateWin.Services.Auth;
 using DataGateWin.Services.Identity;
@@ -214,6 +215,7 @@ public sealed class StatisticsViewModel : INotifyPropertyChanged
         }
         catch (Exception ex)
         {
+            CrashReporter.ReportNonFatal(ex, "StatisticsViewModel.Apply");
             ErrorText = ex.Message;
         }
         finally

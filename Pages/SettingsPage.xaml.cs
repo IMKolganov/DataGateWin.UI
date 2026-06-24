@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using DataGateWin.Configuration;
+using DataGateWin.CrashReporting;
 using DataGateWin.Localization;
 using DataGateWin.Views;
 using DataGateWin.Services.Auth;
@@ -149,8 +150,9 @@ public partial class SettingsPage : Page
                 .ConfigureAwait(false);
             text = latest ?? Loc.T("Settings_LatestVersionUnavailable");
         }
-        catch
+        catch (Exception ex)
         {
+            CrashReporter.ReportNonFatal(ex, "SettingsPage.LoadLatestVersion");
             text = Loc.T("Settings_LatestVersionUnavailable");
         }
 
@@ -200,6 +202,7 @@ public partial class SettingsPage : Page
         }
         catch (Exception ex)
         {
+            CrashReporter.ReportNonFatal(ex, "SettingsPage.Logout");
             MessageBox.Show(
                 Loc.T("Msg_LogoutFailedFmt", ex.Message),
                 Loc.T("Msg_ErrorTitle"),

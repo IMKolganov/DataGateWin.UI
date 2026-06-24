@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DataGateWin.Configuration;
+using DataGateWin.CrashReporting;
 using DataGateWin.Localization;
 using DataGateWin.Services.Auth;
 
@@ -89,6 +90,7 @@ public sealed partial class LoginViewModel : ObservableObject
         }
         catch (Exception ex)
         {
+            CrashReporter.ReportNonFatal(ex, "LoginViewModel.SignIn");
             StatusText = Loc.T("Login_Status_FailedFmt", ex.Message);
         }
         finally

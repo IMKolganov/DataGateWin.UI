@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using DataGateWin.CrashReporting;
 using DataGateWin.Localization;
 
 namespace DataGateWin.Services.Support;
@@ -15,8 +16,9 @@ public static class TelegramChannel
                 UseShellExecute = true
             });
         }
-        catch
+        catch (Exception ex)
         {
+            CrashReporter.ReportNonFatal(ex, "TelegramChannel.OpenPublicChannel");
             // ignore
         }
     }

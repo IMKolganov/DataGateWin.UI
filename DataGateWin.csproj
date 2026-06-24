@@ -10,8 +10,8 @@
     <ApplicationManifest Condition="'$(Configuration)'=='Debug'">app.manifest.debug.xml</ApplicationManifest>
     <ApplicationManifest Condition="'$(Configuration)'!='Debug'">app.manifest</ApplicationManifest>
     <ApplicationIcon>Images\favicon.ico</ApplicationIcon>
-    <AssemblyVersion>1.0.6</AssemblyVersion>
-    <FileVersion>1.0.6</FileVersion>
+    <AssemblyVersion>1.0.7</AssemblyVersion>
+    <FileVersion>1.0.7</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,6 +24,10 @@
     <PackageReference Include="OxyPlot.Wpf" Version="2.2.0" />
     <PackageReference Include="WPF-UI" Version="4.2.0" />
     <PackageReference Include="WPF-UI.Tray" Version="4.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DataGateWin.CrashReporting\DataGateWin.CrashReporting.csproj" />
   </ItemGroup>
 
   <ItemGroup>

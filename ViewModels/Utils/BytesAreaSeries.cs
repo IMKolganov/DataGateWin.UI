@@ -18,10 +18,9 @@ public sealed class BytesAreaSeries : AreaSeries
         var xValue = result.DataPoint.X;
         var yValue = result.DataPoint.Y;
 
-        var xAxisTitle = XAxis?.Title ?? XYAxisSeries.DefaultXAxisTitle;
-        var yAxisTitle = YAxis?.Title ?? XYAxisSeries.DefaultYAxisTitle;
-
-        var dt = DateTimeAxis.ToDateTime(xValue);
+        var dt = XAxis is DateTimeAxis dateTimeAxis
+            ? dateTimeAxis.ConvertToDateTime(xValue)
+            : DateTimeAxis.ToDateTime(xValue, TimeSpan.FromTicks(1));
         var bytes = (long)Math.Max(0, yValue);
 
         var bytesText = BytesFormatter is null

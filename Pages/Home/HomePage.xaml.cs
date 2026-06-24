@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using DataGateWin.Configuration;
 using DataGateWin.Controllers;
+using DataGateWin.CrashReporting;
 using DataGateWin.Localization;
 using DataGateWin.Models.Ipc;
 using DataGateWin.Services.VpnServers;
@@ -44,6 +45,7 @@ public partial class HomePage : Page
         }
         catch (Exception ex)
         {
+            CrashReporter.ReportNonFatal(ex, "HomePage.OnLoaded");
             _controller.AppendLogLine(Loc.T("Home_Log_EngineAttachFmt", ex.Message));
         }
     }
@@ -213,6 +215,7 @@ public partial class HomePage : Page
         }
         catch (Exception ex)
         {
+            CrashReporter.ReportNonFatal(ex, "HomePage.RefreshServerList");
             fetchFailed = true;
             _cachedServerRows = null;
             _controller.AppendLogLine(Loc.T("Home_Log_VpnListFmt", ex.Message));
