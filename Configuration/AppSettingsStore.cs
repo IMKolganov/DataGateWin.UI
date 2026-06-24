@@ -2,6 +2,7 @@
 
 using System.IO;
 using System.Text.Json;
+using DataGateWin.CrashReporting;
 
 namespace DataGateWin.Configuration;
 
@@ -28,8 +29,9 @@ public static class AppSettingsStore
 
             return settings ?? new AppSettings();
         }
-        catch
+        catch (Exception ex)
         {
+            CrashReporter.ReportNonFatal(ex, "AppSettingsStore.LoadSafe");
             return new AppSettings();
         }
     }
@@ -47,8 +49,9 @@ public static class AppSettingsStore
 
             File.WriteAllText(FilePath, json);
         }
-        catch
+        catch (Exception ex)
         {
+            CrashReporter.ReportNonFatal(ex, "AppSettingsStore.SaveSafe");
             // Intentionally ignored.
         }
     }

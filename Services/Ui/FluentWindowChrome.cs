@@ -3,6 +3,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
+using DataGateWin.CrashReporting;
 using Wpf.Ui.Appearance;
 
 namespace DataGateWin.Services.Ui;
@@ -68,8 +69,9 @@ public static class FluentWindowChrome
             foreach (Window w in Application.Current.Windows)
                 TryApplyToWindow(w);
         }
-        catch
+        catch (Exception ex)
         {
+            CrashReporter.ReportNonFatal(ex, "FluentWindowChrome.RefreshAllWindows");
             // ignore during shutdown
         }
     }
@@ -93,8 +95,9 @@ public static class FluentWindowChrome
             if (!string.IsNullOrWhiteSpace(theme))
                 return !string.Equals(theme, "Light", StringComparison.OrdinalIgnoreCase);
         }
-        catch
+        catch (Exception ex)
         {
+            CrashReporter.ReportNonFatal(ex, "FluentWindowChrome.ShouldUseDarkChrome");
             // App.Settings not ready
         }
 

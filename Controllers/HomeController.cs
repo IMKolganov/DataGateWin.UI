@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Windows;
+using DataGateWin.CrashReporting;
 using DataGateWin.Localization;
 using DataGateWin.Models.Ipc;
 using DataGateWin.Services.Installation;
@@ -104,6 +105,7 @@ public sealed class HomeController : IDisposable
             if (TryHandleEngineMissing(ex))
                 return;
 
+            CrashReporter.ReportNonFatal(ex, "HomeController.OnLoaded");
             Log(Loc.T("Home_Log_ErrorFmt", ex));
             ApplyUiState(UiState.Idle, Loc.T("Home_Status_AttachFailedFmt", ex.Message));
         }
@@ -111,7 +113,7 @@ public sealed class HomeController : IDisposable
 
     public void OnUnloaded()
     {
-        try { _lifetimeCts?.Cancel(); } catch { }
+        try { _lifetimeCts?.Cancel(); } catch (Exception ex) { CrashReporter.ReportNonFatal(ex, "HomeController.OnUnloadedCancel"); }
         _lifetimeCts = null;
 
         DetachUi();
@@ -167,6 +169,7 @@ public sealed class HomeController : IDisposable
             if (TryHandleEngineMissing(ex))
                 return;
 
+            CrashReporter.ReportNonFatal(ex, "HomeController.EnsureConnected");
             ApplyUiState(UiState.Idle, Loc.T("Home_Status_IdleErrorFmt", ex.Message));
             Log(Loc.T("Home_Log_ErrorFmt", ex));
 
@@ -248,7 +251,7 @@ public sealed class HomeController : IDisposable
             delay.TotalSeconds.ToString("0", CultureInfo.InvariantCulture)));
 
         try { await Task.Delay(delay, ct); }
-        catch { ApplyUiState(UiState.Idle, Loc.T("Home_Status_Idle")); return; }
+        catch (OperationCanceledException) { ApplyUiState(UiState.Idle, Loc.T("Home_Status_Idle")); return; }
 
         if (_desiredConnected)
             await EnsureConnectedAsync();
@@ -321,7 +324,7 @@ public sealed class HomeController : IDisposable
 
     public void Dispose()
     {
-        try { _lifetimeCts?.Cancel(); } catch { }
+        try { _lifetimeCts?.Cancel(); } catch (Exception ex) { CrashReporter.ReportNonFatal(ex, "HomeController.DisposeCancel"); }
         _lifetimeCts = null;
 
         DetachUi();

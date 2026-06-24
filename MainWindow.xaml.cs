@@ -5,6 +5,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shell;
 using DataGateWin.Controllers;
+using DataGateWin.CrashReporting;
 using DataGateWin.Localization;
 using DataGateWin.Pages;
 using DataGateWin.Pages.Home;
@@ -104,8 +105,9 @@ public partial class MainWindow : FluentWindow
                     ShowUserAvatarFallback();
             });
         }
-        catch
+        catch (Exception ex)
         {
+            CrashReporter.ReportNonFatal(ex, "MainWindow.ApplyUserPaneFooter");
             await Dispatcher.InvokeAsync(ShowUserAvatarFallback);
         }
     }
@@ -133,8 +135,9 @@ public partial class MainWindow : FluentWindow
             rtb.Freeze();
             return rtb;
         }
-        catch
+        catch (Exception ex)
         {
+            CrashReporter.ReportNonFatal(ex, "MainWindow.CreateTaskbarOverlay");
             return null;
         }
     }
@@ -271,8 +274,9 @@ public partial class MainWindow : FluentWindow
             DragMove();
             e.Handled = true;
         }
-        catch
+        catch (Exception ex)
         {
+            CrashReporter.ReportNonFatal(ex, "MainWindow.HeaderDragMove");
             // DragMove can throw if called in an invalid state (rare edge cases)
         }
     }

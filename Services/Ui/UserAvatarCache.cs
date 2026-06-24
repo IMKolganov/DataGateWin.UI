@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Media.Imaging;
+using DataGateWin.CrashReporting;
 
 namespace DataGateWin.Services.Ui;
 
@@ -42,8 +43,9 @@ public static class UserAvatarCache
             {
                 return LoadFrozenFromFile(cachePath);
             }
-            catch
+            catch (Exception ex)
             {
+                CrashReporter.ReportNonFatal(ex, "UserAvatarCache.LoadCached");
                 TryDelete(cachePath);
                 TryDelete(urlMarkerPath);
             }
@@ -60,8 +62,9 @@ public static class UserAvatarCache
             using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(25) };
             bytes = await http.GetByteArrayAsync(uri, ct).ConfigureAwait(false);
         }
-        catch
+        catch (Exception ex)
         {
+            CrashReporter.ReportNonFatal(ex, "UserAvatarCache.Download");
             return null;
         }
 
@@ -74,8 +77,9 @@ public static class UserAvatarCache
             await File.WriteAllTextAsync(urlMarkerPath, normalizedUrl, ct).ConfigureAwait(false);
             return LoadFrozenFromFile(cachePath);
         }
-        catch
+        catch (Exception ex)
         {
+            CrashReporter.ReportNonFatal(ex, "UserAvatarCache.WriteCached");
             return null;
         }
     }
@@ -114,8 +118,9 @@ public static class UserAvatarCache
             if (File.Exists(path))
                 File.Delete(path);
         }
-        catch
+        catch (Exception ex)
         {
+            CrashReporter.ReportNonFatal(ex, "UserAvatarCache.DeleteCached");
             // ignore
         }
     }

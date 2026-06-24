@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using DataGateWin.CrashReporting;
 using DataGateWin.Services.Identity;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -183,8 +184,9 @@ public sealed class UserVpnAccessClient(HttpClient http)
             var t = JToken.Parse(json);
             return t as JObject;
         }
-        catch
+        catch (Exception ex)
         {
+            CrashReporter.ReportNonFatal(ex, "UserVpnAccessClient.ParseJson");
             return null;
         }
     }
