@@ -235,7 +235,7 @@ public partial class MainWindow : FluentWindow
         if (_isOnboardingDialogOpen)
             return;
 
-        if (!force && DateTimeOffset.UtcNow - _lastOnboardingCheckUtc < TimeSpan.FromSeconds(8))
+        if (!force && !FreeTierOnboardingPolicy.ShouldRefreshOnPoll(_lastOnboardingCheckUtc, DateTimeOffset.UtcNow))
             return;
 
         _lastOnboardingCheckUtc = DateTimeOffset.UtcNow;

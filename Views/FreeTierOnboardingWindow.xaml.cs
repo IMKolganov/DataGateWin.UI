@@ -13,9 +13,12 @@ public partial class FreeTierOnboardingWindow
 {
     private readonly IFreeTierAccessApiClient _api;
     private readonly DispatcherTimer _pollTimer;
+    private readonly DispatcherTimer _countdownTimer;
     private FreeTierAccessStatusResponse _status;
+    private string? _linkCode;
+    private DateTimeOffset _codeExpiresAtUtc;
     private bool _isBusy;
-    private bool _allowRequestLinkCode;
+    private bool _linkCodeExpiredNotice;
 
     public FreeTierOnboardingWindow(
         IFreeTierAccessApiClient api,
@@ -27,28 +30,62 @@ public partial class FreeTierOnboardingWindow
         _api = api ?? throw new ArgumentNullException(nameof(api));
         _status = status ?? throw new ArgumentNullException(nameof(status));
 
-        _pollTimer = new DispatcherTimer
-        {
-            Interval = TimeSpan.FromSeconds(5)
-        };
-        _pollTimer.Tick += PollTimer_OnTick;
+        _pollTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(5) };
+        _pollTimer.Tick += (_, _) => _ = RefreshStatusInternalAsync(showSuccessCloseMessage: false);
+
+        _countdownTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+        _countdownTimer.Tick += (_, _) => UpdateLinkCodeCountdown();
 
         ApplyStatusToUi();
-        Loaded += (_, _) => _pollTimer.Start();
-        Closed += (_, _) => _pollTimer.Stop();
+        Loaded += (_, _) =>
+        {
+            _pollTimer.Start();
+            UpdateLinkCodeCountdown();
+        };
+        Closed += (_, _) =>
+        {
+            _pollTimer.Stop();
+            _countdownTimer.Stop();
+        };
     }
 
-    private async void PollTimer_OnTick(object? sender, EventArgs e)
+    private async void CheckAgain_OnClick(object sender, RoutedEventArgs e) =>
+        await RefreshStatusInternalAsync(showSuccessCloseMessage: true);
+
+    private async void PrimaryAction_OnClick(object sender, RoutedEventArgs e)
     {
-        if (_isBusy)
+        var mode = FreeTierOnboardingPolicy.GetCopyMode(_status);
+        if (mode == FreeTierOnboardingCopyMode.LinkAccount && _linkCode == null)
+        {
+            await RequestCodeInternalAsync();
+            return;
+        }
+
+        if (_linkCode != null)
+        {
+            OpenTelegramUrl(FreeTierOnboardingPolicy.DefaultTelegramBotUrl);
+            return;
+        }
+
+        OpenTelegramUrl(FreeTierOnboardingPolicy.ToTelegramChannelUrl(_status.RequiredChannel));
+    }
+
+    private void OpenChannel_OnClick(object sender, RoutedEventArgs e) =>
+        OpenTelegramUrl(FreeTierOnboardingPolicy.ToTelegramChannelUrl(_status.RequiredChannel));
+
+    private void CopyCode_OnClick(object sender, RoutedEventArgs e)
+    {
+        if (string.IsNullOrWhiteSpace(_linkCode))
             return;
 
-        await RefreshStatusInternalAsync(showSuccessCloseMessage: false);
-    }
-
-    private async void RefreshStatus_OnClick(object sender, RoutedEventArgs e)
-    {
-        await RefreshStatusInternalAsync(showSuccessCloseMessage: true);
+        try
+        {
+            Clipboard.SetText(_linkCode);
+        }
+        catch (Exception ex)
+        {
+            CrashReporter.ReportNonFatal(ex, "FreeTierOnboardingWindow.CopyCode");
+        }
     }
 
     private async Task RefreshStatusInternalAsync(bool showSuccessCloseMessage)
@@ -63,7 +100,7 @@ public partial class FreeTierOnboardingWindow
             var updated = resp.Data;
             if (updated == null)
             {
-                StatusText.Text = Loc.T("FreeTierOnboarding_StatusRefreshFailed");
+                ShowError(Loc.T("FreeTierOnboarding_StatusRefreshFailed"));
                 return;
             }
 
@@ -72,9 +109,6 @@ public partial class FreeTierOnboardingWindow
 
             if (!FreeTierOnboardingPolicy.ShouldShow(_status))
             {
-                if (showSuccessCloseMessage)
-                    StatusText.Text = Loc.T("FreeTierOnboarding_ComplianceConfirmed");
-
                 DialogResult = true;
                 Close();
             }
@@ -82,7 +116,7 @@ public partial class FreeTierOnboardingWindow
         catch (Exception ex)
         {
             CrashReporter.ReportNonFatal(ex, "FreeTierOnboardingWindow.RefreshStatus");
-            StatusText.Text = Loc.T("FreeTierOnboarding_StatusRefreshFailed");
+            ShowError(Loc.T("FreeTierOnboarding_StatusRefreshFailed"));
         }
         finally
         {
@@ -90,37 +124,33 @@ public partial class FreeTierOnboardingWindow
         }
     }
 
-    private async void RequestCode_OnClick(object sender, RoutedEventArgs e)
+    private async Task RequestCodeInternalAsync()
     {
-        if (_isBusy)
+        if (_isBusy || !_status.CanRequestAccountLinkCode)
             return;
-
-        if (!_allowRequestLinkCode)
-        {
-            StatusText.Text = Loc.T("FreeTierOnboarding_LinkNotAvailable");
-            return;
-        }
 
         SetBusy(true);
+        _linkCodeExpiredNotice = false;
         try
         {
             var resp = await _api.RequestAccountLinkCodeAsync(CancellationToken.None);
-
             if (resp.Data == null || string.IsNullOrWhiteSpace(resp.Data.Code))
             {
-                StatusText.Text = Loc.T("FreeTierOnboarding_CodeRequestFailed");
+                ShowError(resp.Message ?? Loc.T("FreeTierOnboarding_CodeRequestFailed"));
                 return;
             }
 
-            LinkCodeText.Text = resp.Data.Code.Trim();
-            LinkCodeExpiresText.Text = Loc.T("FreeTierOnboarding_ExpiresFmt", resp.Data.ExpiresInSeconds);
-            LinkCodeBorder.Visibility = Visibility.Visible;
-            StatusText.Text = Loc.T("FreeTierOnboarding_CodeSentHint");
+            _linkCode = resp.Data.Code.Trim();
+            _codeExpiresAtUtc = DateTimeOffset.UtcNow.AddSeconds(resp.Data.ExpiresInSeconds);
+            ClearError();
+            ApplyStatusToUi();
+            UpdateLinkCodeCountdown();
+            _countdownTimer.Start();
         }
         catch (Exception ex)
         {
             CrashReporter.ReportNonFatal(ex, "FreeTierOnboardingWindow.RequestCode");
-            StatusText.Text = Loc.T("FreeTierOnboarding_RequestFailedEnsureRegistered");
+            ShowError(Loc.T("FreeTierOnboarding_CodeRequestFailed"));
         }
         finally
         {
@@ -128,9 +158,114 @@ public partial class FreeTierOnboardingWindow
         }
     }
 
-    private void OpenChannel_OnClick(object sender, RoutedEventArgs e)
+    private void ApplyStatusToUi()
     {
-        var url = ToTelegramChannelUrl(_status.RequiredChannel);
+        var channelLabel = FreeTierOnboardingPolicy.ResolveChannelLabel(_status);
+        var copyMode = FreeTierOnboardingPolicy.GetCopyMode(_status);
+
+        var titleKey = copyMode == FreeTierOnboardingCopyMode.LinkAccount
+            ? "FreeTierOnboarding_TitleLink"
+            : "FreeTierOnboarding_TitleSubscribe";
+        var title = Loc.T(titleKey);
+        Title = title;
+        WindowTitleBar.Title = title;
+
+        BodyText.Text = copyMode switch
+        {
+            FreeTierOnboardingCopyMode.LinkAccount => Loc.T("FreeTierOnboarding_BodyLink", channelLabel),
+            FreeTierOnboardingCopyMode.SubscribeOnly => Loc.T("FreeTierOnboarding_BodySubscribeOnly", channelLabel),
+            _ => Loc.T("FreeTierOnboarding_BodyGeneric", channelLabel),
+        };
+
+        OpenChannelButton.Visibility = copyMode == FreeTierOnboardingCopyMode.Generic
+            ? Visibility.Collapsed
+            : Visibility.Visible;
+
+        CodeExpiredText.Visibility = _linkCodeExpiredNotice && _linkCode == null
+            ? Visibility.Visible
+            : Visibility.Collapsed;
+
+        if (_linkCode != null)
+        {
+            LinkCodeBorder.Visibility = Visibility.Visible;
+            LinkCodeText.Text = _linkCode;
+            LinkCodeStepsText.Text = Loc.T("FreeTierOnboarding_CodeStepsWithVpn", _linkCode);
+            PrimaryActionButton.Content = Loc.T("FreeTierOnboarding_OpenBot");
+        }
+        else
+        {
+            LinkCodeBorder.Visibility = Visibility.Collapsed;
+            PrimaryActionButton.Content = copyMode == FreeTierOnboardingCopyMode.LinkAccount
+                ? Loc.T("FreeTierOnboarding_GetCode")
+                : Loc.T("FreeTierOnboarding_OpenChannel");
+        }
+
+        PrimaryActionButton.IsEnabled = !_isBusy &&
+            (copyMode != FreeTierOnboardingCopyMode.LinkAccount || _status.CanRequestAccountLinkCode || _linkCode != null);
+    }
+
+    private void UpdateLinkCodeCountdown()
+    {
+        if (_linkCode == null || _codeExpiresAtUtc == default)
+        {
+            _countdownTimer.Stop();
+            LinkCodeExpiresText.Text = "";
+            LinkCodeExpiresSoonText.Visibility = Visibility.Collapsed;
+            return;
+        }
+
+        var now = DateTimeOffset.UtcNow;
+        if (FreeTierOnboardingPolicy.IsLinkCodeExpired(_codeExpiresAtUtc, now))
+        {
+            _linkCode = null;
+            _codeExpiresAtUtc = default;
+            _linkCodeExpiredNotice = true;
+            _countdownTimer.Stop();
+            ApplyStatusToUi();
+            return;
+        }
+
+        var secondsLeft = (int)Math.Ceiling((_codeExpiresAtUtc - now).TotalSeconds);
+        LinkCodeExpiresText.Text = Loc.T(
+            "FreeTierOnboarding_CodeExpires",
+            FreeTierOnboardingPolicy.FormatCountdown(secondsLeft));
+
+        if (FreeTierOnboardingPolicy.ShouldWarnLinkCodeExpiringSoon(secondsLeft))
+        {
+            LinkCodeExpiresSoonText.Text = Loc.T(
+                "FreeTierOnboarding_CodeExpiresSoon",
+                FreeTierOnboardingPolicy.FormatCountdown(secondsLeft));
+            LinkCodeExpiresSoonText.Visibility = Visibility.Visible;
+        }
+        else
+        {
+            LinkCodeExpiresSoonText.Visibility = Visibility.Collapsed;
+        }
+    }
+
+    private void ShowError(string message)
+    {
+        ErrorText.Text = message;
+        ErrorText.Visibility = Visibility.Visible;
+    }
+
+    private void ClearError()
+    {
+        ErrorText.Text = "";
+        ErrorText.Visibility = Visibility.Collapsed;
+    }
+
+    private void SetBusy(bool busy)
+    {
+        _isBusy = busy;
+        CheckAgainButton.IsEnabled = !busy;
+        OpenChannelButton.IsEnabled = !busy;
+        CopyCodeButton.IsEnabled = !busy && _linkCode != null;
+        ApplyStatusToUi();
+    }
+
+    private void OpenTelegramUrl(string url)
+    {
         if (string.IsNullOrWhiteSpace(url))
             return;
 
@@ -144,56 +279,7 @@ public partial class FreeTierOnboardingWindow
         }
         catch (Exception ex)
         {
-            CrashReporter.ReportNonFatal(ex, "FreeTierOnboardingWindow.OpenChannel");
+            CrashReporter.ReportNonFatal(ex, "FreeTierOnboardingWindow.OpenTelegramUrl");
         }
-    }
-
-    private void ApplyStatusToUi()
-    {
-        var planName = _status.ActivePlanName ?? Loc.T("FreeTierOnboarding_DefaultPlanName");
-        var channelName = _status.RequiredChannel ?? "@DataGateVPNBot";
-        PlanText.Text = Loc.T("FreeTierOnboarding_PlanFmt", planName);
-        RequiredChannelText.Text = Loc.T("FreeTierOnboarding_RequiredChannelFmt", channelName);
-        OpenChannelButton.Content = Loc.T("FreeTierOnboarding_OpenChannelFmt", channelName);
-        _allowRequestLinkCode = _status.CanRequestAccountLinkCode;
-        RequestCodeButton.IsEnabled = !_isBusy && _allowRequestLinkCode;
-
-        if (_status.IsMergedAccount)
-        {
-            StatusText.Text = Loc.T("FreeTierOnboarding_MergeDetected");
-            return;
-        }
-
-        if (_status.IsChannelSubscribed)
-        {
-            StatusText.Text = Loc.T("FreeTierOnboarding_ChannelDetected");
-            return;
-        }
-
-        if (!_status.CanRequestAccountLinkCode)
-            StatusText.Text = Loc.T("FreeTierOnboarding_LinkNotAvailable");
-    }
-
-    private void SetBusy(bool busy)
-    {
-        _isBusy = busy;
-        RequestCodeButton.IsEnabled = !busy && _allowRequestLinkCode;
-        OpenChannelButton.IsEnabled = !busy;
-    }
-
-    private static string ToTelegramChannelUrl(string? requiredChannel)
-    {
-        if (string.IsNullOrWhiteSpace(requiredChannel))
-            return "";
-
-        var value = requiredChannel.Trim();
-        if (value.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
-            || value.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
-            return value;
-
-        if (value.StartsWith("@", StringComparison.Ordinal))
-            value = value[1..];
-
-        return $"https://t.me/{value}";
     }
 }

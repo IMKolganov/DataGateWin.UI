@@ -2,9 +2,9 @@
                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-                 Title="{DynamicResource FreeTierOnboarding_Title}"
+                 Title="{DynamicResource FreeTierOnboarding_TitleSubscribe}"
                  Width="560"
-                 MinHeight="320"
+                 MinHeight="280"
                  SizeToContent="Height"
                  WindowStartupLocation="CenterOwner"
                  ResizeMode="NoResize"
@@ -18,80 +18,112 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <ui:TitleBar Grid.Row="0"
-                     Title="{DynamicResource FreeTierOnboarding_Title}"
+        <ui:TitleBar x:Name="WindowTitleBar"
+                     Grid.Row="0"
+                     Title="{DynamicResource FreeTierOnboarding_TitleSubscribe}"
                      ShowClose="True"
                      ShowMinimize="False"
                      ShowMaximize="False"/>
 
-        <StackPanel Grid.Row="1" Margin="22,14,22,20">
-            <ui:TextBlock x:Name="PlanText"
-                          FontWeight="SemiBold"
-                          Margin="0,0,0,6"/>
+        <StackPanel Grid.Row="1" Margin="22,14,22,12">
+            <ui:TextBlock x:Name="BodyText"
+                          TextWrapping="Wrap"
+                          Margin="0,0,0,10"/>
 
-            <ui:TextBlock x:Name="RequiredChannelText"
+            <ui:TextBlock x:Name="VpnHintText"
+                          Text="{DynamicResource FreeTierOnboarding_TelegramVpnHint}"
                           Opacity="0.85"
                           TextWrapping="Wrap"
                           Margin="0,0,0,10"/>
 
-            <WrapPanel Margin="0,0,0,12">
-                <ui:Button x:Name="OpenChannelButton"
-                           Height="34"
-                           MinWidth="190"
-                           Margin="0,0,10,0"
-                           Appearance="Secondary"
-                           Click="OpenChannel_OnClick"
-                           Content="{DynamicResource FreeTierOnboarding_OpenRequiredChannel}"/>
-                <ui:Button Height="34"
-                           MinWidth="160"
-                           Appearance="Primary"
-                           Click="RefreshStatus_OnClick"
-                           Content="{DynamicResource FreeTierOnboarding_CompletedSteps}"/>
-            </WrapPanel>
-
-            <Separator Margin="0,0,0,12"/>
-
-            <ui:TextBlock Text="{DynamicResource FreeTierOnboarding_LinkTitle}"
-                          FontWeight="SemiBold"
-                          Margin="0,0,0,6"/>
-            <ui:TextBlock Text="{DynamicResource FreeTierOnboarding_LinkHint}"
-                          Opacity="0.85"
+            <ui:TextBlock x:Name="CodeExpiredText"
+                          Text="{DynamicResource FreeTierOnboarding_CodeExpired}"
+                          Foreground="{DynamicResource SystemFillColorCriticalBrush}"
                           TextWrapping="Wrap"
+                          Visibility="Collapsed"
                           Margin="0,0,0,10"/>
-
-            <ui:Button x:Name="RequestCodeButton"
-                       Height="34"
-                       MinWidth="180"
-                       HorizontalAlignment="Left"
-                       Margin="0,0,0,8"
-                       Appearance="Secondary"
-                       Click="RequestCode_OnClick"
-                       Content="{DynamicResource FreeTierOnboarding_RequestCode}"/>
 
             <Border x:Name="LinkCodeBorder"
                     CornerRadius="8"
                     Padding="10"
                     Visibility="Collapsed"
-                    Background="{DynamicResource ControlFillColorSecondaryBrush}">
+                    Background="{DynamicResource ControlFillColorSecondaryBrush}"
+                    Margin="0,0,0,10">
                 <StackPanel>
-                    <ui:TextBlock Text="{DynamicResource FreeTierOnboarding_CodeHint}"
-                                  Opacity="0.85"/>
-                    <ui:TextBlock x:Name="LinkCodeText"
-                                  FontSize="22"
-                                  FontWeight="SemiBold"
-                                  Margin="0,2,0,0"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <ui:TextBlock x:Name="LinkCodeText"
+                                      Grid.Column="0"
+                                      FontSize="22"
+                                      FontWeight="SemiBold"
+                                      FontFamily="Consolas"
+                                      TextAlignment="Center"
+                                      VerticalAlignment="Center"/>
+                        <ui:Button x:Name="CopyCodeButton"
+                                   Grid.Column="1"
+                                   Height="34"
+                                   MinWidth="110"
+                                   Margin="8,0,0,0"
+                                   Appearance="Secondary"
+                                   Click="CopyCode_OnClick"
+                                   Content="{DynamicResource FreeTierOnboarding_CopyCode}"/>
+                    </Grid>
                     <ui:TextBlock x:Name="LinkCodeExpiresText"
                                   Opacity="0.8"
-                                  Margin="0,4,0,0"/>
+                                  Margin="0,8,0,0"/>
+                    <ui:TextBlock x:Name="LinkCodeExpiresSoonText"
+                                  Foreground="{DynamicResource SystemFillColorCriticalBrush}"
+                                  TextWrapping="Wrap"
+                                  Visibility="Collapsed"
+                                  Margin="0,6,0,0"/>
+                    <ui:TextBlock x:Name="LinkCodeStepsText"
+                                  TextWrapping="Wrap"
+                                  Margin="0,8,0,0"/>
+                    <ui:TextBlock x:Name="OpenBotHintText"
+                                  Text="{DynamicResource FreeTierOnboarding_OpenBotHint}"
+                                  Opacity="0.85"
+                                  TextWrapping="Wrap"
+                                  Margin="0,8,0,0"/>
                 </StackPanel>
             </Border>
 
-            <ui:TextBlock x:Name="StatusText"
-                          Margin="0,12,0,0"
+            <ui:TextBlock x:Name="ErrorText"
+                          Foreground="{DynamicResource SystemFillColorCriticalBrush}"
                           TextWrapping="Wrap"
-                          Opacity="0.85"/>
+                          Visibility="Collapsed"
+                          Margin="0,0,0,4"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Margin="22,0,22,20">
+            <ui:Button x:Name="CheckAgainButton"
+                       Height="34"
+                       HorizontalAlignment="Stretch"
+                       Margin="0,0,0,8"
+                       Appearance="Secondary"
+                       Click="CheckAgain_OnClick"
+                       Content="{DynamicResource FreeTierOnboarding_CheckAgain}"/>
+
+            <ui:Button x:Name="OpenChannelButton"
+                       Height="34"
+                       HorizontalAlignment="Stretch"
+                       Margin="0,0,0,8"
+                       Appearance="Secondary"
+                       Click="OpenChannel_OnClick"
+                       Content="{DynamicResource FreeTierOnboarding_OpenChannel}"
+                       Visibility="Collapsed"/>
+
+            <ui:Button x:Name="PrimaryActionButton"
+                       Height="36"
+                       HorizontalAlignment="Stretch"
+                       Appearance="Primary"
+                       Click="PrimaryAction_OnClick"
+                       Content="{DynamicResource FreeTierOnboarding_GetCode}"/>
         </StackPanel>
     </Grid>
 </ui:FluentWindow>
