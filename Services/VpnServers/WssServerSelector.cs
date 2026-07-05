@@ -21,6 +21,16 @@ public sealed class WssServerSelector(OpenVpnServersApiClient apiClient)
             .ToList()
             ?? new List<VpnServerWithStatusV2Dto>();
 
+    /// <summary>Access tab: WSS-capable servers only (Windows client ignores xray/non-WSS rows).</summary>
+    public static List<VpnServerWithStatusV2Dto> FilterWssEnabled(
+        IEnumerable<VpnServerWithStatusV2Dto>? source) =>
+        source?
+            .Where(x => x.VpnServerResponses?.VpnServer != null)
+            .Where(x => x.VpnServerResponses.VpnServer.IsEnableWss)
+            .OrderBy(x => x.VpnServerResponses.VpnServer.ServerName, StringComparer.OrdinalIgnoreCase)
+            .ToList()
+            ?? new List<VpnServerWithStatusV2Dto>();
+
     /// <summary>
     /// Linux parity: WSS + quota filter; auto = online first, then least <see cref="VpnServerWithStatusV2Dto.CountConnectedClients"/>, with rotation.
     /// Manual = server by id if present in filtered list.

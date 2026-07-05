@@ -22,6 +22,9 @@ public sealed class EngineSessionService(
 
     private const string SessionId = "dev";
 
+    /// <summary>Last <see cref="StartSessionAsync"/> failed because no WSS server matched filters.</summary>
+    public bool LastStartFailedNoEligibleServers { get; private set; }
+
     // Guard so we don't kill repeatedly if service is used multiple times
     private bool _startupKillDone;
 
@@ -145,6 +148,7 @@ public sealed class EngineSessionService(
     public async Task<bool> StartSessionAsync(bool autoPickServer, int? manualVpnServerId, CancellationToken ct)
     {
         EnsureClientCreated();
+        LastStartFailedNoEligibleServers = false;
 
         JObject? payload;
         try
@@ -166,7 +170,11 @@ public sealed class EngineSessionService(
         }
 
         if (payload == null)
+        {
+            log("No eligible WSS VPN servers.");
+            LastStartFailedNoEligibleServers = true;
             return false;
+        }
 
         using var startCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
         startCts.CancelAfter(TimeSpan.FromSeconds(20));

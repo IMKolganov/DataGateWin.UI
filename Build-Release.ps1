@@ -1,7 +1,7 @@
 # Build-Release.ps1 — Release app + engine + installer + GitHub ZIP (DataGateWin.vX.Y.Z.zip)
 param(
     [string]$Configuration = "Release",
-    [string]$Version = "1.0.10",
+    [string]$Version = "1.0.11",
     [string]$VcpkgRoot = "F:\C++\vcpkg",
     [switch]$SkipConfigure,
     [switch]$SkipInstaller

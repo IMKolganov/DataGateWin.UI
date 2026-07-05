@@ -155,6 +155,12 @@ public sealed class HomeController : IDisposable
             var started = await _engine.StartSessionAsync(_connectAutoPick, _connectManualId, ct);
             if (!started)
             {
+                if (_engine.LastStartFailedNoEligibleServers)
+                {
+                    Log(Loc.T("Home_Log_NoWss"));
+                    _desiredConnected = false;
+                }
+
                 ApplyUiState(UiState.Idle, Loc.T("Home_Status_IdleStartFailed"));
                 if (_desiredConnected)
                     _ = ScheduleReconnectAsync();

@@ -18,6 +18,7 @@ public sealed partial class AccessViewModel : ObservableObject
     private readonly AuthSession _session;
 
     private UserVpnAccessInfo? _lastQuota;
+    private string? _lastV3PlanName;
     private int _lastTotalClients;
     private bool _clientsLoaded;
 
@@ -39,7 +40,7 @@ public sealed partial class AccessViewModel : ObservableObject
             ? Loc.T("Access_TotalClientsUnknown")
             : Loc.T("Access_TotalClientsFmt", _lastTotalClients);
         if (_lastQuota is not null)
-            ApplyQuotaUi(_lastQuota);
+            ApplyQuotaUi(_lastQuota, _lastV3PlanName);
     }
 
     [ObservableProperty]
@@ -96,8 +97,7 @@ public sealed partial class AccessViewModel : ObservableObject
             var token = await _session.GetValidAccessTokenAsync(CancellationToken.None).ConfigureAwait(true);
 
             var resp = await _serversApi.GetAllWithStatusAsync(CancellationToken.None).ConfigureAwait(true);
-            Servers = resp.Data?.VpnServerWithStatuses
-                      ?? new List<VpnServerWithStatusV2Dto>();
+            Servers = WssServerSelector.FilterWssEnabled(resp.Data?.VpnServerWithStatuses);
 
             var totalClients = Servers.Sum(s => s.CountConnectedClients);
             _lastTotalClients = totalClients;
@@ -105,8 +105,10 @@ public sealed partial class AccessViewModel : ObservableObject
             TotalClientsLineText = Loc.T("Access_TotalClientsFmt", totalClients);
 
             var quota = await _quotaApi.FetchAsync(token, CancellationToken.None).ConfigureAwait(true);
+            var v3PlanName = resp.Data?.UserQuotaPlan?.QuotaPlanName?.Trim();
             _lastQuota = quota;
-            ApplyQuotaUi(quota);
+            _lastV3PlanName = v3PlanName;
+            ApplyQuotaUi(quota, v3PlanName);
         }
         catch (Exception ex)
         {
@@ -121,7 +123,7 @@ public sealed partial class AccessViewModel : ObservableObject
 
     public IAsyncRelayCommand RefreshCommand { get; }
 
-    private void ApplyQuotaUi(UserVpnAccessInfo i)
+    private void ApplyQuotaUi(UserVpnAccessInfo i, string? v3PlanName = null)
     {
         if (!string.IsNullOrEmpty(i.QuotaApiError))
         {
@@ -135,13 +137,14 @@ public sealed partial class AccessViewModel : ObservableObject
         }
 
         ShowTrafficQuotaTitle = true;
-        PlanLineText = string.IsNullOrEmpty(i.PlanName)
+        var planName = string.IsNullOrEmpty(i.PlanName) ? v3PlanName : i.PlanName;
+        PlanLineText = string.IsNullOrEmpty(planName)
             ? Loc.T("Access_PlanDash")
-            : Loc.T("Access_PlanFmt", i.PlanName);
+            : Loc.T("Access_PlanFmt", planName);
 
         var metaParts = new List<string>();
-        if (!string.IsNullOrEmpty(i.PlanName))
-            metaParts.Add(i.PlanName);
+        if (!string.IsNullOrEmpty(planName))
+            metaParts.Add(planName);
         if (i.QuotaPeriodIsMonthly && i.QuotaLimitBytes > 0)
             metaParts.Add(Loc.T("Access_QuotaMetaThisMonth"));
         else if (!i.QuotaPeriodIsMonthly && i.QuotaLimitBytes > 0)
