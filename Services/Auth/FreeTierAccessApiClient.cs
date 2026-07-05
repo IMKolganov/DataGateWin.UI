@@ -1,6 +1,5 @@
 using System.Net.Http;
 using System.Text;
-using DataGateMonitor.SharedModels.DataGateMonitor.Auth.Requests;
 using DataGateMonitor.SharedModels.DataGateMonitor.Auth.Responses;
 using DataGateMonitor.SharedModels.Responses;
 using Newtonsoft.Json;
@@ -10,9 +9,7 @@ namespace DataGateWin.Services.Auth;
 public interface IFreeTierAccessApiClient
 {
     Task<ApiResponse<FreeTierAccessStatusResponse>> GetStatusAsync(CancellationToken ct);
-    Task<ApiResponse<RequestTelegramAccountLinkCodeResponse>> RequestAccountLinkCodeAsync(
-        RequestTelegramAccountLinkCodeRequest request,
-        CancellationToken ct);
+    Task<ApiResponse<RequestTelegramAccountLinkCodeResponse>> RequestAccountLinkCodeAsync(CancellationToken ct);
 }
 
 public sealed class FreeTierAccessApiClient(HttpClient http) : IFreeTierAccessApiClient
@@ -36,11 +33,11 @@ public sealed class FreeTierAccessApiClient(HttpClient http) : IFreeTierAccessAp
     }
 
     public async Task<ApiResponse<RequestTelegramAccountLinkCodeResponse>> RequestAccountLinkCodeAsync(
-        RequestTelegramAccountLinkCodeRequest request,
         CancellationToken ct)
     {
+        // TelegramId omitted: user completes linking in the bot (/link_account CODE).
         var content = new StringContent(
-            JsonConvert.SerializeObject(request),
+            "{}",
             Encoding.UTF8,
             "application/json");
 

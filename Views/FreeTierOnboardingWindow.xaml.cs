@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Threading;
-using DataGateMonitor.SharedModels.DataGateMonitor.Auth.Requests;
 using DataGateMonitor.SharedModels.DataGateMonitor.Auth.Responses;
 using DataGateWin.CrashReporting;
 using DataGateWin.Localization;
@@ -102,21 +101,10 @@ public partial class FreeTierOnboardingWindow
             return;
         }
 
-        if (!long.TryParse(TelegramIdTextBox.Text?.Trim(), out var telegramId) || telegramId <= 0)
-        {
-            StatusText.Text = Loc.T("FreeTierOnboarding_InvalidTelegramId");
-            return;
-        }
-
         SetBusy(true);
         try
         {
-            var resp = await _api.RequestAccountLinkCodeAsync(
-                new RequestTelegramAccountLinkCodeRequest
-                {
-                    TelegramId = telegramId
-                },
-                CancellationToken.None);
+            var resp = await _api.RequestAccountLinkCodeAsync(CancellationToken.None);
 
             if (resp.Data == null || string.IsNullOrWhiteSpace(resp.Data.Code))
             {
@@ -190,7 +178,6 @@ public partial class FreeTierOnboardingWindow
     {
         _isBusy = busy;
         RequestCodeButton.IsEnabled = !busy && _allowRequestLinkCode;
-        TelegramIdTextBox.IsEnabled = !busy;
         OpenChannelButton.IsEnabled = !busy;
     }
 

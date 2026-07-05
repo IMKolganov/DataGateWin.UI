@@ -138,8 +138,8 @@
     <sys:String x:Key="FreeTierOnboarding_Title">Онбординг доступа Free/Default</sys:String>
     <sys:String x:Key="FreeTierOnboarding_OpenRequiredChannel">Открыть обязательный канал</sys:String>
     <sys:String x:Key="FreeTierOnboarding_CompletedSteps">Я выполнил(а) шаги</sys:String>
-    <sys:String x:Key="FreeTierOnboarding_LinkTitle">Связать Telegram-аккаунт (альтернативный вариант):</sys:String>
-    <sys:String x:Key="FreeTierOnboarding_LinkHint">Введите числовой Telegram ID аккаунта, который будет использовать бота.</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_LinkTitle">Связать Telegram-аккаунт (альтернатива)</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_LinkHint">Запросите одноразовый код, затем откройте бота и отправьте /link_account CODE в личном чате. Telegram ID вводить не нужно.</sys:String>
     <sys:String x:Key="FreeTierOnboarding_TelegramIdTooltip">Числовой Telegram ID</sys:String>
     <sys:String x:Key="FreeTierOnboarding_RequestCode">Запросить код привязки</sys:String>
     <sys:String x:Key="FreeTierOnboarding_CodeHint">Используйте этот код в личном чате с ботом:</sys:String>

@@ -228,8 +228,8 @@
     <sys:String x:Key="FreeTierOnboarding_Title">Free/Default access onboarding</sys:String>
     <sys:String x:Key="FreeTierOnboarding_OpenRequiredChannel">Open required channel</sys:String>
     <sys:String x:Key="FreeTierOnboarding_CompletedSteps">I completed steps</sys:String>
-    <sys:String x:Key="FreeTierOnboarding_LinkTitle">Link Telegram account (optional alternative):</sys:String>
-    <sys:String x:Key="FreeTierOnboarding_LinkHint">Enter your numeric Telegram ID from the same account that will use the bot.</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_LinkTitle">Link Telegram account (alternative)</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_LinkHint">Request a one-time code, then open the bot and send /link_account CODE in a private chat. No Telegram ID needed.</sys:String>
     <sys:String x:Key="FreeTierOnboarding_TelegramIdTooltip">Numeric Telegram ID</sys:String>
     <sys:String x:Key="FreeTierOnboarding_RequestCode">Request link code</sys:String>
     <sys:String x:Key="FreeTierOnboarding_CodeHint">Use this code in bot private chat:</sys:String>
