@@ -4,9 +4,9 @@ using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using OpenVPNGateMonitor.SharedModels.DataGateMonitorBackend.Auth.Requests;
-using OpenVPNGateMonitor.SharedModels.DataGateMonitorBackend.Auth.Responses;
-using OpenVPNGateMonitor.SharedModels.Responses;
+using DataGateMonitor.SharedModels.DataGateMonitor.Auth.Requests;
+using DataGateMonitor.SharedModels.DataGateMonitor.Auth.Responses;
+using DataGateMonitor.SharedModels.Responses;
 
 namespace DataGateWin.Services.Auth;
 

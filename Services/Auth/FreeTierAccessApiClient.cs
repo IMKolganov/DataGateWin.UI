@@ -2,8 +2,8 @@ using System.Net.Http;
 using System.Text;
 using DataGateMonitor.SharedModels.DataGateMonitor.Auth.Requests;
 using DataGateMonitor.SharedModels.DataGateMonitor.Auth.Responses;
+using DataGateMonitor.SharedModels.Responses;
 using Newtonsoft.Json;
-using OpenVPNGateMonitor.SharedModels.Responses;
 
 namespace DataGateWin.Services.Auth;
 

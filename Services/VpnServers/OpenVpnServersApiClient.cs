@@ -1,7 +1,7 @@
 using System.Net.Http;
 using Newtonsoft.Json;
-using OpenVPNGateMonitor.SharedModels.DataGateMonitorBackend.OpenVpnServers.Responses;
-using OpenVPNGateMonitor.SharedModels.Responses;
+using DataGateMonitor.SharedModels.DataGateMonitor.VpnServers.Responses;
+using DataGateMonitor.SharedModels.Responses;
 
 namespace DataGateWin.Services.VpnServers;
 
@@ -9,7 +9,7 @@ public sealed class OpenVpnServersApiClient(HttpClient http)
 {
     private readonly HttpClient _http = http ?? throw new ArgumentNullException(nameof(http));
 
-    public async Task<ApiResponse<OpenVpnServerWithStatusesResponse>> GetAllWithStatusAsync(
+    public async Task<ApiResponse<VpnServerWithStatusesResponse>> GetAllWithStatusAsync(
         CancellationToken ct)
     {
         using var req = new HttpRequestMessage(
@@ -24,7 +24,7 @@ public sealed class OpenVpnServersApiClient(HttpClient http)
             throw new InvalidOperationException(
                 $"Request failed: {(int)resp.StatusCode} {resp.ReasonPhrase}. Body: {json}");
 
-        var result = JsonConvert.DeserializeObject<ApiResponse<OpenVpnServerWithStatusesResponse>>(json);
+        var result = JsonConvert.DeserializeObject<ApiResponse<VpnServerWithStatusesResponse>>(json);
         if (result == null)
             throw new InvalidOperationException("Response deserialization returned null.");
 

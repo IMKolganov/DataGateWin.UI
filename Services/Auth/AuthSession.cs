@@ -1,8 +1,8 @@
 using System.Net;
 using System.Net.Http;
 using DataGateWin.Services.Auth.Interfaces;
-using OpenVPNGateMonitor.SharedModels.DataGateMonitorBackend.Auth.Requests;
-using OpenVPNGateMonitor.SharedModels.DataGateMonitorBackend.Auth.Responses;
+using DataGateMonitor.SharedModels.DataGateMonitor.Auth.Requests;
+using DataGateMonitor.SharedModels.DataGateMonitor.Auth.Responses;
 
 namespace DataGateWin.Services.Auth;
 
@@ -25,8 +25,8 @@ public sealed class AuthSession(
 
     public async Task SetFromLoginAsync(GoogleLoginResponse login, CancellationToken ct)
     {
-        _current = login;
-        await store.SaveAsync(login, ct).ConfigureAwait(false);
+        _current = ToAuthTokens(login);
+        await store.SaveAsync(_current, ct).ConfigureAwait(false);
     }
 
     public async Task LogoutAsync(CancellationToken ct)
@@ -81,7 +81,7 @@ public sealed class AuthSession(
                 if (!response.Success || response.Data == null)
                     return false;
 
-                _current = response.Data;
+                _current = ToAuthTokens(response.Data);
                 await store.SaveAsync(_current, ct).ConfigureAwait(false);
                 return true;
             }
@@ -107,4 +107,28 @@ public sealed class AuthSession(
         var now = DateTimeOffset.UtcNow;
         return t.Expiration > now.AddSeconds(60);
     }
+
+    private static AuthTokensResponse ToAuthTokens(GoogleLoginResponse login) => ToAuthTokens(
+        login.Token,
+        login.Expiration,
+        login.RefreshToken,
+        login.RefreshExpiration);
+
+    private static AuthTokensResponse ToAuthTokens(RefreshResponse refresh) => ToAuthTokens(
+        refresh.Token,
+        refresh.Expiration,
+        refresh.RefreshToken,
+        refresh.RefreshExpiration);
+
+    private static AuthTokensResponse ToAuthTokens(
+        string? token,
+        DateTimeOffset expiration,
+        string? refreshToken,
+        DateTimeOffset? refreshExpiration) => new()
+    {
+        Token = token ?? throw new InvalidOperationException("Auth response is missing access token."),
+        Expiration = expiration,
+        RefreshToken = refreshToken,
+        RefreshExpiration = refreshExpiration
+    };
 }

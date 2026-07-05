@@ -223,5 +223,29 @@
     <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">Trūksta VPN variklio (engine.exe). Iš naujo įdiekite „DataGate“.&#x0a;&#x0a;Atsisiuntimo puslapis: {0}&#x0a;&#x0a;Ar atidaryti atsisiuntimo puslapį naršyklėje dabar?</sys:String>
     <sys:String x:Key="Home_Status_EngineMissing">Tuščioji eiga – reikia iš naujo įdiegti (trūksta variklio)</sys:String>
     <sys:String x:Key="Home_Log_EngineMissing">KLAIDA: VPN variklis nerastas. Iš naujo įdiekite programą arba paleiskite diegimo programą.</sys:String>
+    <sys:String x:Key="Torrent_WarningTitle">Torrent client detected</sys:String>
+    <sys:String x:Key="Torrent_WarningBodyFmt">Urgently disable the torrent client and close this process now: {0}</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_Title">Free/Default access onboarding</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_OpenRequiredChannel">Open required channel</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_CompletedSteps">I completed steps</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_LinkTitle">Link Telegram account (optional alternative):</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_LinkHint">Enter your numeric Telegram ID from the same account that will use the bot.</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_TelegramIdTooltip">Numeric Telegram ID</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_RequestCode">Request link code</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_CodeHint">Use this code in bot private chat:</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_PlanFmt">Plan: {0}</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_DefaultPlanName">Free/Default</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_RequiredChannelFmt">Subscribe to {0} or link your Telegram account.</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_OpenChannelFmt">Open {0}</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_MergeDetected">Account merge detected. Waiting for compliance update...</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_ChannelDetected">Channel subscription detected. Waiting for compliance update...</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_LinkNotAvailable">Link-code request is currently unavailable for this account.</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_StatusRefreshFailed">Status refresh failed. Please try again.</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_ComplianceConfirmed">Compliance confirmed. Closing onboarding...</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_InvalidTelegramId">Enter a valid numeric Telegram ID.</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_CodeRequestFailed">Code request failed. Try again.</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_ExpiresFmt">Expires in {0} seconds.</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_CodeSentHint">Send /link_account CODE in the Telegram bot private chat.</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_RequestFailedEnsureRegistered">Failed to request link code. Ensure Telegram is registered in the bot.</sys:String>
+
 </ResourceDictionary>
-

@@ -1,5 +1,5 @@
 using System.Reflection;
-using OpenVPNGateMonitor.SharedModels.DataGateMonitorBackend.OpenVpnServers.Dto;
+using DataGateMonitor.SharedModels.DataGateMonitor.VpnServers.Dto;
 
 namespace DataGateWin.Services.VpnServers;
 
@@ -10,11 +10,11 @@ namespace DataGateWin.Services.VpnServers;
 public static class OpenVpnServerQuotaReflection
 {
     private static readonly Lazy<PropertyInfo?> ServerProp = new(() =>
-        typeof(OpenVpnServerDto).GetProperty(
+        typeof(VpnServerDto).GetProperty(
             "IsAccessibleForUserQuotaPlan",
             BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase));
 
-    public static bool IsAccessibleForUserQuotaPlanOrDefault(this OpenVpnServerDto server)
+    public static bool IsAccessibleForUserQuotaPlanOrDefault(this VpnServerDto server)
     {
         var p = ServerProp.Value;
         if (p?.GetValue(server) is bool b)
