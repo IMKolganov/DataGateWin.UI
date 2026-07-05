@@ -34,6 +34,9 @@ public sealed class OpenVpnServersApiClient(HttpClient http)
                     ? "Server list: API returned success=false."
                     : $"Server list: {result.Message}");
 
+        if (result.Data?.VpnServerWithStatuses is { Count: > 0 } servers)
+            result.Data.VpnServerWithStatuses = VpnServerListDeduper.ByServerId(servers);
+
         return result;
     }
 }
