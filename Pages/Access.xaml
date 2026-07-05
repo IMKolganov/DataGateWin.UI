@@ -153,7 +153,7 @@
 
                     <DataGridTextColumn
                         Header="{DynamicResource Access_Col_Server}"
-                        Binding="{Binding OpenVpnServerResponses.OpenVpnServer.ServerName}"
+                        Binding="{Binding VpnServerResponses.VpnServer.ServerName}"
                         Width="*" />
 
                     <DataGridTextColumn
@@ -173,7 +173,7 @@
 
                     <DataGridCheckBoxColumn
                         Header="{DynamicResource Access_Col_Online}"
-                        Binding="{Binding OpenVpnServerResponses.OpenVpnServer.IsOnline}"
+                        Binding="{Binding VpnServerResponses.VpnServer.IsOnline}"
                         Width="90">
                         <DataGridCheckBoxColumn.ElementStyle>
                             <Style TargetType="CheckBox">

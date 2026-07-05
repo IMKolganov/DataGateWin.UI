@@ -191,12 +191,12 @@ public partial class HomePage : Page
         try
         {
             var resp = await _serversApi.GetAllWithStatusAsync(CancellationToken.None).ConfigureAwait(true);
-            var raw = resp.Data?.OpenVpnServerWithStatuses;
+            var raw = resp.Data?.VpnServerWithStatuses;
             var eligible = WssServerSelector.FilterEligible(raw);
             _cachedServerRows = eligible
                 .Select(x =>
                 {
-                    var srv = x.OpenVpnServerResponses!.OpenVpnServer;
+                    var srv = x.VpnServerResponses!.VpnServer;
                     return new CachedVpnServerRow
                     {
                         Id = srv.Id,

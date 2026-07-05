@@ -1,5 +1,5 @@
-﻿using DataGateWin.Services.Auth.Interfaces;
-using OpenVPNGateMonitor.SharedModels.DataGateMonitorBackend.Auth.Responses;
+using DataGateWin.Services.Auth.Interfaces;
+using DataGateMonitor.SharedModels.DataGateMonitor.Auth.Responses;
 
 namespace DataGateWin.Services.Auth;
 

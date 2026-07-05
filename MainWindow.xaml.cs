@@ -11,6 +11,7 @@ using DataGateWin.Pages;
 using DataGateWin.Pages.Home;
 using DataGateWin.Services.Auth;
 using DataGateWin.Services.Identity;
+using DataGateWin.Services.Security;
 using DataGateWin.Services.Support;
 using DataGateWin.Services.Ui;
 using DataGateWin.Views;
@@ -21,6 +22,9 @@ namespace DataGateWin;
 public partial class MainWindow : FluentWindow
 {
     private ImageSource? _taskbarAvatarOverlay;
+    private readonly FreeTierAccessApiClient _freeTierAccessApi;
+    private bool _isOnboardingDialogOpen;
+    private DateTimeOffset _lastOnboardingCheckUtc = DateTimeOffset.MinValue;
 
     private readonly AuthStateStore _authState;
 
@@ -30,16 +34,19 @@ public partial class MainWindow : FluentWindow
     private readonly Access _accessPage = new();
     private readonly Statistics _statisticsPage;
     private readonly SettingsPage _settingsPage;
+    private readonly TorrentClientMonitor _torrentClientMonitor;
 
     public MainWindow(AuthStateStore authState, HttpClient authedApiHttp)
     {
         InitializeComponent();
 
         _authState = authState;
+        _freeTierAccessApi = new FreeTierAccessApiClient(authedApiHttp);
 
         _homePage = new HomePage(_homeController);
         _settingsPage = new SettingsPage(_authState);
         _statisticsPage = new Statistics(authedApiHttp, App.Session);
+        _torrentClientMonitor = new TorrentClientMonitor(this);
 
         Loaded += OnLoadedAsync;
 
@@ -56,8 +63,10 @@ public partial class MainWindow : FluentWindow
 
     private async void OnLoadedAsync(object sender, RoutedEventArgs e)
     {
+        _torrentClientMonitor.Start();
         NavigateTo("home");
         await ApplyUserPaneFooterAsync().ConfigureAwait(true);
+        await CheckAndShowFreeTierOnboardingIfNeededAsync(force: true).ConfigureAwait(true);
     }
 
     private async Task ApplyUserPaneFooterAsync()
@@ -164,6 +173,7 @@ public partial class MainWindow : FluentWindow
 
     protected override void OnClosed(EventArgs e)
     {
+        _torrentClientMonitor.Dispose();
         base.OnClosed(e);
         _homeController.Dispose();
     }
@@ -214,6 +224,43 @@ public partial class MainWindow : FluentWindow
                 SetActive("home");
                 MainFrame.Navigate(_homePage);
                 break;
+        }
+
+        if (tag is "home" or "access")
+            _ = CheckAndShowFreeTierOnboardingIfNeededAsync(force: false);
+    }
+
+    private async Task CheckAndShowFreeTierOnboardingIfNeededAsync(bool force)
+    {
+        if (_isOnboardingDialogOpen)
+            return;
+
+        if (!force && !FreeTierOnboardingPolicy.ShouldRefreshOnPoll(_lastOnboardingCheckUtc, DateTimeOffset.UtcNow))
+            return;
+
+        _lastOnboardingCheckUtc = DateTimeOffset.UtcNow;
+
+        try
+        {
+            var resp = await _freeTierAccessApi.GetStatusAsync(CancellationToken.None).ConfigureAwait(true);
+            var status = resp.Data;
+            if (!FreeTierOnboardingPolicy.ShouldShow(status) || status == null)
+                return;
+
+            _isOnboardingDialogOpen = true;
+            var wnd = new FreeTierOnboardingWindow(_freeTierAccessApi, status)
+            {
+                Owner = this
+            };
+            wnd.ShowDialog();
+        }
+        catch (Exception ex)
+        {
+            CrashReporter.ReportNonFatal(ex, "MainWindow.CheckFreeTierOnboarding");
+        }
+        finally
+        {
+            _isOnboardingDialogOpen = false;
         }
     }
 

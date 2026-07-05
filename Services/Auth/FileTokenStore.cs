@@ -1,7 +1,7 @@
-﻿using System.IO;
+using System.IO;
 using DataGateWin.Services.Auth.Interfaces;
 using Newtonsoft.Json;
-using OpenVPNGateMonitor.SharedModels.DataGateMonitorBackend.Auth.Responses;
+using DataGateMonitor.SharedModels.DataGateMonitor.Auth.Responses;
 
 namespace DataGateWin.Services.Auth;
 
