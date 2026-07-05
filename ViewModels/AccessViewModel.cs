@@ -49,8 +49,8 @@ public sealed partial class AccessViewModel : ObservableObject
     private string? errorText;
 
     [ObservableProperty]
-    private IList<VpnServerWithStatusDto> servers
-        = new List<VpnServerWithStatusDto>();
+    private IList<VpnServerWithStatusV2Dto> servers
+        = new List<VpnServerWithStatusV2Dto>();
 
     [ObservableProperty]
     private string totalClientsLineText = Loc.T("Access_TotalClientsUnknown");
@@ -97,7 +97,7 @@ public sealed partial class AccessViewModel : ObservableObject
 
             var resp = await _serversApi.GetAllWithStatusAsync(CancellationToken.None).ConfigureAwait(true);
             Servers = resp.Data?.VpnServerWithStatuses
-                      ?? new List<VpnServerWithStatusDto>();
+                      ?? new List<VpnServerWithStatusV2Dto>();
 
             var totalClients = Servers.Sum(s => s.CountConnectedClients);
             _lastTotalClients = totalClients;

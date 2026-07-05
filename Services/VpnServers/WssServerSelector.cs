@@ -7,25 +7,25 @@ public sealed class WssServerSelector(OpenVpnServersApiClient apiClient)
 {
     private int? _lastSelectedServerId;
 
-    public Task<VpnServerDto?> GetBestWssAsync(CancellationToken ct) =>
+    public Task<VpnServerV2Dto?> GetBestWssAsync(CancellationToken ct) =>
         GetServerAsync(autoPick: true, manualServerId: null, ct);
 
     /// <summary>WSS-enabled and allowed by user quota plan (Linux <c>parseWssServersFromStatusJson</c> filter).</summary>
-    public static List<VpnServerWithStatusDto> FilterEligible(
-        IEnumerable<VpnServerWithStatusDto>? source) =>
+    public static List<VpnServerWithStatusV2Dto> FilterEligible(
+        IEnumerable<VpnServerWithStatusV2Dto>? source) =>
         source?
             .Where(x => x.VpnServerResponses?.VpnServer != null)
             .Where(x => x.VpnServerResponses.VpnServer.IsEnableWss)
             .Where(x => x.VpnServerResponses.VpnServer.IsAccessibleForUserQuotaPlanOrDefault())
             .OrderBy(x => x.VpnServerResponses.VpnServer.ServerName, StringComparer.OrdinalIgnoreCase)
             .ToList()
-            ?? new List<VpnServerWithStatusDto>();
+            ?? new List<VpnServerWithStatusV2Dto>();
 
     /// <summary>
-    /// Linux parity: WSS + quota filter; auto = online first, then least <see cref="VpnServerWithStatusDto.CountConnectedClients"/>, with rotation.
+    /// Linux parity: WSS + quota filter; auto = online first, then least <see cref="VpnServerWithStatusV2Dto.CountConnectedClients"/>, with rotation.
     /// Manual = server by id if present in filtered list.
     /// </summary>
-    public async Task<VpnServerDto?> GetServerAsync(bool autoPick, int? manualServerId, CancellationToken ct)
+    public async Task<VpnServerV2Dto?> GetServerAsync(bool autoPick, int? manualServerId, CancellationToken ct)
     {
         var resp = await apiClient.GetAllWithStatusAsync(ct).ConfigureAwait(false);
         var list = resp.Data?.VpnServerWithStatuses;

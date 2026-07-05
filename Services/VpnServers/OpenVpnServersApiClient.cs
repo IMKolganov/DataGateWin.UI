@@ -9,12 +9,12 @@ public sealed class OpenVpnServersApiClient(HttpClient http)
 {
     private readonly HttpClient _http = http ?? throw new ArgumentNullException(nameof(http));
 
-    public async Task<ApiResponse<VpnServerWithStatusesResponse>> GetAllWithStatusAsync(
+    public async Task<ApiResponse<VpnServerWithStatusesV3Response>> GetAllWithStatusAsync(
         CancellationToken ct)
     {
         using var req = new HttpRequestMessage(
             HttpMethod.Get,
-            "api/open-vpn-servers/get-all-with-status");
+            "api/v3/open-vpn-servers/get-all-with-status");
 
         using var resp = await _http.SendAsync(req, ct);
 
@@ -24,7 +24,7 @@ public sealed class OpenVpnServersApiClient(HttpClient http)
             throw new InvalidOperationException(
                 $"Request failed: {(int)resp.StatusCode} {resp.ReasonPhrase}. Body: {json}");
 
-        var result = JsonConvert.DeserializeObject<ApiResponse<VpnServerWithStatusesResponse>>(json);
+        var result = JsonConvert.DeserializeObject<ApiResponse<VpnServerWithStatusesV3Response>>(json);
         if (result == null)
             throw new InvalidOperationException("Response deserialization returned null.");
 

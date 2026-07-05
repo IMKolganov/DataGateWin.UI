@@ -21,4 +21,7 @@ public static class OpenVpnServerQuotaReflection
             return b;
         return true;
     }
+
+    public static bool IsAccessibleForUserQuotaPlanOrDefault(this VpnServerV2Dto server) =>
+        server.IsAccessibleForUserQuotaPlan;
 }
