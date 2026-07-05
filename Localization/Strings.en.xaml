@@ -199,6 +199,8 @@
     <sys:String x:Key="Home_Status_EngineMissing">Idle — reinstall required (engine missing)</sys:String>
     <sys:String x:Key="Home_Log_EngineMissing">ERROR: VPN engine not found. Reinstall the application or run the installer.</sys:String>
     <sys:String x:Key="Msg_UpdateErrorBody">A new update is available, but the update component could not be found.&#x0a;&#x0a;Please reinstall the application or contact support.</sys:String>
+    <sys:String x:Key="Torrent_WarningTitle">Torrent client detected</sys:String>
+    <sys:String x:Key="Torrent_WarningBodyFmt">Urgently disable the torrent client and close this process now: {0}</sys:String>
 
     <sys:String x:Key="Login_Welcome">Welcome to DataGate</sys:String>
     <sys:String x:Key="Login_SignInToContinue">Sign in to continue</sys:String>

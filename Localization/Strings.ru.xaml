@@ -133,6 +133,8 @@
     <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">Не найден VPN-движок (engine.exe). Переустановите DataGate.&#x0a;&#x0a;Страница загрузки: {0}&#x0a;&#x0a;Открыть страницу загрузки в браузере?</sys:String>
     <sys:String x:Key="Home_Status_EngineMissing">Не подключено — нужна переустановка (нет движка)</sys:String>
     <sys:String x:Key="Home_Log_EngineMissing">ОШИБКА: не найден VPN-движок. Переустановите приложение или запустите установщик.</sys:String>
+    <sys:String x:Key="Torrent_WarningTitle">Обнаружен торрент-клиент</sys:String>
+    <sys:String x:Key="Torrent_WarningBodyFmt">Срочно выключите торрент-клиент и закройте этот процесс: {0}</sys:String>
     <sys:String x:Key="Nav_Access">Доступ</sys:String>
     <sys:String x:Key="Nav_Home">Главная</sys:String>
     <sys:String x:Key="Nav_Settings">Настройки</sys:String>

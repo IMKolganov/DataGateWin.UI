@@ -11,6 +11,7 @@ using DataGateWin.Pages;
 using DataGateWin.Pages.Home;
 using DataGateWin.Services.Auth;
 using DataGateWin.Services.Identity;
+using DataGateWin.Services.Security;
 using DataGateWin.Services.Support;
 using DataGateWin.Services.Ui;
 using DataGateWin.Views;
@@ -33,6 +34,7 @@ public partial class MainWindow : FluentWindow
     private readonly Access _accessPage = new();
     private readonly Statistics _statisticsPage;
     private readonly SettingsPage _settingsPage;
+    private readonly TorrentClientMonitor _torrentClientMonitor;
 
     public MainWindow(AuthStateStore authState, HttpClient authedApiHttp)
     {
@@ -44,6 +46,7 @@ public partial class MainWindow : FluentWindow
         _homePage = new HomePage(_homeController);
         _settingsPage = new SettingsPage(_authState);
         _statisticsPage = new Statistics(authedApiHttp, App.Session);
+        _torrentClientMonitor = new TorrentClientMonitor(this);
 
         Loaded += OnLoadedAsync;
 
@@ -63,6 +66,7 @@ public partial class MainWindow : FluentWindow
         NavigateTo("home");
         await ApplyUserPaneFooterAsync().ConfigureAwait(true);
         await CheckAndShowFreeTierOnboardingIfNeededAsync(force: true).ConfigureAwait(true);
+        _torrentClientMonitor.Start();
     }
 
     private async Task ApplyUserPaneFooterAsync()
@@ -169,6 +173,7 @@ public partial class MainWindow : FluentWindow
 
     protected override void OnClosed(EventArgs e)
     {
+        _torrentClientMonitor.Dispose();
         base.OnClosed(e);
         _homeController.Dispose();
     }
