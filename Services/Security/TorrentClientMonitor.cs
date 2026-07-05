@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using System.Windows;
-using System.Windows.Threading;
 using DataGateWin.CrashReporting;
 using DataGateWin.Localization;
 
@@ -55,19 +54,16 @@ public static class TorrentProcessDetector
 
 public sealed class TorrentClientMonitor : IDisposable
 {
-    private readonly DispatcherTimer _timer;
     private readonly Window _owner;
     private readonly HashSet<string> _activeAlertedProcessNames = new(StringComparer.OrdinalIgnoreCase);
+    private readonly SemaphoreSlim _scanLock = new(1, 1);
+    private CancellationTokenSource? _cts;
+    private Task? _monitorTask;
     private bool _isRunning;
 
     public TorrentClientMonitor(Window owner)
     {
         _owner = owner ?? throw new ArgumentNullException(nameof(owner));
-        _timer = new DispatcherTimer
-        {
-            Interval = TimeSpan.FromSeconds(20)
-        };
-        _timer.Tick += (_, _) => ScanAndNotify();
     }
 
     public void Start()
@@ -76,8 +72,8 @@ public sealed class TorrentClientMonitor : IDisposable
             return;
 
         _isRunning = true;
-        ScanAndNotify();
-        _timer.Start();
+        _cts = new CancellationTokenSource();
+        _monitorTask = RunMonitorLoopAsync(_cts.Token);
     }
 
     public void Stop()
@@ -85,36 +81,51 @@ public sealed class TorrentClientMonitor : IDisposable
         if (!_isRunning)
             return;
 
-        _timer.Stop();
+        _cts?.Cancel();
+        _cts?.Dispose();
+        _cts = null;
+        _monitorTask = null;
         _isRunning = false;
     }
 
-    private void ScanAndNotify()
+    private async Task RunMonitorLoopAsync(CancellationToken ct)
     {
+        await ScanAndNotifyAsync(ct).ConfigureAwait(false);
+
+        try
+        {
+            using var timer = new PeriodicTimer(TimeSpan.FromSeconds(20));
+            while (await timer.WaitForNextTickAsync(ct).ConfigureAwait(false))
+                await ScanAndNotifyAsync(ct).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+            // monitor was stopped
+        }
+        catch (Exception ex)
+        {
+            CrashReporter.ReportNonFatal(ex, "TorrentClientMonitor.Loop");
+        }
+    }
+
+    private async Task ScanAndNotifyAsync(CancellationToken ct)
+    {
+        if (!await _scanLock.WaitAsync(0, ct).ConfigureAwait(false))
+            return;
+
         IReadOnlyList<string> detected;
         try
         {
-            detected = TorrentProcessDetector.DetectFromProcessNames(
-                Process.GetProcesses().Select(p =>
-                {
-                    try
-                    {
-                        return p.ProcessName;
-                    }
-                    catch
-                    {
-                        return null;
-                    }
-                    finally
-                    {
-                        try { p.Dispose(); } catch { }
-                    }
-                }));
+            detected = await Task.Run(DetectRunningTorrentProcesses, ct).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
             CrashReporter.ReportNonFatal(ex, "TorrentClientMonitor.Scan");
             return;
+        }
+        finally
+        {
+            _scanLock.Release();
         }
 
         var detectedSet = new HashSet<string>(detected, StringComparer.OrdinalIgnoreCase);
@@ -131,12 +142,13 @@ public sealed class TorrentClientMonitor : IDisposable
         var warningBody = Loc.T("Torrent_WarningBodyFmt", processList);
         var warningTitle = Loc.T("Torrent_WarningTitle");
 
-        MessageBox.Show(
-            _owner,
-            warningBody,
-            warningTitle,
-            MessageBoxButton.OK,
-            MessageBoxImage.Warning);
+        await _owner.Dispatcher.InvokeAsync(() =>
+            MessageBox.Show(
+                _owner,
+                warningBody,
+                warningTitle,
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning));
 
         CrashReporter.ReportNonFatal(
             new InvalidOperationException($"Torrent client detected on user machine. Processes: {processList}."),
@@ -146,5 +158,28 @@ public sealed class TorrentClientMonitor : IDisposable
     public void Dispose()
     {
         Stop();
+        _scanLock.Dispose();
+    }
+
+    private static IReadOnlyList<string> DetectRunningTorrentProcesses()
+    {
+        var names = new List<string?>();
+        foreach (var process in Process.GetProcesses())
+        {
+            try
+            {
+                names.Add(process.ProcessName);
+            }
+            catch
+            {
+                names.Add(null);
+            }
+            finally
+            {
+                try { process.Dispose(); } catch { }
+            }
+        }
+
+        return TorrentProcessDetector.DetectFromProcessNames(names);
     }
 }

@@ -63,10 +63,10 @@ public partial class MainWindow : FluentWindow
 
     private async void OnLoadedAsync(object sender, RoutedEventArgs e)
     {
+        _torrentClientMonitor.Start();
         NavigateTo("home");
         await ApplyUserPaneFooterAsync().ConfigureAwait(true);
         await CheckAndShowFreeTierOnboardingIfNeededAsync(force: true).ConfigureAwait(true);
-        _torrentClientMonitor.Start();
     }
 
     private async Task ApplyUserPaneFooterAsync()

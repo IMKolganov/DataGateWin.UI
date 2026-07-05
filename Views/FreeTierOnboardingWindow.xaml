@@ -2,7 +2,7 @@
                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-                 Title="Free plan onboarding"
+                 Title="{DynamicResource FreeTierOnboarding_Title}"
                  Width="560"
                  MinHeight="320"
                  SizeToContent="Height"
@@ -21,7 +21,7 @@
         </Grid.RowDefinitions>
 
         <ui:TitleBar Grid.Row="0"
-                     Title="Free/Default access onboarding"
+                     Title="{DynamicResource FreeTierOnboarding_Title}"
                      ShowClose="True"
                      ShowMinimize="False"
                      ShowMaximize="False"/>
@@ -43,20 +43,20 @@
                            Margin="0,0,10,0"
                            Appearance="Secondary"
                            Click="OpenChannel_OnClick"
-                           Content="Open required channel"/>
+                           Content="{DynamicResource FreeTierOnboarding_OpenRequiredChannel}"/>
                 <ui:Button Height="34"
                            MinWidth="160"
                            Appearance="Primary"
                            Click="RefreshStatus_OnClick"
-                           Content="I completed steps"/>
+                           Content="{DynamicResource FreeTierOnboarding_CompletedSteps}"/>
             </WrapPanel>
 
             <Separator Margin="0,0,0,12"/>
 
-            <ui:TextBlock Text="Link Telegram account (optional alternative):"
+            <ui:TextBlock Text="{DynamicResource FreeTierOnboarding_LinkTitle}"
                           FontWeight="SemiBold"
                           Margin="0,0,0,6"/>
-            <ui:TextBlock Text="Enter your numeric Telegram ID from the same account that will use the bot."
+            <ui:TextBlock Text="{DynamicResource FreeTierOnboarding_LinkHint}"
                           Opacity="0.85"
                           TextWrapping="Wrap"
                           Margin="0,0,0,8"/>
@@ -72,7 +72,7 @@
                          Grid.Column="0"
                          Height="34"
                          VerticalContentAlignment="Center"
-                         ToolTip="Numeric Telegram ID"/>
+                         ToolTip="{DynamicResource FreeTierOnboarding_TelegramIdTooltip}"/>
 
                 <ui:Button x:Name="RequestCodeButton"
                            Grid.Column="2"
@@ -80,7 +80,7 @@
                            MinWidth="150"
                            Appearance="Secondary"
                            Click="RequestCode_OnClick"
-                           Content="Request link code"/>
+                           Content="{DynamicResource FreeTierOnboarding_RequestCode}"/>
             </Grid>
 
             <Border x:Name="LinkCodeBorder"
@@ -89,7 +89,7 @@
                     Visibility="Collapsed"
                     Background="{DynamicResource ControlFillColorSecondaryBrush}">
                 <StackPanel>
-                    <ui:TextBlock Text="Use this code in bot private chat:"
+                    <ui:TextBlock Text="{DynamicResource FreeTierOnboarding_CodeHint}"
                                   Opacity="0.85"/>
                     <ui:TextBlock x:Name="LinkCodeText"
                                   FontSize="22"

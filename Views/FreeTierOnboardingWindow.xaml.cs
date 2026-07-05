@@ -4,6 +4,7 @@ using System.Windows.Threading;
 using DataGateMonitor.SharedModels.DataGateMonitor.Auth.Requests;
 using DataGateMonitor.SharedModels.DataGateMonitor.Auth.Responses;
 using DataGateWin.CrashReporting;
+using DataGateWin.Localization;
 using DataGateWin.Services.Auth;
 using DataGateWin.Services.Ui;
 
@@ -63,7 +64,7 @@ public partial class FreeTierOnboardingWindow
             var updated = resp.Data;
             if (updated == null)
             {
-                StatusText.Text = "Could not refresh compliance status. Try again.";
+                StatusText.Text = Loc.T("FreeTierOnboarding_StatusRefreshFailed");
                 return;
             }
 
@@ -73,7 +74,7 @@ public partial class FreeTierOnboardingWindow
             if (!FreeTierOnboardingPolicy.ShouldShow(_status))
             {
                 if (showSuccessCloseMessage)
-                    StatusText.Text = "Compliance confirmed. Closing onboarding...";
+                    StatusText.Text = Loc.T("FreeTierOnboarding_ComplianceConfirmed");
 
                 DialogResult = true;
                 Close();
@@ -82,7 +83,7 @@ public partial class FreeTierOnboardingWindow
         catch (Exception ex)
         {
             CrashReporter.ReportNonFatal(ex, "FreeTierOnboardingWindow.RefreshStatus");
-            StatusText.Text = "Status refresh failed. Please try again.";
+            StatusText.Text = Loc.T("FreeTierOnboarding_StatusRefreshFailed");
         }
         finally
         {
@@ -97,13 +98,13 @@ public partial class FreeTierOnboardingWindow
 
         if (!_allowRequestLinkCode)
         {
-            StatusText.Text = "Link-code request is not available for this account yet.";
+            StatusText.Text = Loc.T("FreeTierOnboarding_LinkNotAvailable");
             return;
         }
 
         if (!long.TryParse(TelegramIdTextBox.Text?.Trim(), out var telegramId) || telegramId <= 0)
         {
-            StatusText.Text = "Enter a valid numeric Telegram ID.";
+            StatusText.Text = Loc.T("FreeTierOnboarding_InvalidTelegramId");
             return;
         }
 
@@ -119,19 +120,19 @@ public partial class FreeTierOnboardingWindow
 
             if (resp.Data == null || string.IsNullOrWhiteSpace(resp.Data.Code))
             {
-                StatusText.Text = "Code request failed. Try again.";
+                StatusText.Text = Loc.T("FreeTierOnboarding_CodeRequestFailed");
                 return;
             }
 
             LinkCodeText.Text = resp.Data.Code.Trim();
-            LinkCodeExpiresText.Text = $"Expires in {resp.Data.ExpiresInSeconds} seconds.";
+            LinkCodeExpiresText.Text = Loc.T("FreeTierOnboarding_ExpiresFmt", resp.Data.ExpiresInSeconds);
             LinkCodeBorder.Visibility = Visibility.Visible;
-            StatusText.Text = "Send /link_account CODE in the Telegram bot private chat.";
+            StatusText.Text = Loc.T("FreeTierOnboarding_CodeSentHint");
         }
         catch (Exception ex)
         {
             CrashReporter.ReportNonFatal(ex, "FreeTierOnboardingWindow.RequestCode");
-            StatusText.Text = "Failed to request link code. Ensure Telegram is registered in the bot.";
+            StatusText.Text = Loc.T("FreeTierOnboarding_RequestFailedEnsureRegistered");
         }
         finally
         {
@@ -161,26 +162,28 @@ public partial class FreeTierOnboardingWindow
 
     private void ApplyStatusToUi()
     {
-        PlanText.Text = $"Plan: {_status.ActivePlanName ?? "Free/Default"}";
-        RequiredChannelText.Text = $"Subscribe to {_status.RequiredChannel ?? "@DataGateVPNBot"} or link your Telegram account.";
-        OpenChannelButton.Content = $"Open {_status.RequiredChannel ?? "required channel"}";
+        var planName = _status.ActivePlanName ?? Loc.T("FreeTierOnboarding_DefaultPlanName");
+        var channelName = _status.RequiredChannel ?? "@DataGateVPNBot";
+        PlanText.Text = Loc.T("FreeTierOnboarding_PlanFmt", planName);
+        RequiredChannelText.Text = Loc.T("FreeTierOnboarding_RequiredChannelFmt", channelName);
+        OpenChannelButton.Content = Loc.T("FreeTierOnboarding_OpenChannelFmt", channelName);
         _allowRequestLinkCode = _status.CanRequestAccountLinkCode;
         RequestCodeButton.IsEnabled = !_isBusy && _allowRequestLinkCode;
 
         if (_status.IsMergedAccount)
         {
-            StatusText.Text = "Account merge detected. Waiting for compliance update...";
+            StatusText.Text = Loc.T("FreeTierOnboarding_MergeDetected");
             return;
         }
 
         if (_status.IsChannelSubscribed)
         {
-            StatusText.Text = "Channel subscription detected. Waiting for compliance update...";
+            StatusText.Text = Loc.T("FreeTierOnboarding_ChannelDetected");
             return;
         }
 
         if (!_status.CanRequestAccountLinkCode)
-            StatusText.Text = "Link-code request is currently unavailable for this account.";
+            StatusText.Text = Loc.T("FreeTierOnboarding_LinkNotAvailable");
     }
 
     private void SetBusy(bool busy)
