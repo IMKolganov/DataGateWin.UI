@@ -208,17 +208,8 @@ public partial class App : Application
                 MainWindow = main;
 
                 main.Show();
-                
-                _ = Task.Run(async () =>
-                {
-                    var checker = new GitHubUpdateChecker(
-                        new HttpClient(),
-                        "IMKolganov",
-                        "DataGateWin"
-                    );
 
-                    await checker.CheckForUpdateAsync(CancellationToken.None);
-                });
+                ScheduleUpdateCheck();
 
                 _tray = new TrayService();
                 _tray.AttachMainWindow(main);
@@ -230,6 +221,8 @@ public partial class App : Application
             var login = new LoginWindow(authState);
             MainWindow = login;
             login.Show();
+
+            ScheduleUpdateCheck();
         }
         catch (Exception ex)
         {
@@ -243,6 +236,20 @@ public partial class App : Application
 
             Shutdown();
         }
+    }
+
+    internal static void ScheduleUpdateCheck()
+    {
+        _ = Task.Run(async () =>
+        {
+            using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(15) };
+            var checker = new GitHubUpdateChecker(
+                http,
+                "IMKolganov",
+                "DataGateWin");
+
+            await checker.CheckForUpdateAsync(CancellationToken.None).ConfigureAwait(false);
+        });
     }
 
     private void InstallCrashReportingHandlers()

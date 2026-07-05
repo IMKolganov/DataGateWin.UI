@@ -13,6 +13,9 @@ public sealed class GitHubUpdateChecker
 {
     private const string EngineExeRelativePath = "engine";
 
+    private static int _checkInFlight;
+    private static bool _updatePromptCompletedThisSession;
+
     private readonly HttpClient _http;
     private readonly string _owner;
     private readonly string _repo;
@@ -28,12 +31,18 @@ public sealed class GitHubUpdateChecker
 
     public async Task CheckForUpdateAsync(CancellationToken ct)
     {
+        if (_updatePromptCompletedThisSession)
+            return;
+
+        if (Interlocked.CompareExchange(ref _checkInFlight, 1, 0) != 0)
+            return;
+
         try
         {
             var currentVersion = GetCurrentVersion();
-            var latest = await GetLatestReleaseAsync(ct);
+            var latest = await GetLatestReleaseAsync(ct).ConfigureAwait(false);
 
-            if (latest == null || latest.Version <= currentVersion)
+            if (latest == null || !ReleaseVersionParser.IsUpgradeAvailable(latest.Version, currentVersion))
                 return;
 
             StartUpdater();
@@ -43,6 +52,10 @@ public sealed class GitHubUpdateChecker
             CrashReporter.ReportNonFatal(ex, "GitHubUpdateChecker.CheckForUpdate");
             // Silent fail: update check must never break startup
         }
+        finally
+        {
+            Interlocked.Exchange(ref _checkInFlight, 0);
+        }
     }
 
     /// <summary>Latest release version from GitHub, formatted for display, or null if unavailable.</summary>
@@ -51,7 +64,7 @@ public sealed class GitHubUpdateChecker
         try
         {
             var latest = await GetLatestReleaseAsync(ct);
-            return latest == null ? null : FormatVersionForDisplay(latest.Version);
+            return latest == null ? null : ReleaseVersionParser.FormatForDisplay(latest.Version);
         }
         catch (Exception ex)
         {
@@ -60,7 +73,7 @@ public sealed class GitHubUpdateChecker
         }
     }
 
-    private static string FormatVersionForDisplay(Version v) => v.ToString(3);
+    private static string FormatVersionForDisplay(Version v) => ReleaseVersionParser.FormatForDisplay(v);
 
     private async Task<GitHubRelease?> GetLatestReleaseAsync(CancellationToken ct)
     {
@@ -81,8 +94,14 @@ public sealed class GitHubUpdateChecker
 
         return new GitHubRelease
         {
-            Version = ParseVersion(tag)
+            Version = ReleaseVersionParser.ParseTag(tag)
         };
+    }
+
+    internal static void ResetSessionStateForTests()
+    {
+        _updatePromptCompletedThisSession = false;
+        Interlocked.Exchange(ref _checkInFlight, 0);
     }
 
     private static Version GetCurrentVersion()
@@ -93,15 +112,6 @@ public sealed class GitHubUpdateChecker
                ?? new Version(0, 0, 0);
     }
 
-    private static Version ParseVersion(string tag)
-    {
-        // supports: v1.2.3 or 1.2.3
-        tag = tag.TrimStart('v', 'V');
-        return Version.TryParse(tag, out var v)
-            ? v
-            : new Version(0, 0, 0);
-    }
-
     private sealed class GitHubRelease
     {
         public Version Version { get; init; } = null!;
@@ -109,8 +119,14 @@ public sealed class GitHubUpdateChecker
 
     private static void StartUpdater()
     {
+        if (_updatePromptCompletedThisSession)
+            return;
+
         RunOnUiThread(() =>
         {
+            if (_updatePromptCompletedThisSession)
+                return;
+
             var owner = Application.Current?.MainWindow;
             if (owner != null)
                 owner.IsEnabled = false;
@@ -119,15 +135,20 @@ public sealed class GitHubUpdateChecker
             try
             {
                 if (!ConfirmUpdate(owner))
+                {
+                    _updatePromptCompletedThisSession = true;
                     return;
+                }
 
                 var updaterPath = AppInstallerLocator.TryFindInstallerExe();
                 if (string.IsNullOrWhiteSpace(updaterPath))
                 {
+                    _updatePromptCompletedThisSession = true;
                     ShowUpdaterMissing(owner);
                     return;
                 }
 
+                _updatePromptCompletedThisSession = true;
                 StopEngineIfRunning();
                 LaunchUpdater(updaterPath);
 
