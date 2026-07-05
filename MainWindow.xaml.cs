@@ -253,6 +253,7 @@ public partial class MainWindow : FluentWindow
                 Owner = this
             };
             wnd.ShowDialog();
+            App.ScheduleUpdateCheck();
         }
         catch (Exception ex)
         {
