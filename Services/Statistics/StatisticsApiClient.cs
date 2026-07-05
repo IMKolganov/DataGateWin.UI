@@ -1,9 +1,9 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Net.Http;
 using System.Net.Http.Json;
-using OpenVPNGateMonitor.SharedModels.DataGateMonitorBackend.OpenVpnServerClients.Requests;
-using OpenVPNGateMonitor.SharedModels.DataGateMonitorBackend.OpenVpnServerClients.Responses;
-using OpenVPNGateMonitor.SharedModels.Responses;
+using DataGateMonitor.SharedModels.DataGateMonitor.VpnServerClients.Requests;
+using DataGateMonitor.SharedModels.DataGateMonitor.VpnServerClients.Responses;
+using DataGateMonitor.SharedModels.Responses;
 
 namespace DataGateWin.Services.Statistics;
 

@@ -223,5 +223,24 @@
     <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">محرك VPN (engine.exe) مفقود. يرجى إعادة تثبيت DataGate.&#x0a;&#x0a;صفحة التنزيل: {0}&#x0a;&#x0a;افتح صفحة التنزيل في متصفحك الآن؟</sys:String>
     <sys:String x:Key="Home_Status_EngineMissing">خامل - يلزم إعادة التثبيت (المحرك مفقود)</sys:String>
     <sys:String x:Key="Home_Log_EngineMissing">خطأ: لم يتم العثور على محرك VPN. أعد تثبيت التطبيق أو قم بتشغيل المثبت.</sys:String>
+    <sys:String x:Key="Torrent_WarningTitle">Torrent client detected</sys:String>
+    <sys:String x:Key="Torrent_WarningBodyFmt">Urgently disable the torrent client and close this process now: {0}</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_TitleLink">Connect Telegram for VPN access</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_TitleSubscribe">Subscribe to the Telegram channel</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_BodyLink">To use VPN on the Free or Default plan:&#x0a;• Subscribe to {0}&#x0a;• Or link your account with the DataGate Telegram bot</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_BodySubscribeOnly">Your Telegram account is linked, but you still need to subscribe to {0} to get VPN configs from the bot.</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_BodyGeneric">Subscribe to {0} or link your account via the DataGate Telegram bot.</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_GetCode">Get link code</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_OpenChannel">Open channel</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_OpenBot">Open bot</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_CheckAgain">Check again</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_CodeExpires">Expires in {0}</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_CodeExpired">Link code expired. Tap Get link code to request a new one.</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_CopyCode">Copy code</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_TelegramVpnHint">If Telegram does not open, connect VPN first (Access tab), then open the bot or channel.</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_CodeStepsWithVpn">1. Connect VPN in the Access tab&#x0a;2. Open the DataGate Telegram bot&#x0a;3. Send /link_account {0}, or send the code in a private message to the bot</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_OpenBotHint">Connect VPN first if Telegram is blocked in your region.</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_CodeExpiresSoon">Code expires soon ({0}). Connect VPN and open the bot, or request a new code.</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_StatusRefreshFailed">Could not verify Free plan access. Check your connection and try again.</sys:String>
+    <sys:String x:Key="FreeTierOnboarding_CodeRequestFailed">Could not request a link code.</sys:String>
 </ResourceDictionary>
-

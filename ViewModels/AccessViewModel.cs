@@ -7,7 +7,7 @@ using DataGateWin.Localization;
 using DataGateWin.Services.Access;
 using DataGateWin.Services.Auth;
 using DataGateWin.Services.VpnServers;
-using OpenVPNGateMonitor.SharedModels.DataGateMonitorBackend.OpenVpnServers.Dto;
+using DataGateMonitor.SharedModels.DataGateMonitor.VpnServers.Dto;
 
 namespace DataGateWin.ViewModels;
 
@@ -49,8 +49,8 @@ public sealed partial class AccessViewModel : ObservableObject
     private string? errorText;
 
     [ObservableProperty]
-    private IList<OpenVpnServerWithStatusDto> servers
-        = new List<OpenVpnServerWithStatusDto>();
+    private IList<VpnServerWithStatusDto> servers
+        = new List<VpnServerWithStatusDto>();
 
     [ObservableProperty]
     private string totalClientsLineText = Loc.T("Access_TotalClientsUnknown");
@@ -96,8 +96,8 @@ public sealed partial class AccessViewModel : ObservableObject
             var token = await _session.GetValidAccessTokenAsync(CancellationToken.None).ConfigureAwait(true);
 
             var resp = await _serversApi.GetAllWithStatusAsync(CancellationToken.None).ConfigureAwait(true);
-            Servers = resp.Data?.OpenVpnServerWithStatuses
-                      ?? new List<OpenVpnServerWithStatusDto>();
+            Servers = resp.Data?.VpnServerWithStatuses
+                      ?? new List<VpnServerWithStatusDto>();
 
             var totalClients = Servers.Sum(s => s.CountConnectedClients);
             _lastTotalClients = totalClients;
