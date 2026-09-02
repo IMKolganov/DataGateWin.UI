@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.IO;
+using System.Security.Principal;
 using DataGateWin.CrashReporting;
 
 namespace DataGateWin.Services.Ipc;
@@ -16,6 +17,13 @@ internal static class EngineDnsRecoveryRunner
         {
             log?.Invoke("[ui][dns] recover-dns skipped: engine.exe not found");
             return;
+        }
+
+        if (!IsCurrentProcessElevated())
+        {
+            log?.Invoke(
+                "[ui][dns] WARNING: process is not elevated — HKLM NRPT/SearchList cleanup may ACCESS_DENIED " +
+                "(Debug builds use asInvoker; run Release or elevate)");
         }
 
         try
@@ -47,7 +55,15 @@ internal static class EngineDnsRecoveryRunner
 
             var stderr = process.StandardError.ReadToEnd();
             if (process.ExitCode == 0)
+            {
                 log?.Invoke("[ui][dns] recover-dns OK");
+                return;
+            }
+
+            if (process.ExitCode == 3)
+                log?.Invoke("[ui][dns] recover-dns skipped: VPN/engine session still active");
+            else if (process.ExitCode == 5)
+                log?.Invoke("[ui][dns] recover-dns ACCESS_DENIED — need Administrator");
             else
                 log?.Invoke($"[ui][dns] recover-dns exit={process.ExitCode} stderr={stderr}");
         }
@@ -55,6 +71,20 @@ internal static class EngineDnsRecoveryRunner
         {
             CrashReporter.ReportNonFatal(ex, "EngineDnsRecoveryRunner.TryRecover");
             log?.Invoke($"[ui][dns] recover-dns error: {ex.Message}");
+        }
+    }
+
+    static bool IsCurrentProcessElevated()
+    {
+        try
+        {
+            using var identity = WindowsIdentity.GetCurrent();
+            var principal = new WindowsPrincipal(identity);
+            return principal.IsInRole(WindowsBuiltInRole.Administrator);
+        }
+        catch
+        {
+            return false;
         }
     }
 }

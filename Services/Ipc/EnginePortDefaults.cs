@@ -13,5 +13,5 @@ public static class EnginePortDefaults
     public const int LocalBridgeDefaultListenPort = 18080;
 
     /// <summary>Engine tries this many consecutive ports if the preferred one is busy.</summary>
-    public const int LocalBridgeListenPortAttempts = 16;
+    public const int LocalBridgeListenPortAttempts = 64;
 }
