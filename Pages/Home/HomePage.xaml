@@ -92,45 +92,55 @@
                 <StackPanel x:Name="NetworkInfoPanel"
                             Grid.Row="4"
                             Margin="0,12,0,0"
+                            Grid.IsSharedSizeScope="True"
                             Visibility="Collapsed">
                     <Grid Margin="0,0,0,4">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="110"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="HomeNetLabel"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0"
+                                   Margin="0,0,16,0"
                                    Text="{DynamicResource Home_Network_Server}"
-                                   Opacity="0.9"/>
+                                   Opacity="0.9"
+                                   VerticalAlignment="Center"/>
                         <TextBlock x:Name="NetworkServerText"
                                    Grid.Column="1"
                                    Text="{DynamicResource Home_Network_Unavailable}"
-                                   TextWrapping="Wrap"/>
+                                   TextWrapping="Wrap"
+                                   VerticalAlignment="Center"/>
                     </Grid>
                     <Grid Margin="0,0,0,4">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="110"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="HomeNetLabel"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0"
+                                   Margin="0,0,16,0"
                                    Text="{DynamicResource Home_Network_VpnIp}"
-                                   Opacity="0.9"/>
+                                   Opacity="0.9"
+                                   VerticalAlignment="Center"/>
                         <TextBlock x:Name="NetworkVpnIpText"
                                    Grid.Column="1"
                                    Text="{DynamicResource Home_Network_Unavailable}"
-                                   FontFamily="Consolas"/>
+                                   FontFamily="Consolas"
+                                   VerticalAlignment="Center"/>
                     </Grid>
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="110"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="HomeNetLabel"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0"
+                                   Margin="0,0,16,0"
                                    Text="{DynamicResource Home_Network_ExternalIp}"
-                                   Opacity="0.9"/>
+                                   Opacity="0.9"
+                                   VerticalAlignment="Center"/>
                         <TextBlock x:Name="NetworkExternalIpText"
                                    Grid.Column="1"
                                    Text="{DynamicResource Home_Network_Unavailable}"
-                                   FontFamily="Consolas"/>
+                                   FontFamily="Consolas"
+                                   VerticalAlignment="Center"/>
                     </Grid>
                 </StackPanel>
 

@@ -87,10 +87,15 @@ public partial class HomePage : Page
     private async void DisconnectButton_OnClick(object sender, RoutedEventArgs e)
         => await _controller.DisconnectAsync();
 
-    private void ServerModeCombo_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    private async void ServerModeCombo_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         UpdateManualRowVisibility();
         SaveVpnHomeSettingsFromUi();
+
+        // Switching to manual: always load/refresh the list so the user never needs
+        // an extra Refresh click just to see servers.
+        if (IsLoaded && ServerModeCombo.SelectedIndex == 1)
+            await EnsureManualServerListReadyAsync().ConfigureAwait(true);
     }
 
     private void ManualServerCombo_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -98,16 +103,36 @@ public partial class HomePage : Page
 
     private async void RefreshServersButton_OnClick(object sender, RoutedEventArgs e)
     {
+        await EnsureManualServerListReadyAsync().ConfigureAwait(true);
+    }
+
+    private async Task EnsureManualServerListReadyAsync()
+    {
         RefreshServersButton.IsEnabled = false;
+        ManualServerCombo.IsEnabled = false;
         try
         {
             await EnsureAccessTokenForApiAsync().ConfigureAwait(true);
             await RefreshServerListAsync().ConfigureAwait(true);
-            RestoreVpnHomeSettingsFromStore();
+
+            _suppressSettingsSave = true;
+            try
+            {
+                var keepId = App.Settings.HomeVpnManualServerId;
+                if (keepId > 0)
+                    ManualServerCombo.SelectedValue = keepId;
+                else if (ManualServerCombo.SelectedIndex < 0 && ManualServerCombo.Items.Count > 0)
+                    ManualServerCombo.SelectedIndex = 0;
+            }
+            finally
+            {
+                _suppressSettingsSave = false;
+            }
+
+            SaveVpnHomeSettingsFromUi();
         }
         finally
         {
-            RefreshServersButton.IsEnabled = true;
             _controller.ReapplyUiToLastState();
         }
     }
