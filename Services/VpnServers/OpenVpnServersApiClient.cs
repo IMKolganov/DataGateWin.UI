@@ -12,6 +12,7 @@ public sealed class OpenVpnServersApiClient(HttpClient http)
     public async Task<ApiResponse<VpnServerWithStatusesV3Response>> GetAllWithStatusAsync(
         CancellationToken ct)
     {
+        // Latest public list endpoint (v3): includes ServerType (OpenVpn/Xray) + quota plan.
         using var req = new HttpRequestMessage(
             HttpMethod.Get,
             "api/v3/open-vpn-servers/get-all-with-status");

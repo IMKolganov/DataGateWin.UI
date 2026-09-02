@@ -17,16 +17,26 @@ public sealed class StartSessionPayloadBuilder(
     AuthSession session,
     IpListRoutesRepository ipListRoutes)
 {
+    public VpnConnectionSessionInfo? LastSelection { get; private set; }
+
+    public void ClearLastSelection() => LastSelection = null;
+
     public Task<JObject?> BuildAsync(CancellationToken ct) =>
         BuildAsync(autoPickServer: true, manualVpnServerId: null, ct);
 
     public async Task<JObject?> BuildAsync(bool autoPickServer, int? manualVpnServerId, CancellationToken ct)
     {
-        var server = await wssServerSelector
-            .GetServerAsync(autoPickServer, manualVpnServerId, ct)
+        var row = await wssServerSelector
+            .GetServerRowAsync(autoPickServer, manualVpnServerId, ct)
             .ConfigureAwait(false);
-        if (server == null)
+        if (row?.VpnServerResponses?.VpnServer == null)
+        {
+            LastSelection = null;
             return null;
+        }
+
+        var server = row.VpnServerResponses.VpnServer;
+        LastSelection = VpnConnectionSessionInfoFactory.FromStatusRow(row);
 
         var installationId = installationIdService.GetOrCreate();
 
@@ -88,6 +98,7 @@ public sealed class StartSessionPayloadBuilder(
 
             ["listenIp"] = "127.0.0.1",
             ["listenPort"] = EnginePortDefaults.LocalBridgeDefaultListenPort,
+            // WSS edge uses product CA; do not enable pinning without coordinated server rollout.
             ["verifyServerCert"] = false
         };
     }

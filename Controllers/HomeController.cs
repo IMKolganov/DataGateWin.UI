@@ -26,11 +26,12 @@ public sealed class HomeController : IDisposable
     private readonly object _uiLock = new();
 
     private Action<string>? _setStatusText;
-    private Action<UiState, string>? _applyUiState;
+    private Action<UiState, string, VpnConnectionSessionInfo?>? _applyUiState;
     private Action<string>? _log;
 
     private UiState _lastUiState = UiState.Idle;
     private string _lastStatusText = Loc.T("Home_Status_Idle");
+    private VpnConnectionSessionInfo? _sessionInfo;
 
     public HomeController()
     {
@@ -61,7 +62,7 @@ public sealed class HomeController : IDisposable
 
     public void AttachUi(
         Action<string> statusTextSetter,
-        Action<UiState, string> uiStateApplier,
+        Action<UiState, string, VpnConnectionSessionInfo?> uiStateApplier,
         Action<string> logAppender)
     {
         lock (_uiLock)
@@ -87,18 +88,27 @@ public sealed class HomeController : IDisposable
 
     public async Task OnLoadedAsync()
     {
-        _lifetimeCts?.Cancel();
-        _lifetimeCts = new CancellationTokenSource();
+        // Page navigation must not reset VPN intent / session identity.
+        // Only ensure a live CTS for future connect/disconnect/reconnect work.
+        if (_lifetimeCts == null || _lifetimeCts.IsCancellationRequested)
+            _lifetimeCts = new CancellationTokenSource();
 
-        _desiredConnected = false;
+        var ct = _lifetimeCts.Token;
+        var returningToPage =
+            _lastUiState is UiState.Connected or UiState.Connecting or UiState.Disconnecting
+            || _sessionInfo is { HasIdentity: true }
+            || _desiredConnected;
 
         try
         {
-            ApplyUiState(UiState.Connecting, Loc.T("Home_Status_Attaching"));
+            if (!returningToPage)
+                ApplyUiState(UiState.Connecting, Loc.T("Home_Status_Attaching"));
+            else
+                ReapplyUiToLastState();
 
-            await _engine.AttachOrStartAsync(_lifetimeCts.Token);
-
-            await RefreshStatusAsync(_lifetimeCts.Token);
+            await _engine.AttachOrStartAsync(ct);
+            RememberSelectionFromEngine();
+            await RefreshStatusAsync(ct);
         }
         catch (Exception ex)
         {
@@ -107,15 +117,16 @@ public sealed class HomeController : IDisposable
 
             CrashReporter.ReportNonFatal(ex, "HomeController.OnLoaded");
             Log(Loc.T("Home_Log_ErrorFmt", ex));
+            // Always surface attach failure (including return-to-Home), so we never leave a
+            // stale Connected UI when the engine IPC is dead.
             ApplyUiState(UiState.Idle, Loc.T("Home_Status_AttachFailedFmt", ex.Message));
         }
     }
 
     public void OnUnloaded()
     {
-        try { _lifetimeCts?.Cancel(); } catch (Exception ex) { CrashReporter.ReportNonFatal(ex, "HomeController.OnUnloadedCancel"); }
-        _lifetimeCts = null;
-
+        // Keep controller CTS + session info alive across menu navigation.
+        // Cancelling here used to kill reconnect and force a cold "Attaching" reset on return.
         DetachUi();
     }
 
@@ -147,14 +158,15 @@ public sealed class HomeController : IDisposable
             var state = await _engine.GetEngineStateAsync(ct);
             if (!EngineState.IsIdle(state))
             {
-                var label = string.IsNullOrWhiteSpace(state) ? Loc.T("Common_Unknown") : state;
-                ApplyUiState(UiState.Connected, Loc.T("Home_Status_ConnectedFmt", label));
+                RememberSelectionFromEngine();
+                ApplyUiState(UiState.Connected, ConnectedStatusText(state));
                 return;
             }
 
             var started = await _engine.StartSessionAsync(_connectAutoPick, _connectManualId, ct);
             if (!started)
             {
+                ClearSessionInfo();
                 if (_engine.LastStartFailedNoEligibleServers)
                 {
                     Log(Loc.T("Home_Log_NoWss"));
@@ -167,6 +179,7 @@ public sealed class HomeController : IDisposable
                 return;
             }
 
+            RememberSelectionFromEngine();
             ApplyUiState(UiState.Connecting, Loc.T("Home_Status_ConnectingWaiting"));
             _reconnectAttempt = 0;
         }
@@ -198,6 +211,7 @@ public sealed class HomeController : IDisposable
             ApplyUiState(UiState.Disconnecting, Loc.T("Home_Status_Disconnecting"));
 
             await _engine.StopSessionSafeAsync(ct);
+            ClearSessionInfo();
 
             ApplyUiState(
                 UiState.Idle,
@@ -213,16 +227,23 @@ public sealed class HomeController : IDisposable
     {
         if (!await _engine.IsAttachedAsync(ct))
         {
+            if (!_desiredConnected)
+                ClearSessionInfo();
             ApplyUiState(UiState.Idle, Loc.T("Home_Status_IdleNotAttached"));
             return;
         }
 
         var state = await _engine.GetEngineStateAsync(ct);
-        var label = string.IsNullOrWhiteSpace(state) ? Loc.T("Common_Unknown") : state!;
-        ApplyUiState(
-            EngineState.IsIdle(state) ? UiState.Idle : UiState.Connected,
-            EngineState.IsIdle(state) ? Loc.T("Home_Status_Idle") : Loc.T("Home_Status_ConnectedFmt", label)
-        );
+        if (EngineState.IsIdle(state))
+        {
+            if (!_desiredConnected)
+                ClearSessionInfo();
+            ApplyUiState(UiState.Idle, Loc.T("Home_Status_Idle"));
+            return;
+        }
+
+        RememberSelectionFromEngine();
+        ApplyUiState(UiState.Connected, ConnectedStatusText(state));
     }
 
     private bool TryHandleEngineMissing(Exception ex)
@@ -231,6 +252,7 @@ public sealed class HomeController : IDisposable
             return false;
 
         EngineMissingUi.ShowDialog(Application.Current?.MainWindow);
+        ClearSessionInfo();
         ApplyUiState(UiState.Idle, Loc.T("Home_Status_EngineMissing"));
         Log(Loc.T("Home_Log_EngineMissing"));
         _desiredConnected = false;
@@ -267,24 +289,41 @@ public sealed class HomeController : IDisposable
     {
         if (ev.Kind == EngineEventKind.StateChanged)
         {
+            if (EngineState.IsIdle(ev.State))
+            {
+                if (HomeSessionUiPolicy.ShouldClearSessionIdentity(_desiredConnected))
+                    ClearSessionInfo();
+
+                if (_desiredConnected)
+                {
+                    ApplyUiState(UiState.Connecting, Loc.T("Home_Status_ConnectingWaiting"));
+                    return;
+                }
+
+                ApplyUiState(UiState.Idle, Loc.T("Home_Status_Idle"));
+                return;
+            }
+
+            // Keep rich Connected status (server/IPs in footer). Do not replace with "Connected (connected)".
+            if (_lastUiState == UiState.Connected || _sessionInfo is { HasIdentity: true })
+            {
+                ApplyUiState(UiState.Connected, ConnectedStatusText(ev.State));
+                return;
+            }
+
             SetStatusText(Loc.T("Home_Status_StateFmt", ev.State ?? "?"));
-            var label = string.IsNullOrWhiteSpace(ev.State) ? Loc.T("Common_Unknown") : ev.State;
-            ApplyUiState(
-                EngineState.IsIdle(ev.State) ? UiState.Idle : UiState.Connected,
-                EngineState.IsIdle(ev.State) ? Loc.T("Home_Status_Idle") : Loc.T("Home_Status_ConnectedFmt", label)
-            );
+            ApplyUiState(UiState.Connected, ConnectedStatusText(ev.State));
             return;
         }
 
         if (ev.Kind == EngineEventKind.Connected)
         {
             _reconnectAttempt = 0;
-            ApplyUiState(
-                UiState.Connected,
-                string.IsNullOrWhiteSpace(ev.Ip)
-                    ? Loc.T("Home_Status_Connected")
-                    : Loc.T("Home_Status_ConnectedIpFmt", ev.Ip)
-            );
+            RememberSelectionFromEngine();
+            if (_sessionInfo != null && !string.IsNullOrWhiteSpace(ev.Ip))
+                _sessionInfo.VpnIp = ev.Ip.Trim();
+
+            ApplyUiState(UiState.Connected, ConnectedStatusText(null));
             return;
         }
 
@@ -292,14 +331,55 @@ public sealed class HomeController : IDisposable
         {
             var reason = string.IsNullOrWhiteSpace(ev.Reason) ? Loc.T("Common_Unknown") : ev.Reason;
             Log(Loc.T("Home_Log_DisconnectedLineFmt", reason));
-            ApplyUiState(UiState.Idle, Loc.T("Home_Status_IdleDisconnectedReasonFmt", reason));
 
             if (_desiredConnected)
+            {
+                // Keep footer identity while ScheduleReconnect rebuilds the session.
+                ApplyUiState(UiState.Connecting, Loc.T("Home_Status_IdleDisconnectedReasonFmt", reason));
                 _ = ScheduleReconnectAsync();
+                return;
+            }
 
+            ClearSessionInfo();
+            ApplyUiState(UiState.Idle, Loc.T("Home_Status_IdleDisconnectedReasonFmt", reason));
             return;
         }
     }
+
+    private void RememberSelectionFromEngine()
+    {
+        var sel = _engine.LastSelection;
+        if (sel == null)
+            return;
+
+        // Preserve tunnel IP across payload rebuilds during reconnect.
+        var previousVpnIp = _sessionInfo?.VpnIp;
+        _sessionInfo = new VpnConnectionSessionInfo
+        {
+            ServerId = sel.ServerId,
+            ServerName = sel.ServerName,
+            ExternalIp = sel.ExternalIp,
+            VpnIp = !string.IsNullOrWhiteSpace(sel.VpnIp) ? sel.VpnIp : previousVpnIp,
+        };
+    }
+
+    private void ClearSessionInfo()
+    {
+        _sessionInfo = null;
+        _engine.ClearLastSelection();
+    }
+
+    private string ConnectedStatusText(string? engineState) =>
+        HomeSessionUiPolicy.ComposeConnectedStatus(
+            serverName: _sessionInfo?.ServerName,
+            vpnIp: _sessionInfo?.VpnIp,
+            engineState: engineState,
+            lastStatusText: _lastStatusText,
+            lastWasConnected: _lastUiState == UiState.Connected,
+            connectedPlain: Loc.T("Home_Status_Connected"),
+            connectedServerFmt: Loc.T("Home_Status_ConnectedServerFmt"),
+            connectedIpFmt: Loc.T("Home_Status_ConnectedIpFmt"),
+            connectedFmt: Loc.T("Home_Status_ConnectedFmt"));
 
     private void SetStatusText(string text)
     {
@@ -314,9 +394,13 @@ public sealed class HomeController : IDisposable
         _lastUiState = state;
         _lastStatusText = statusText;
 
+        var network = state is UiState.Connected or UiState.Connecting or UiState.Disconnecting
+            ? _sessionInfo
+            : null;
+
         lock (_uiLock)
         {
-            _applyUiState?.Invoke(state, statusText);
+            _applyUiState?.Invoke(state, statusText, network);
         }
     }
 
