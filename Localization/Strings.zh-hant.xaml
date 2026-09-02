@@ -82,6 +82,11 @@
     <sys:String x:Key="Home_Status_Connected">Connected</sys:String>
     <sys:String x:Key="Home_Status_ConnectedFmt">Connected ({0})</sys:String>
     <sys:String x:Key="Home_Status_ConnectedIpFmt">Connected ({0})</sys:String>
+    <sys:String x:Key="Home_Status_ConnectedServerFmt">Connected · {0}</sys:String>
+    <sys:String x:Key="Home_Network_Unavailable">—</sys:String>
+    <sys:String x:Key="Home_Network_ExternalIp">External IP (server)</sys:String>
+    <sys:String x:Key="Home_Network_VpnIp">VPN IP</sys:String>
+    <sys:String x:Key="Home_Network_Server">Server</sys:String>
     <sys:String x:Key="Home_Status_Connecting">Connecting…</sys:String>
     <sys:String x:Key="Home_Status_ConnectingWaiting">Connecting (waiting for events)…</sys:String>
     <sys:String x:Key="Home_Status_Disconnecting">Disconnecting…</sys:String>
