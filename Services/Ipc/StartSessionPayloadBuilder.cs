@@ -87,7 +87,7 @@ public sealed class StartSessionPayloadBuilder(
             ["sni"] = host,
 
             ["listenIp"] = "127.0.0.1",
-            ["listenPort"] = 18080,
+            ["listenPort"] = EnginePortDefaults.LocalBridgeDefaultListenPort,
             ["verifyServerCert"] = false
         };
     }

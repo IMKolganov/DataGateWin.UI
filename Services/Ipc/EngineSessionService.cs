@@ -256,6 +256,7 @@ public sealed class EngineSessionService(
             throw new FileNotFoundException("Engine executable not found.", engineExePath);
 
         KillEngineProcessesByExactPathOnce(engineExePath);
+        EngineDnsRecoveryRunner.TryRecover(engineExePath, log);
 
         s_active = this;
         _client = new EngineIpcClient(engineExePath, SessionId);
