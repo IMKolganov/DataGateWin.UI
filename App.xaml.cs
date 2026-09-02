@@ -104,7 +104,10 @@ public partial class App : Application
         try
         {
             if (!string.IsNullOrWhiteSpace(_engineExePath) && File.Exists(_engineExePath))
+            {
                 KillEngineProcessesByExactPathOnce(_engineExePath);
+                EngineDnsRecoveryRunner.TryRecover(_engineExePath);
+            }
         }
         catch (Exception ex)
         {

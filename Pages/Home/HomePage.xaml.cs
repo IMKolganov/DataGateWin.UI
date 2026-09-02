@@ -15,6 +15,7 @@ public partial class HomePage : Page
     private readonly HomeController _controller;
     private OpenVpnServersApiClient? _serversApi;
     private List<CachedVpnServerRow>? _cachedServerRows;
+    private bool _suppressSettingsSave;
 
     public HomePage(HomeController controller)
     {
@@ -30,13 +31,13 @@ public partial class HomePage : Page
 
         _controller.AttachUi(
             statusTextSetter: s => DispatchUi(() => StatusText.Text = s),
-            uiStateApplier: (state, status) => DispatchUi(() => ApplyUiState(state, status)),
+            uiStateApplier: (state, status, network) => DispatchUi(() => ApplyUiState(state, status, network)),
             logAppender: line => DispatchUi(() => AppendLog(line))
         );
 
         await EnsureAccessTokenForApiAsync().ConfigureAwait(true);
         await RefreshServerListAsync().ConfigureAwait(true);
-        ApplyVpnHomeSettingsFromStore();
+        RestoreVpnHomeSettingsFromStore();
         UpdateManualRowVisibility();
 
         try
@@ -86,10 +87,15 @@ public partial class HomePage : Page
     private async void DisconnectButton_OnClick(object sender, RoutedEventArgs e)
         => await _controller.DisconnectAsync();
 
-    private void ServerModeCombo_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    private async void ServerModeCombo_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         UpdateManualRowVisibility();
         SaveVpnHomeSettingsFromUi();
+
+        // Switching to manual: always load/refresh the list so the user never needs
+        // an extra Refresh click just to see servers.
+        if (IsLoaded && ServerModeCombo.SelectedIndex == 1)
+            await EnsureManualServerListReadyAsync().ConfigureAwait(true);
     }
 
     private void ManualServerCombo_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -97,21 +103,41 @@ public partial class HomePage : Page
 
     private async void RefreshServersButton_OnClick(object sender, RoutedEventArgs e)
     {
+        await EnsureManualServerListReadyAsync().ConfigureAwait(true);
+    }
+
+    private async Task EnsureManualServerListReadyAsync()
+    {
         RefreshServersButton.IsEnabled = false;
+        ManualServerCombo.IsEnabled = false;
         try
         {
             await EnsureAccessTokenForApiAsync().ConfigureAwait(true);
             await RefreshServerListAsync().ConfigureAwait(true);
-            ApplyVpnHomeSettingsFromStore();
+
+            _suppressSettingsSave = true;
+            try
+            {
+                var keepId = App.Settings.HomeVpnManualServerId;
+                if (keepId > 0)
+                    ManualServerCombo.SelectedValue = keepId;
+                else if (ManualServerCombo.SelectedIndex < 0 && ManualServerCombo.Items.Count > 0)
+                    ManualServerCombo.SelectedIndex = 0;
+            }
+            finally
+            {
+                _suppressSettingsSave = false;
+            }
+
+            SaveVpnHomeSettingsFromUi();
         }
         finally
         {
-            RefreshServersButton.IsEnabled = true;
             _controller.ReapplyUiToLastState();
         }
     }
 
-    private void ApplyUiState(UiState state, string statusText)
+    private void ApplyUiState(UiState state, string statusText, VpnConnectionSessionInfo? network)
     {
         StatusText.Text = statusText;
 
@@ -125,6 +151,21 @@ public partial class HomePage : Page
         ServerModeCombo.IsEnabled = canPickServer;
         ManualServerCombo.IsEnabled = canPickServer && ServerModeCombo.SelectedIndex == 1;
         RefreshServersButton.IsEnabled = canPickServer;
+
+        ApplyNetworkInfo(network);
+    }
+
+    private void ApplyNetworkInfo(VpnConnectionSessionInfo? network)
+    {
+        var show = network is { HasIdentity: true };
+        NetworkInfoPanel.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+        if (!show)
+            return;
+
+        var dash = Loc.T("Home_Network_Unavailable");
+        NetworkServerText.Text = string.IsNullOrWhiteSpace(network!.ServerName) ? dash : network.ServerName;
+        NetworkVpnIpText.Text = string.IsNullOrWhiteSpace(network.VpnIp) ? dash : network.VpnIp!;
+        NetworkExternalIpText.Text = string.IsNullOrWhiteSpace(network.ExternalIp) ? dash : network.ExternalIp!;
     }
 
     private void AppendLog(string line)
@@ -150,21 +191,34 @@ public partial class HomePage : Page
         ManualServerRow.Visibility = ServerModeCombo.SelectedIndex == 1 ? Visibility.Visible : Visibility.Collapsed;
     }
 
-    private void ApplyVpnHomeSettingsFromStore()
+    private void RestoreVpnHomeSettingsFromStore()
     {
-        var s = App.Settings;
-        ServerModeCombo.SelectedIndex = s.HomeVpnAutoPickServer ? 0 : 1;
-        if (!s.HomeVpnAutoPickServer && s.HomeVpnManualServerId > 0)
-            ManualServerCombo.SelectedValue = s.HomeVpnManualServerId;
+        _suppressSettingsSave = true;
+        try
+        {
+            var s = App.Settings;
+            ServerModeCombo.SelectedIndex = s.HomeVpnAutoPickServer ? 0 : 1;
+            if (!s.HomeVpnAutoPickServer && s.HomeVpnManualServerId > 0)
+                ManualServerCombo.SelectedValue = s.HomeVpnManualServerId;
+            UpdateManualRowVisibility();
+        }
+        finally
+        {
+            _suppressSettingsSave = false;
+        }
     }
 
     private void SaveVpnHomeSettingsFromUi()
     {
+        if (_suppressSettingsSave)
+            return;
+
         var s = App.Settings;
         s.HomeVpnAutoPickServer = ServerModeCombo.SelectedIndex <= 0;
         if (ManualServerCombo.SelectedValue is int mid && mid > 0)
             s.HomeVpnManualServerId = mid;
-        else if (!s.HomeVpnAutoPickServer)
+        // Do not wipe a previously saved manual id when the combo is mid-refresh (null selection).
+        else if (!s.HomeVpnAutoPickServer && ManualServerCombo.SelectedValue is not null)
             s.HomeVpnManualServerId = 0;
 
         AppSettingsStore.SaveSafe(s);
@@ -224,7 +278,19 @@ public partial class HomePage : Page
 
         void ApplyList()
         {
-            ManualServerCombo.ItemsSource = items;
+            _suppressSettingsSave = true;
+            try
+            {
+                var keepId = App.Settings.HomeVpnManualServerId;
+                ManualServerCombo.ItemsSource = items;
+                if (!App.Settings.HomeVpnAutoPickServer && keepId > 0)
+                    ManualServerCombo.SelectedValue = keepId;
+            }
+            finally
+            {
+                _suppressSettingsSave = false;
+            }
+
             if (items.Count == 0 && !fetchFailed)
                 _controller.AppendLogLine(Loc.T("Home_Log_NoWss"));
         }
@@ -240,15 +306,23 @@ public partial class HomePage : Page
         if (_cachedServerRows is null || _cachedServerRows.Count == 0)
             return;
 
-        var prev = ManualServerCombo.SelectedValue;
-        var items = _cachedServerRows
-            .Select(r => new HomeVpnServerListItem { Id = r.Id, Display = FormatServerDisplay(r) })
-            .ToList();
+        _suppressSettingsSave = true;
+        try
+        {
+            var prev = ManualServerCombo.SelectedValue as int? ?? App.Settings.HomeVpnManualServerId;
+            var items = _cachedServerRows
+                .Select(r => new HomeVpnServerListItem { Id = r.Id, Display = FormatServerDisplay(r) })
+                .ToList();
 
-        ManualServerCombo.ItemsSource = items;
+            ManualServerCombo.ItemsSource = items;
 
-        if (prev is int id && id > 0)
-            ManualServerCombo.SelectedValue = id;
+            if (prev > 0)
+                ManualServerCombo.SelectedValue = prev;
+        }
+        finally
+        {
+            _suppressSettingsSave = false;
+        }
     }
 
     private static string FormatServerDisplay(CachedVpnServerRow r)

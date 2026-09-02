@@ -9,7 +9,7 @@ namespace DataGateWin.ViewModels.Utils;
 public sealed class PlanAccessYesNoConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) =>
-        value is VpnServerWithStatusDto row
+        value is VpnServerWithStatusV2Dto row
             ? (row.VpnServerResponses.VpnServer.IsAccessibleForUserQuotaPlanOrDefault()
                 ? Loc.T("PlanAccess_Yes")
                 : Loc.T("PlanAccess_No"))

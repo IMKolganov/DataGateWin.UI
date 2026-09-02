@@ -6,6 +6,7 @@ using DataGateWin.CrashReporting;
 using DataGateWin.Ipc;
 using DataGateWin.Localization;
 using DataGateWin.Models.Ipc;
+using DataGateWin.Services.VpnServers;
 using Newtonsoft.Json.Linq;
 
 namespace DataGateWin.Services.Ipc;
@@ -21,6 +22,14 @@ public sealed class EngineSessionService(
     private bool _handlersAttached;
 
     private const string SessionId = "dev";
+
+    /// <summary>Last <see cref="StartSessionAsync"/> failed because no WSS server matched filters.</summary>
+    public bool LastStartFailedNoEligibleServers { get; private set; }
+
+    /// <summary>Server row remembered from the last successful payload build (Home network footer).</summary>
+    public VpnConnectionSessionInfo? LastSelection => payloadBuilder.LastSelection;
+
+    public void ClearLastSelection() => payloadBuilder.ClearLastSelection();
 
     // Guard so we don't kill repeatedly if service is used multiple times
     private bool _startupKillDone;
@@ -145,6 +154,7 @@ public sealed class EngineSessionService(
     public async Task<bool> StartSessionAsync(bool autoPickServer, int? manualVpnServerId, CancellationToken ct)
     {
         EnsureClientCreated();
+        LastStartFailedNoEligibleServers = false;
 
         JObject? payload;
         try
@@ -166,7 +176,11 @@ public sealed class EngineSessionService(
         }
 
         if (payload == null)
+        {
+            log("No eligible WSS VPN servers.");
+            LastStartFailedNoEligibleServers = true;
             return false;
+        }
 
         using var startCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
         startCts.CancelAfter(TimeSpan.FromSeconds(20));
@@ -248,6 +262,7 @@ public sealed class EngineSessionService(
             throw new FileNotFoundException("Engine executable not found.", engineExePath);
 
         KillEngineProcessesByExactPathOnce(engineExePath);
+        EngineDnsRecoveryRunner.TryRecover(engineExePath, log);
 
         s_active = this;
         _client = new EngineIpcClient(engineExePath, SessionId);

@@ -85,6 +85,11 @@
     <sys:String x:Key="Home_Status_Connected">Подключено</sys:String>
     <sys:String x:Key="Home_Status_ConnectedFmt">Подключено ({0})</sys:String>
     <sys:String x:Key="Home_Status_ConnectedIpFmt">Подключено ({0})</sys:String>
+    <sys:String x:Key="Home_Status_ConnectedServerFmt">Подключено · {0}</sys:String>
+    <sys:String x:Key="Home_Network_Unavailable">—</sys:String>
+    <sys:String x:Key="Home_Network_ExternalIp">Внешний IP (сервер)</sys:String>
+    <sys:String x:Key="Home_Network_VpnIp">IP в VPN</sys:String>
+    <sys:String x:Key="Home_Network_Server">Сервер</sys:String>
     <sys:String x:Key="Home_Status_Connecting">Подключение…</sys:String>
     <sys:String x:Key="Home_Status_ConnectingWaiting">Подключение (ожидание событий)…</sys:String>
     <sys:String x:Key="Home_Status_Disconnecting">Отключение…</sys:String>
