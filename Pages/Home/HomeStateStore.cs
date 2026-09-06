@@ -1,4 +1,5 @@
-﻿using DataGateWin.Models.Ipc;
+﻿using DataGateWin.CrashReporting;
+using DataGateWin.Models.Ipc;
 
 namespace DataGateWin.Pages.Home;
 
@@ -26,17 +27,12 @@ public sealed class HomeStateStore
         }
     }
 
-    public void AppendLog(string line, int maxLines = 2000)
+    public void AppendLog(string line, int maxLines = InMemoryLogBudget.MaxLines)
     {
         if (string.IsNullOrWhiteSpace(line))
             return;
 
         lock (_lock)
-        {
-            _log.Add(line);
-
-            if (_log.Count > maxLines)
-                _log.RemoveRange(0, _log.Count - maxLines);
-        }
+            InMemoryLogBudget.AppendLine(_log, line, maxLines);
     }
 }
