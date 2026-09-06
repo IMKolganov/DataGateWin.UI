@@ -17,7 +17,11 @@ $InstallerDir = Join-Path $Root "DataGateWin.Installer"
 $WintunDll = Join-Path $Root "drivers\wintun\wintun.dll"
 $VcpkgBin = Join-Path $VcpkgRoot "installed\x64-windows\bin"
 $Tfm = "net10.0-windows10.0.26100.0"
+# dotnet publish -r win-x64 writes here; bin\x64\... may hold a stale tiny PRI from smoke tests.
 $OutDir = Join-Path $UiDir "bin\$Configuration\$Tfm\win-x64\publish"
+if (-not (Test-Path (Join-Path $OutDir "DataGateWin.exe"))) {
+    $OutDir = Join-Path $UiDir "bin\x64\$Configuration\$Tfm\win-x64\publish"
+}
 $EngineOut = Join-Path $OutDir "engine"
 $InstallerOut = Join-Path $OutDir "Installer"
 $ZipPath = Join-Path $OutDir "DataGateWin.v$Version.zip"
@@ -58,6 +62,13 @@ dotnet publish $UiProj `
 
 Require-Path $OutDir "WinUI publish dir"
 Require-Path (Join-Path $OutDir "DataGateWin.exe") "DataGateWin.exe"
+$PriPath = Join-Path $OutDir "DataGateWin.pri"
+Require-Path $PriPath "DataGateWin.pri (required for XAML)"
+$priLen = (Get-Item $PriPath).Length
+if ($priLen -lt 100000) {
+    throw "DataGateWin.pri too small ($priLen bytes) — need SDK EmbeddedData PRI with WinUI themes"
+}
+Write-Host "DataGateWin.pri size=$priLen" -ForegroundColor Green
 New-Item -ItemType Directory -Force -Path $EngineOut | Out-Null
 
 Write-Host "=== Stage engine + runtime DLLs ===" -ForegroundColor Cyan
