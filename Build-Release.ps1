@@ -69,9 +69,13 @@ if ($priLen -lt 100000) {
     throw "DataGateWin.pri too small ($priLen bytes) — need SDK EmbeddedData PRI with WinUI themes"
 }
 Write-Host "DataGateWin.pri size=$priLen" -ForegroundColor Green
-New-Item -ItemType Directory -Force -Path $EngineOut | Out-Null
 
 Write-Host "=== Stage engine + runtime DLLs ===" -ForegroundColor Cyan
+# Replace the folder so leftover build junk (e.g. .lib, nested dirs) never ships.
+if (Test-Path $EngineOut) {
+    Remove-Item -Recurse -Force $EngineOut
+}
+New-Item -ItemType Directory -Force -Path $EngineOut | Out-Null
 Copy-Item -Force $EngineExe (Join-Path $EngineOut "engine.exe")
 foreach ($dll in @(
         "libcrypto-3-x64.dll",
