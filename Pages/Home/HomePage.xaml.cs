@@ -13,9 +13,13 @@ namespace DataGateWin.Pages.Home;
 public partial class HomePage : Page
 {
     private readonly HomeController _controller;
+    private readonly SemaphoreSlim _serverListLock = new(1, 1);
     private OpenVpnServersApiClient? _serversApi;
     private List<CachedVpnServerRow>? _cachedServerRows;
     private bool _suppressSettingsSave;
+    private bool _suppressServerListFetch;
+    private bool _languageHookAttached;
+    private readonly List<string> _logLines = new();
 
     public HomePage(HomeController controller)
     {
@@ -25,7 +29,11 @@ public partial class HomePage : Page
 
     private async void HomePage_OnLoaded(object sender, RoutedEventArgs e)
     {
-        UiLanguageService.LanguageChanged += OnUiLanguageChanged;
+        if (!_languageHookAttached)
+        {
+            UiLanguageService.LanguageChanged += OnUiLanguageChanged;
+            _languageHookAttached = true;
+        }
 
         _serversApi ??= new OpenVpnServersApiClient(App.AuthedApiHttp);
 
@@ -35,10 +43,22 @@ public partial class HomePage : Page
             logAppender: line => DispatchUi(() => AppendLog(line))
         );
 
+        // Restore mode first under fetch-suppress so SelectionChanged cannot start a second API call.
+        _suppressServerListFetch = true;
+        try
+        {
+            RestoreVpnHomeSettingsFromStore();
+            UpdateManualRowVisibility();
+        }
+        finally
+        {
+            _suppressServerListFetch = false;
+        }
+
         await EnsureAccessTokenForApiAsync().ConfigureAwait(true);
-        await RefreshServerListAsync().ConfigureAwait(true);
-        RestoreVpnHomeSettingsFromStore();
-        UpdateManualRowVisibility();
+
+        if (HomeServerListLoadPolicy.ShouldForceRefreshOnHomeLoaded(_suppressServerListFetch))
+            await EnsureManualServerListReadyAsync(forceRefresh: true).ConfigureAwait(true);
 
         try
         {
@@ -53,9 +73,31 @@ public partial class HomePage : Page
 
     private void HomePage_OnUnloaded(object sender, RoutedEventArgs e)
     {
-        UiLanguageService.LanguageChanged -= OnUiLanguageChanged;
+        if (_languageHookAttached)
+        {
+            UiLanguageService.LanguageChanged -= OnUiLanguageChanged;
+            _languageHookAttached = false;
+        }
+
         SaveVpnHomeSettingsFromUi();
         _controller.OnUnloaded();
+    }
+
+    private async void HomePage_OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+        if (e.NewValue is not true)
+            return;
+
+        var hasCache = _cachedServerRows is { Count: > 0 };
+        if (!HomeServerListLoadPolicy.ShouldFetchOnBecameVisible(
+                isVisible: true,
+                isLoaded: IsLoaded,
+                suppressFetch: _suppressServerListFetch,
+                hasCachedServers: hasCache))
+            return;
+
+        await EnsureAccessTokenForApiAsync().ConfigureAwait(true);
+        await EnsureManualServerListReadyAsync(forceRefresh: false).ConfigureAwait(true);
     }
 
     private void OnUiLanguageChanged(object? sender, EventArgs e)
@@ -92,10 +134,15 @@ public partial class HomePage : Page
         UpdateManualRowVisibility();
         SaveVpnHomeSettingsFromUi();
 
-        // Switching to manual: always load/refresh the list so the user never needs
-        // an extra Refresh click just to see servers.
-        if (IsLoaded && ServerModeCombo.SelectedIndex == 1)
-            await EnsureManualServerListReadyAsync().ConfigureAwait(true);
+        var hasCache = _cachedServerRows is { Count: > 0 };
+        if (!HomeServerListLoadPolicy.ShouldFetchOnManualModeSelected(
+                suppressFetch: _suppressServerListFetch,
+                isLoaded: IsLoaded,
+                isManualMode: ServerModeCombo.SelectedIndex == 1,
+                hasCachedServers: hasCache))
+            return;
+
+        await EnsureManualServerListReadyAsync(forceRefresh: false).ConfigureAwait(true);
     }
 
     private void ManualServerCombo_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -103,37 +150,40 @@ public partial class HomePage : Page
 
     private async void RefreshServersButton_OnClick(object sender, RoutedEventArgs e)
     {
-        await EnsureManualServerListReadyAsync().ConfigureAwait(true);
+        await EnsureManualServerListReadyAsync(forceRefresh: true).ConfigureAwait(true);
     }
 
-    private async Task EnsureManualServerListReadyAsync()
+    private async Task EnsureManualServerListReadyAsync(bool forceRefresh)
     {
         RefreshServersButton.IsEnabled = false;
         ManualServerCombo.IsEnabled = false;
         try
         {
             await EnsureAccessTokenForApiAsync().ConfigureAwait(true);
-            await RefreshServerListAsync().ConfigureAwait(true);
-
-            _suppressSettingsSave = true;
-            try
-            {
-                var keepId = App.Settings.HomeVpnManualServerId;
-                if (keepId > 0)
-                    ManualServerCombo.SelectedValue = keepId;
-                else if (ManualServerCombo.SelectedIndex < 0 && ManualServerCombo.Items.Count > 0)
-                    ManualServerCombo.SelectedIndex = 0;
-            }
-            finally
-            {
-                _suppressSettingsSave = false;
-            }
-
+            await RefreshServerListAsync(forceRefresh).ConfigureAwait(true);
+            ApplyManualSelectionFromSettings();
             SaveVpnHomeSettingsFromUi();
         }
         finally
         {
             _controller.ReapplyUiToLastState();
+        }
+    }
+
+    private void ApplyManualSelectionFromSettings()
+    {
+        _suppressSettingsSave = true;
+        try
+        {
+            var keepId = App.Settings.HomeVpnManualServerId;
+            if (keepId > 0)
+                ManualServerCombo.SelectedValue = keepId;
+            else if (ManualServerCombo.SelectedIndex < 0 && ManualServerCombo.Items.Count > 0)
+                ManualServerCombo.SelectedIndex = 0;
+        }
+        finally
+        {
+            _suppressSettingsSave = false;
         }
     }
 
@@ -174,7 +224,13 @@ public partial class HomePage : Page
             return;
 
         var ts = DateTime.Now.ToString("HH:mm:ss");
-        LogTextBox.AppendText($"[{ts}] {line}{Environment.NewLine}");
+        var chunk = $"[{ts}] {line}";
+        var dropped = InMemoryLogBudget.AppendLine(_logLines, chunk);
+        if (dropped)
+            LogTextBox.Text = InMemoryLogBudget.JoinLinesForTextBox(_logLines);
+        else
+            LogTextBox.AppendText(chunk + Environment.NewLine);
+
         LogTextBox.ScrollToEnd();
     }
 
@@ -226,79 +282,93 @@ public partial class HomePage : Page
 
     private static async Task EnsureAccessTokenForApiAsync()
     {
-        for (var i = 0; i < 25; i++)
+        for (var i = 0; i < 50; i++)
         {
             var t = await App.Session.GetValidAccessTokenAsync(CancellationToken.None).ConfigureAwait(true);
             if (!string.IsNullOrWhiteSpace(t))
                 return;
-            await Task.Delay(80).ConfigureAwait(true);
+            await Task.Delay(100).ConfigureAwait(true);
         }
     }
 
-    private async Task RefreshServerListAsync()
+    private async Task RefreshServerListAsync(bool forceRefresh)
     {
-        if (_serversApi == null)
-            _serversApi = new OpenVpnServersApiClient(App.AuthedApiHttp);
+        if (!forceRefresh && _cachedServerRows is { Count: > 0 })
+            return;
 
-        List<HomeVpnServerListItem> items;
-        var fetchFailed = false;
+        await _serverListLock.WaitAsync().ConfigureAwait(true);
         try
         {
-            var resp = await _serversApi.GetAllWithStatusAsync(CancellationToken.None).ConfigureAwait(true);
-            var raw = resp.Data?.VpnServerWithStatuses;
-            var eligible = WssServerSelector.FilterEligible(raw);
-            _cachedServerRows = eligible
-                .Select(x =>
-                {
-                    var srv = x.VpnServerResponses!.VpnServer;
-                    return new CachedVpnServerRow
-                    {
-                        Id = srv.Id,
-                        Name = srv.ServerName ?? "",
-                        Clients = x.CountConnectedClients,
-                        Online = srv.IsOnline
-                    };
-                })
-                .ToList();
+            if (!forceRefresh && _cachedServerRows is { Count: > 0 })
+                return;
 
-            items = _cachedServerRows.Select(r => new HomeVpnServerListItem
-            {
-                Id = r.Id,
-                Display = FormatServerDisplay(r)
-            }).ToList();
-        }
-        catch (Exception ex)
-        {
-            CrashReporter.ReportNonFatal(ex, "HomePage.RefreshServerList");
-            fetchFailed = true;
-            _cachedServerRows = null;
-            _controller.AppendLogLine(Loc.T("Home_Log_VpnListFmt", ex.Message));
-            items = [];
-        }
+            if (_serversApi == null)
+                _serversApi = new OpenVpnServersApiClient(App.AuthedApiHttp);
 
-        void ApplyList()
-        {
-            _suppressSettingsSave = true;
+            List<HomeVpnServerListItem> items;
+            var fetchFailed = false;
             try
             {
-                var keepId = App.Settings.HomeVpnManualServerId;
-                ManualServerCombo.ItemsSource = items;
-                if (!App.Settings.HomeVpnAutoPickServer && keepId > 0)
-                    ManualServerCombo.SelectedValue = keepId;
+                var resp = await _serversApi.GetAllWithStatusAsync(CancellationToken.None).ConfigureAwait(true);
+                var raw = resp.Data?.VpnServerWithStatuses;
+                var eligible = WssServerSelector.FilterEligible(raw);
+                _cachedServerRows = eligible
+                    .Select(x =>
+                    {
+                        var srv = x.VpnServerResponses!.VpnServer;
+                        return new CachedVpnServerRow
+                        {
+                            Id = srv.Id,
+                            Name = srv.ServerName ?? "",
+                            Clients = x.CountConnectedClients,
+                            Online = srv.IsOnline
+                        };
+                    })
+                    .ToList();
+
+                items = _cachedServerRows.Select(r => new HomeVpnServerListItem
+                {
+                    Id = r.Id,
+                    Display = FormatServerDisplay(r)
+                }).ToList();
             }
-            finally
+            catch (Exception ex)
             {
-                _suppressSettingsSave = false;
+                CrashReporter.ReportNonFatal(ex, "HomePage.RefreshServerList");
+                fetchFailed = true;
+                _cachedServerRows = null;
+                _controller.AppendLogLine(Loc.T("Home_Log_VpnListFmt", ex.Message));
+                items = [];
             }
 
-            if (items.Count == 0 && !fetchFailed)
-                _controller.AppendLogLine(Loc.T("Home_Log_NoWss"));
-        }
+            void ApplyList()
+            {
+                _suppressSettingsSave = true;
+                try
+                {
+                    var keepId = App.Settings.HomeVpnManualServerId;
+                    ManualServerCombo.ItemsSource = items;
+                    if (!App.Settings.HomeVpnAutoPickServer && keepId > 0)
+                        ManualServerCombo.SelectedValue = keepId;
+                }
+                finally
+                {
+                    _suppressSettingsSave = false;
+                }
 
-        if (Dispatcher.CheckAccess())
-            ApplyList();
-        else
-            await Dispatcher.InvokeAsync(ApplyList);
+                if (items.Count == 0 && !fetchFailed)
+                    _controller.AppendLogLine(Loc.T("Home_Log_NoWss"));
+            }
+
+            if (Dispatcher.CheckAccess())
+                ApplyList();
+            else
+                await Dispatcher.InvokeAsync(ApplyList);
+        }
+        finally
+        {
+            _serverListLock.Release();
+        }
     }
 
     private void RebuildServerComboFromCache()

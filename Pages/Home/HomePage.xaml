@@ -4,7 +4,8 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       Loaded="HomePage_OnLoaded"
-      Unloaded="HomePage_OnUnloaded">
+      Unloaded="HomePage_OnUnloaded"
+      IsVisibleChanged="HomePage_OnIsVisibleChanged">
 
     <Grid Margin="20">
         <Grid.RowDefinitions>
