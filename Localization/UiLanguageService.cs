@@ -20,6 +20,17 @@ public static class UiLanguageService
 
     public static event EventHandler? LanguageChanged;
 
+    /// <summary>Wire Core <see cref="Loc.Resolver"/> to WPF <see cref="Application"/> resources.</summary>
+    public static void WireLocResolver()
+    {
+        Loc.Resolver = key =>
+        {
+            if (Application.Current?.TryFindResource(key) is string s && s.Length > 0)
+                return s;
+            return null;
+        };
+    }
+
     public static string GetStoredLanguagePreference()
         => NormalizePreferenceForStorage(App.Settings.UiLanguage);
 

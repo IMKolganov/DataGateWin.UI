@@ -2,8 +2,8 @@
 <#
 .SYNOPSIS
   Builds the native engine via CMake (repo root is the parent of DataGateWin.UI)
-  and copies engine.exe plus vcpkg runtime DLLs to bin\Debug|Release\<TFM>\engine.
-  For Release (or Both), publishes DataGateWin.Installer into bin\Release\<TFM>\Installer.
+  and copies engine.exe plus vcpkg runtime DLLs next to the WinUI app output.
+  For Release (or Both), publishes DataGateWin.Installer into the WinUI publish Installer folder.
 
 .EXAMPLE
   pwsh -File .\Build-Engine.ps1
@@ -17,7 +17,7 @@ param(
 
     [switch] $SkipConfigure,
 
-    # Skip dotnet publish of the Windows installer into bin\Release\<TFM>\Installer.
+    # Skip dotnet publish of the Windows installer into WinUI output Installer\.
     [switch] $SkipInstaller,
 
     # CMake generator (default: VS 2022 x64).
@@ -26,14 +26,15 @@ param(
     # Explicit CMake build directory (default: <repo>\build).
     [string] $BuildDirectory = '',
 
-    # Target framework folder name (must match the UI .csproj).
-    [string] $TargetFramework = 'net10.0-windows'
+    # Target framework folder name (must match DataGateWin.WinUI .csproj).
+    [string] $TargetFramework = 'net10.0-windows10.0.26100.0'
 )
 
 $ErrorActionPreference = 'Stop'
 
-$UiDir = $PSScriptRoot
-$RepoRoot = Split-Path -Parent $UiDir
+$ScriptDir = $PSScriptRoot
+$RepoRoot = Split-Path -Parent $ScriptDir
+$UiDir = Join-Path $RepoRoot 'DataGateWin.WinUI'
 $BuildDir = if ($BuildDirectory) { $BuildDirectory } else { Join-Path $RepoRoot 'build' }
 
 function Find-BuiltEngineExe {
@@ -169,7 +170,7 @@ function Invoke-EngineBuild {
         throw "engine.exe not found under $BuildDir for configuration '$Config'."
     }
 
-    $rel = "bin\$Config\$TargetFramework\engine"
+    $rel = "bin\x64\$Config\$TargetFramework\win-x64\engine"
     Copy-EngineToUiBin -EngineExe $built -UiBinConfigFolder $rel -CMakeConfig $Config
 }
 
@@ -180,12 +181,13 @@ function Publish-InstallerToUiRelease {
         return
     }
 
-    $outDir = Join-Path $UiDir "bin\Release\$TargetFramework\Installer"
+    $outDir = Join-Path $UiDir "bin\Release\$TargetFramework\win-x64\publish\Installer"
     if (-not (Get-Command dotnet -ErrorAction SilentlyContinue)) {
         throw "dotnet not found in PATH (needed to publish the installer)."
     }
 
     Write-Host "dotnet publish installer -> $outDir"
+    New-Item -ItemType Directory -Path $outDir -Force | Out-Null
     dotnet publish $installerProj -c Release -o $outDir `
         -p:DebugType=none `
         -p:DebugSymbols=false

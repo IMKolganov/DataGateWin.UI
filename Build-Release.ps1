@@ -1,4 +1,4 @@
-# Build-Release.ps1 — Release app + engine + installer + GitHub ZIP (DataGateWin.vX.Y.Z.zip)
+# Build-Release.ps1 — Release WinUI app + engine + installer + GitHub ZIP (DataGateWin.vX.Y.Z.zip)
 param(
     [string]$Configuration = "Release",
     [string]$Version = "1.0.13",
@@ -11,12 +11,13 @@ $ErrorActionPreference = "Stop"
 
 $Root = Split-Path $PSScriptRoot -Parent
 
-$UiDir = Join-Path $Root "DataGateWin.UI"
+$UiDir = Join-Path $Root "DataGateWin.WinUI"
 $EngineDir = Join-Path $Root "engine"
 $InstallerDir = Join-Path $Root "DataGateWin.Installer"
 $WintunDll = Join-Path $Root "drivers\wintun\wintun.dll"
 $VcpkgBin = Join-Path $VcpkgRoot "installed\x64-windows\bin"
-$OutDir = Join-Path $UiDir "bin\$Configuration\net10.0-windows"
+$Tfm = "net10.0-windows10.0.26100.0"
+$OutDir = Join-Path $UiDir "bin\$Configuration\$Tfm\win-x64\publish"
 $EngineOut = Join-Path $OutDir "engine"
 $InstallerOut = Join-Path $OutDir "Installer"
 $ZipPath = Join-Path $OutDir "DataGateWin.v$Version.zip"
@@ -44,11 +45,19 @@ cmake --build $BuildDir --config $Configuration --target engine -- /m
 $EngineExe = Join-Path $BuildDir "$Configuration\engine.exe"
 Require-Path $EngineExe "engine.exe"
 
-Write-Host "=== Build UI ($Configuration) ===" -ForegroundColor Cyan
-dotnet build (Join-Path $UiDir "DataGateWin.csproj") -c $Configuration --no-restore 2>$null
-dotnet build (Join-Path $UiDir "DataGateWin.csproj") -c $Configuration
+Write-Host "=== Publish WinUI ($Configuration, unpackaged self-contained) ===" -ForegroundColor Cyan
+$UiProj = Join-Path $UiDir "DataGateWin.csproj"
+dotnet publish $UiProj `
+    -c $Configuration `
+    -r win-x64 `
+    -p:Platform=x64 `
+    -p:WindowsPackageType=None `
+    -p:WindowsAppSDKSelfContained=true `
+    -p:SelfContained=true `
+    -p:PublishTrimmed=false
 
-Require-Path $OutDir "UI output dir"
+Require-Path $OutDir "WinUI publish dir"
+Require-Path (Join-Path $OutDir "DataGateWin.exe") "DataGateWin.exe"
 New-Item -ItemType Directory -Force -Path $EngineOut | Out-Null
 
 Write-Host "=== Stage engine + runtime DLLs ===" -ForegroundColor Cyan
@@ -80,17 +89,15 @@ if (-not $SkipInstaller) {
 Write-Host "=== Create release ZIP ===" -ForegroundColor Cyan
 if (Test-Path $ZipPath) { Remove-Item -Force $ZipPath }
 
-# Match GitHub release layout (see DataGateWin.v1.0.6.zip): framework-dependent app
-# with all runtime DLLs, configs, engine/, Installer/, Images/, Assets/.
+# Unpackaged WinUI: pack the full publish folder (exe + managed/native deps + staged dirs).
 $zipNames = @(
     Get-ChildItem -Path $OutDir -File |
         Where-Object {
-            $_.Extension -in @(".exe", ".dll", ".json") -and
             $_.Name -notlike "DataGateWin.v*.zip"
         } |
         Select-Object -ExpandProperty Name
 )
-foreach ($dir in @("Images", "Assets", "engine", "Installer")) {
+foreach ($dir in @("Images", "Assets", "Localization", "engine", "Installer")) {
     $dirPath = Join-Path $OutDir $dir
     if (Test-Path $dirPath) {
         $zipNames += $dir
@@ -116,3 +123,4 @@ if (-not $SkipInstaller) {
     Write-Host "  Installer: $InstallerOut\DataGateWin.Installer.exe"
 }
 Write-Host "  ZIP:       $ZipPath"
+Write-Host "  Layout:    docs\WINUI3_PUBLISH_LAYOUT.md"

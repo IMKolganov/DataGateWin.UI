@@ -30,7 +30,32 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DataGateWin.Core\DataGateWin.Core.csproj" />
     <ProjectReference Include="..\DataGateWin.CrashReporting\DataGateWin.CrashReporting.csproj" />
+  </ItemGroup>
+
+  <!-- Portable logic compiles in DataGateWin.Core; keep WPF-only sources here. -->
+  <ItemGroup>
+    <Compile Remove="Configuration\**\*.cs" />
+    <Compile Remove="Models\**\*.cs" />
+    <Compile Remove="Ipc\EngineIpcClient.cs" />
+    <Compile Remove="Localization\CultureMapping.cs" />
+    <Compile Remove="Localization\UiLocale.cs" />
+    <Compile Remove="Localization\Loc.cs" />
+    <Compile Remove="Services\Auth\**\*.cs" />
+    <Compile Remove="Services\Access\**\*.cs" />
+    <Compile Remove="Services\Ipc\**\*.cs" />
+    <!-- WPF MessageBox / Window dialog — not in Core -->
+    <Compile Include="Services\Ipc\EngineMissingUi.cs" />
+    <Compile Remove="Services\VpnServers\**\*.cs" />
+    <Compile Remove="Services\OpenVpnFiles\**\*.cs" />
+    <Compile Remove="Services\IpList\**\*.cs" />
+    <Compile Remove="Services\Statistics\**\*.cs" />
+    <Compile Remove="Services\Support\**\*.cs" />
+    <Compile Remove="Services\Installation\**\*.cs" />
+    <Compile Remove="Services\Identity\**\*.cs" />
+    <Compile Remove="Services\Update\AppInstallerLocator.cs" />
+    <Compile Remove="Services\Update\ReleaseVersionParser.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -70,10 +95,6 @@
       <XamlRuntime>Wpf</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-  </ItemGroup>
-
-  <ItemGroup>
-    <InternalsVisibleTo Include="DataGateWin.Tests" />
   </ItemGroup>
 
 </Project>

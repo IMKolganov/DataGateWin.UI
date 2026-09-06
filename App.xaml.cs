@@ -38,6 +38,7 @@ public partial class App : Application
         base.OnStartup(e);
         
         Settings = AppSettingsStore.LoadSafe();
+        UiLanguageService.WireLocResolver();
         UiLanguageService.ApplyFromSettings();
 
         var themeName = Settings.Theme;
