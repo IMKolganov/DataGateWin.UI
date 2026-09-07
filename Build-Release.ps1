@@ -35,6 +35,11 @@ function Require-Path([string]$Path, [string]$Label) {
 Require-Path $VcpkgBin "vcpkg bin"
 Require-Path $WintunDll "wintun.dll"
 
+$fetchLibxray = Join-Path $Root "scripts\libxray\fetch-windows.ps1"
+Write-Host "=== Ensure libXray.dll ===" -ForegroundColor Cyan
+& $fetchLibxray
+Require-Path (Join-Path $Root "engine\third_party\libxray\libXray.dll") "libXray.dll"
+
 Write-Host "=== Configure engine (openvpn3) ===" -ForegroundColor Cyan
 $BuildDir = Join-Path $EngineDir "build"
 if (-not $SkipConfigure) {
@@ -85,6 +90,7 @@ foreach ($dll in @(
     Copy-Item -Force (Join-Path $VcpkgBin $dll) (Join-Path $EngineOut $dll)
 }
 Copy-Item -Force $WintunDll (Join-Path $EngineOut "wintun.dll")
+Copy-Item -Force (Join-Path $Root "engine\third_party\libxray\libXray.dll") (Join-Path $EngineOut "libXray.dll")
 
 if (-not $SkipInstaller) {
     Write-Host "=== Publish installer (single-file) ===" -ForegroundColor Cyan

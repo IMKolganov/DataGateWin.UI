@@ -20,6 +20,9 @@ public partial class HomePage : Page
     private bool _suppressServerListFetch;
     private bool _languageHookAttached;
     private readonly List<string> _logLines = new();
+    private readonly object _logUiLock = new();
+    private bool _logFlushScheduled;
+    private bool _logDirty;
 
     public HomePage(HomeController controller)
     {
@@ -40,7 +43,8 @@ public partial class HomePage : Page
         _controller.AttachUi(
             statusTextSetter: s => DispatchUi(() => StatusText.Text = s),
             uiStateApplier: (state, status, network) => DispatchUi(() => ApplyUiState(state, status, network)),
-            logAppender: line => DispatchUi(() => AppendLog(line))
+            // AppendLog is thread-safe; avoid BeginInvoke-per-line under route floods.
+            logAppender: AppendLog
         );
 
         // Restore mode first under fetch-suppress so SelectionChanged cannot start a second API call.
@@ -225,13 +229,33 @@ public partial class HomePage : Page
 
         var ts = DateTime.Now.ToString("HH:mm:ss");
         var chunk = $"[{ts}] {line}";
-        var dropped = InMemoryLogBudget.AppendLine(_logLines, chunk);
-        if (dropped)
-            LogTextBox.Text = InMemoryLogBudget.JoinLinesForTextBox(_logLines);
-        else
-            LogTextBox.AppendText(chunk + Environment.NewLine);
 
-        LogTextBox.ScrollToEnd();
+        lock (_logUiLock)
+        {
+            InMemoryLogBudget.AppendLine(_logLines, chunk);
+            _logDirty = true;
+            if (_logFlushScheduled)
+                return;
+            _logFlushScheduled = true;
+        }
+
+        void Flush()
+        {
+            string text;
+            lock (_logUiLock)
+            {
+                _logFlushScheduled = false;
+                if (!_logDirty)
+                    return;
+                _logDirty = false;
+                text = InMemoryLogBudget.JoinLinesForTextBox(_logLines);
+            }
+
+            LogTextBox.Text = text;
+            LogTextBox.ScrollToEnd();
+        }
+
+        Dispatcher.BeginInvoke(Flush, System.Windows.Threading.DispatcherPriority.Background);
     }
 
     private void DispatchUi(Action action)

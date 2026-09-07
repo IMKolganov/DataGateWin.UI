@@ -46,4 +46,29 @@ public sealed class AuthApiClient(HttpClient http)
         var json = await resp.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
         return JsonConvert.DeserializeObject<ApiResponse<RefreshResponse>>(json)!;
     }
+
+    public async Task<ApiResponse<GoogleLoginResponse>> TotpVerifyLoginAsync(
+        TotpVerifyLoginRequest request,
+        CancellationToken ct)
+    {
+        var content = new StringContent(
+            JsonConvert.SerializeObject(request),
+            Encoding.UTF8,
+            "application/json");
+
+        using var resp = await _http.PostAsync("/api/auth/totp/verify-login", content, ct)
+            .ConfigureAwait(false);
+
+        var json = await resp.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
+        if (!resp.IsSuccessStatusCode)
+        {
+            throw new HttpRequestException(
+                $"TOTP verify failed: {(int)resp.StatusCode} {resp.ReasonPhrase}. Body: {json}",
+                null,
+                resp.StatusCode);
+        }
+
+        return JsonConvert.DeserializeObject<ApiResponse<GoogleLoginResponse>>(json)
+               ?? throw new InvalidOperationException("TOTP verify response deserialization returned null.");
+    }
 }

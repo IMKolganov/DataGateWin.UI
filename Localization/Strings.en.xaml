@@ -237,6 +237,16 @@
     <sys:String x:Key="Login_Status_SignedInFmt">Signed in as {0}.</sys:String>
     <sys:String x:Key="Login_Status_Cancelled">Sign-in cancelled.</sys:String>
     <sys:String x:Key="Login_Status_FailedFmt">Sign-in failed: {0}</sys:String>
+    <sys:String x:Key="Login_Totp_Title">Authenticator code</sys:String>
+    <sys:String x:Key="Login_Totp_Lead">Enter the 6-digit code from your authenticator app to finish signing in.</sys:String>
+    <sys:String x:Key="Login_Totp_LeadNamedFmt">Hi {0}. Enter the 6-digit code from your authenticator app.</sys:String>
+    <sys:String x:Key="Login_Totp_CodePlaceholder">000000</sys:String>
+    <sys:String x:Key="Login_Totp_Verify">Verify and sign in</sys:String>
+    <sys:String x:Key="Login_Totp_Back">Back to sign in</sys:String>
+    <sys:String x:Key="Login_Totp_Status_EnterCode">Two-factor authentication required.</sys:String>
+    <sys:String x:Key="Login_Totp_Status_Verifying">Verifying authenticator code…</sys:String>
+    <sys:String x:Key="Login_Totp_Error_CodeRequired">Enter a valid 6-digit authenticator code.</sys:String>
+    <sys:String x:Key="Login_Totp_ChallengeExpired">This sign-in challenge expired. Sign in with Google again.</sys:String>
 
     <sys:String x:Key="FirstRun_Title">Connection setup</sys:String>
     <sys:String x:Key="FirstRun_Subtitle">Enter your DataGate API URL and Google OAuth client ID. Values are saved to appsettings.json next to the application.</sys:String>

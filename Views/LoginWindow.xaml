@@ -100,34 +100,64 @@
                             </StackPanel>
                         </StackPanel>
 
-                        <!-- Primary -->
-                        <ui:Button Grid.Row="1"
-                                   Height="46"
-                                   Appearance="Primary"
-                                   Command="{Binding SignInCommand}"
-                                   IsEnabled="{Binding IsNotBusy}">
-                            <ui:Button.Icon>
-                                <ui:SymbolIcon Symbol="PersonAccounts24"/>
-                            </ui:Button.Icon>
-                            <ui:Button.Content>
-                                <TextBlock Text="{DynamicResource Login_SignInGoogle}"/>
-                            </ui:Button.Content>
-                        </ui:Button>
+                        <!-- Primary Google -->
+                        <StackPanel Grid.Row="1"
+                                    Visibility="{Binding IsGoogleSignInVisible, Converter={StaticResource BoolToVis}}">
+                            <ui:Button Height="46"
+                                       Appearance="Primary"
+                                       Command="{Binding SignInCommand}">
+                                <ui:Button.Icon>
+                                    <ui:SymbolIcon Symbol="PersonAccounts24"/>
+                                </ui:Button.Icon>
+                                <ui:Button.Content>
+                                    <TextBlock Text="{DynamicResource Login_SignInGoogle}"/>
+                                </ui:Button.Content>
+                            </ui:Button>
 
-                        <!-- Cancel only when busy -->
-                        <ui:Button Grid.Row="2"
-                                   Height="42"
-                                   Margin="0,10,0,0"
-                                   Appearance="Secondary"
-                                   Command="{Binding CancelCommand}"
-                                   Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}">
-                            <ui:Button.Icon>
-                                <ui:SymbolIcon Symbol="Dismiss24"/>
-                            </ui:Button.Icon>
-                            <ui:Button.Content>
-                                <TextBlock Text="{DynamicResource Login_Cancel}"/>
-                            </ui:Button.Content>
-                        </ui:Button>
+                            <ui:Button Height="42"
+                                       Margin="0,10,0,0"
+                                       Appearance="Secondary"
+                                       Command="{Binding CancelCommand}"
+                                       Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}">
+                                <ui:Button.Icon>
+                                    <ui:SymbolIcon Symbol="Dismiss24"/>
+                                </ui:Button.Icon>
+                                <ui:Button.Content>
+                                    <TextBlock Text="{DynamicResource Login_Cancel}"/>
+                                </ui:Button.Content>
+                            </ui:Button>
+                        </StackPanel>
+
+                        <!-- TOTP challenge -->
+                        <StackPanel Grid.Row="2"
+                                    Visibility="{Binding IsTotpChallengeVisible, Converter={StaticResource BoolToVis}}">
+                            <ui:TextBlock Text="{DynamicResource Login_Totp_Title}"
+                                          FontWeight="SemiBold"
+                                          FontSize="18"/>
+                            <ui:TextBlock Text="{Binding TotpLeadText}"
+                                          Margin="0,8,0,0"
+                                          Opacity="0.8"
+                                          TextWrapping="Wrap"/>
+                            <TextBox Margin="0,12,0,0"
+                                     MaxLength="8"
+                                     Text="{Binding TotpCode, UpdateSourceTrigger=PropertyChanged}"/>
+                            <ui:Button Height="46"
+                                       Margin="0,12,0,0"
+                                       Appearance="Primary"
+                                       Command="{Binding VerifyTotpCommand}">
+                                <ui:Button.Content>
+                                    <TextBlock Text="{DynamicResource Login_Totp_Verify}"/>
+                                </ui:Button.Content>
+                            </ui:Button>
+                            <ui:Button Height="42"
+                                       Margin="0,10,0,0"
+                                       Appearance="Secondary"
+                                       Command="{Binding BackFromTotpCommand}">
+                                <ui:Button.Content>
+                                    <TextBlock Text="{DynamicResource Login_Totp_Back}"/>
+                                </ui:Button.Content>
+                            </ui:Button>
+                        </StackPanel>
 
                         <!-- Status -->
                         <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,16,0,0">

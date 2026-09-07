@@ -156,11 +156,44 @@ public sealed class HomeController : IDisposable
             await _engine.AttachOrStartAsync(ct);
 
             var state = await _engine.GetEngineStateAsync(ct);
-            if (!EngineState.IsIdle(state))
+            if (EngineState.IsUnknown(state))
+            {
+                Log(Loc.T("Home_Log_ErrorFmt", "GetStatus failed"));
+                ApplyUiState(UiState.Idle, Loc.T("Home_Status_IdleStartFailed"));
+                if (_desiredConnected)
+                    _ = ScheduleReconnectAsync();
+                return;
+            }
+
+            if (EngineState.IsLiveSession(state) && !EngineState.NeedsCleanup(state))
             {
                 RememberSelectionFromEngine();
-                ApplyUiState(UiState.Connected, ConnectedStatusText(state));
+                if (EngineState.IsConnected(state))
+                {
+                    ApplyUiState(UiState.Connected, ConnectedStatusText(state));
+                    return;
+                }
+
+                ApplyUiState(UiState.Connecting, Loc.T("Home_Status_ConnectingWaiting"));
                 return;
+            }
+
+            if (!EngineState.IsIdle(state))
+            {
+                ApplyUiState(UiState.Disconnecting, Loc.T("Home_Status_Disconnecting"));
+                var stopped = await _engine.StopSessionSafeAsync(ct);
+                ClearSessionInfo();
+                var afterStop = await _engine.GetEngineStateAsync(ct);
+                if (!stopped || (!EngineState.IsUnknown(afterStop) && !EngineState.IsIdle(afterStop)))
+                {
+                    Log(Loc.T("Home_Log_ErrorFmt", $"StopSession incomplete (ok={stopped}, state={afterStop ?? "null"})"));
+                    ApplyUiState(UiState.Idle, Loc.T("Home_Status_IdleStartFailed"));
+                    if (_desiredConnected)
+                        _ = ScheduleReconnectAsync();
+                    return;
+                }
+
+                ApplyUiState(UiState.Connecting, Loc.T("Home_Status_Connecting"));
             }
 
             var started = await _engine.StartSessionAsync(_connectAutoPick, _connectManualId, ct);
@@ -234,7 +267,13 @@ public sealed class HomeController : IDisposable
         }
 
         var state = await _engine.GetEngineStateAsync(ct);
-        if (EngineState.IsIdle(state))
+        if (EngineState.IsUnknown(state))
+        {
+            ApplyUiState(UiState.Idle, Loc.T("Home_Status_IdleNotAttached"));
+            return;
+        }
+
+        if (EngineState.IsIdle(state) || EngineState.NeedsCleanup(state))
         {
             if (!_desiredConnected)
                 ClearSessionInfo();
@@ -242,8 +281,15 @@ public sealed class HomeController : IDisposable
             return;
         }
 
+        if (EngineState.IsConnected(state))
+        {
+            RememberSelectionFromEngine();
+            ApplyUiState(UiState.Connected, ConnectedStatusText(state));
+            return;
+        }
+
         RememberSelectionFromEngine();
-        ApplyUiState(UiState.Connected, ConnectedStatusText(state));
+        ApplyUiState(UiState.Connecting, Loc.T("Home_Status_ConnectingWaiting"));
     }
 
     private bool TryHandleEngineMissing(Exception ex)
@@ -289,7 +335,7 @@ public sealed class HomeController : IDisposable
     {
         if (ev.Kind == EngineEventKind.StateChanged)
         {
-            if (EngineState.IsIdle(ev.State))
+            if (EngineState.IsIdle(ev.State) || EngineState.NeedsCleanup(ev.State))
             {
                 if (HomeSessionUiPolicy.ShouldClearSessionIdentity(_desiredConnected))
                     ClearSessionInfo();
@@ -304,15 +350,20 @@ public sealed class HomeController : IDisposable
                 return;
             }
 
-            // Keep rich Connected status (server/IPs in footer). Do not replace with "Connected (connected)".
-            if (_lastUiState == UiState.Connected || _sessionInfo is { HasIdentity: true })
+            if (EngineState.IsConnected(ev.State))
             {
+                if (_lastUiState == UiState.Connected || _sessionInfo is { HasIdentity: true })
+                {
+                    ApplyUiState(UiState.Connected, ConnectedStatusText(ev.State));
+                    return;
+                }
+
+                SetStatusText(Loc.T("Home_Status_StateFmt", ev.State ?? "?"));
                 ApplyUiState(UiState.Connected, ConnectedStatusText(ev.State));
                 return;
             }
 
-            SetStatusText(Loc.T("Home_Status_StateFmt", ev.State ?? "?"));
-            ApplyUiState(UiState.Connected, ConnectedStatusText(ev.State));
+            ApplyUiState(UiState.Connecting, Loc.T("Home_Status_StateFmt", ev.State ?? "?"));
             return;
         }
 
@@ -343,6 +394,25 @@ public sealed class HomeController : IDisposable
             ClearSessionInfo();
             ApplyUiState(UiState.Idle, Loc.T("Home_Status_IdleDisconnectedReasonFmt", reason));
             return;
+        }
+
+        if (ev.Kind == EngineEventKind.Error)
+        {
+            var msg = string.IsNullOrWhiteSpace(ev.Message) ? Loc.T("Common_Unknown") : ev.Message!;
+            Log(Loc.T("Home_Log_ErrorFmt", msg));
+            ApplyUiState(UiState.Idle, Loc.T("Home_Status_IdleErrorFmt", msg));
+            if (_desiredConnected)
+                _ = ScheduleReconnectAsync();
+            return;
+        }
+
+        if (ev.Kind == EngineEventKind.EngineExited)
+        {
+            Log(Loc.T("Home_Log_ErrorFmt", $"engine exit code={ev.ExitCode}"));
+            ClearSessionInfo();
+            ApplyUiState(UiState.Idle, Loc.T("Home_Status_IdleErrorFmt", $"engine exit {ev.ExitCode}"));
+            if (_desiredConnected)
+                _ = ScheduleReconnectAsync();
         }
     }
 

@@ -34,7 +34,7 @@ public partial class LoginWindow : FluentWindow
                               .Get<ApiSettings>()
                           ?? throw new InvalidOperationException("Api settings are missing.");
 
-        var vm = new LoginViewModel(App.GoogleAuth, App.Session, googleSettings, apiSettings);
+        var vm = new LoginViewModel(App.GoogleAuth, App.AuthApi, App.Session, googleSettings, apiSettings);
 
         vm.SignedIn += (_, accessToken) =>
         {

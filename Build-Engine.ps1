@@ -159,6 +159,15 @@ function Copy-EngineToUiBin {
     else {
         Write-Warning "wintun.dll not found at $wintunSrc — engine cannot load Wintun (see drivers/wintun/README.md)."
     }
+
+    $libxraySrc = Join-Path $RepoRoot 'engine\third_party\libxray\libXray.dll'
+    if (Test-Path -LiteralPath $libxraySrc) {
+        Copy-Item -LiteralPath $libxraySrc -Destination (Join-Path $destDir 'libXray.dll') -Force
+        Write-Host "Copied: libXray.dll -> $destDir"
+    }
+    else {
+        Write-Warning "libXray.dll not found at $libxraySrc — run scripts/libxray/fetch-windows.ps1 (Xray sessions will fail to load)."
+    }
 }
 
 function Invoke-EngineBuild {
@@ -204,6 +213,15 @@ if (-not (Get-Command cmake -ErrorAction SilentlyContinue)) {
 
 if (-not (Test-Path -LiteralPath (Join-Path $RepoRoot 'CMakeLists.txt'))) {
     throw "Repository root not found (no CMakeLists.txt): $RepoRoot"
+}
+
+$fetchLibxray = Join-Path $RepoRoot 'scripts\libxray\fetch-windows.ps1'
+if (Test-Path -LiteralPath $fetchLibxray) {
+    Write-Host "Ensure libXray.dll (scripts/libxray/fetch-windows.ps1)"
+    & $fetchLibxray
+    if ($LASTEXITCODE -ne 0) {
+        Write-Warning "libXray fetch failed (exit $LASTEXITCODE). Engine builds without DLL copy."
+    }
 }
 
 if (-not $SkipConfigure -or -not (Test-Path -LiteralPath (Join-Path $BuildDir 'CMakeCache.txt'))) {
