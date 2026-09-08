@@ -8,6 +8,7 @@ using DataGateWin.Services.Ipc;
 using DataGateWin.Services.IpList;
 using DataGateWin.Services.OpenVpnFiles;
 using DataGateWin.Services.VpnServers;
+using DataGateWin.Services.Xray;
 
 namespace DataGateWin.Controllers;
 
@@ -40,11 +41,13 @@ public sealed class HomeController : IDisposable
 
         var installation = new InstallationIdService();
         var filesApi = new OpenVpnFilesApiClient(App.AuthedApiHttp);
+        var xrayFilesApi = new XrayClientLinksApiClient(App.AuthedApiHttp);
 
         var payloadBuilder = new StartSessionPayloadBuilder(
             wssServerSelector: selector,
             installationIdService: installation,
             filesApi: filesApi,
+            xrayFilesApi: xrayFilesApi,
             session: App.Session,
             ipListRoutes: new IpListRoutesRepository());
 
