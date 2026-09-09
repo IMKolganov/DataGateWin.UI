@@ -1,7 +1,7 @@
 # Build-Release.ps1 — Release WinUI app + engine + installer + GitHub ZIP (DataGateWin.vX.Y.Z.zip)
 param(
     [string]$Configuration = "Release",
-    [string]$Version = "1.0.18",
+    [string]$Version = "1.0.19",
     [string]$VcpkgRoot = "F:\C++\vcpkg",
     [switch]$SkipConfigure,
     [switch]$SkipInstaller
