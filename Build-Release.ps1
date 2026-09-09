@@ -1,7 +1,7 @@
 # Build-Release.ps1 — Release WinUI app + engine + installer + GitHub ZIP (DataGateWin.vX.Y.Z.zip)
 param(
     [string]$Configuration = "Release",
-    [string]$Version = "1.0.20",
+    [string]$Version = "1.0.21",
     [string]$VcpkgRoot = "F:\C++\vcpkg",
     [switch]$SkipConfigure,
     [switch]$SkipInstaller
@@ -132,31 +132,61 @@ if (-not $SkipInstaller) {
 Write-Host "=== Create release ZIP ===" -ForegroundColor Cyan
 if (Test-Path $ZipPath) { Remove-Item -Force $ZipPath }
 
-# Unpackaged WinUI: pack the full publish folder (exe + managed/native deps + staged dirs).
-$zipNames = @(
-    Get-ChildItem -Path $OutDir -File |
-        Where-Object {
-            $_.Name -notlike "DataGateWin.v*.zip"
-        } |
-        Select-Object -ExpandProperty Name
-)
-foreach ($dir in @("Images", "Assets", "Localization", "engine", "Installer")) {
-    $dirPath = Join-Path $OutDir $dir
-    if (Test-Path $dirPath) {
-        $zipNames += $dir
-    }
-}
+# Unpackaged WinUI: pack the FULL publish tree. Locale folders (en-us\*.mui, ru-RU\*.mui, …)
+# are required — omitting them causes install-from-GitHub FailFast 0x80073B01 / 0xC000027B
+# after ShowMain while the same bits still run from the publish folder.
+$zipExcludeNames = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
+[void]$zipExcludeNames.Add((Split-Path $ZipPath -Leaf))
+[void]$zipExcludeNames.Add("_pri_work")
+Get-ChildItem -Path $OutDir -Directory -Filter "DataGateWinBuild*" -EA SilentlyContinue |
+    ForEach-Object { [void]$zipExcludeNames.Add($_.Name) }
 
-if ($zipNames.Count -eq 0) {
+$zipPaths = @(
+    Get-ChildItem -Path $OutDir -Force |
+        Where-Object {
+            -not $zipExcludeNames.Contains($_.Name) -and
+            $_.Name -notlike "DataGateWin.v*.zip" -and
+            $_.Extension -ne ".pdb"
+        } |
+        Select-Object -ExpandProperty FullName
+)
+
+if ($zipPaths.Count -eq 0) {
     throw "Nothing to pack into release ZIP."
 }
 
+$muiDirCount = @(
+    Get-ChildItem -Path $OutDir -Directory -EA SilentlyContinue |
+        Where-Object { Test-Path (Join-Path $_.FullName "Microsoft.ui.xaml.dll.mui") }
+).Count
+if ($muiDirCount -lt 1) {
+    throw "Publish folder has no WinUI MUI locale dirs (en-us\Microsoft.ui.xaml.dll.mui missing) — refuse to ship a broken ZIP."
+}
+Write-Host "  Packing $($zipPaths.Count) roots ($muiDirCount WinUI MUI locale dirs)." -ForegroundColor Green
+
 Push-Location $OutDir
 try {
-    Compress-Archive -Path $zipNames -DestinationPath $ZipPath -CompressionLevel Optimal
+    $relative = $zipPaths | ForEach-Object {
+        $_.Substring($OutDir.Length).TrimStart('\', '/')
+    }
+    Compress-Archive -Path $relative -DestinationPath $ZipPath -CompressionLevel Optimal
 }
 finally {
     Pop-Location
+}
+
+# Guard: ZIP must contain at least one MUI satellite (prevents silent packaging regressions).
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+$zipCheck = [System.IO.Compression.ZipFile]::OpenRead($ZipPath)
+try {
+    $muiInZip = @($zipCheck.Entries | Where-Object { $_.FullName -like "*.mui" }).Count
+    if ($muiInZip -lt 1) {
+        throw "Release ZIP missing *.mui satellites ($muiInZip) — WinUI will FailFast after install."
+    }
+    Write-Host "  ZIP OK: $muiInZip .mui entries, $([math]::Round((Get-Item $ZipPath).Length/1MB,1)) MB" -ForegroundColor Green
+}
+finally {
+    $zipCheck.Dispose()
 }
 
 Write-Host "Done." -ForegroundColor Green
