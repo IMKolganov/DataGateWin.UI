@@ -64,6 +64,9 @@ dotnet publish $UiProj `
     -p:WindowsAppSDKSelfContained=true `
     -p:SelfContained=true `
     -p:PublishTrimmed=false
+if ($LASTEXITCODE -ne 0) {
+    throw "dotnet publish WinUI failed with exit $LASTEXITCODE"
+}
 
 Require-Path $OutDir "WinUI publish dir"
 Require-Path (Join-Path $OutDir "DataGateWin.exe") "DataGateWin.exe"
