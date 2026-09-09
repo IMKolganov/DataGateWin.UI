@@ -1,7 +1,7 @@
-﻿# Build-Release.ps1 — Release WinUI app + engine + installer + GitHub ZIP (DataGateWin.vX.Y.Z.zip)
+# Build-Release.ps1 — Release WinUI app + engine + installer + GitHub ZIP (DataGateWin.vX.Y.Z.zip)
 param(
     [string]$Configuration = "Release",
-    [string]$Version = "1.0.17",
+    [string]$Version = "1.0.18",
     [string]$VcpkgRoot = "F:\C++\vcpkg",
     [switch]$SkipConfigure,
     [switch]$SkipInstaller
@@ -108,6 +108,25 @@ if (-not $SkipInstaller) {
     Require-Path $PublishedInstaller "published installer"
     New-Item -ItemType Directory -Force -Path $InstallerOut | Out-Null
     Copy-Item -Force $PublishedInstaller (Join-Path $InstallerOut "DataGateWin.Installer.exe")
+
+    # Offline package beside the installer tree: parent of Installer\ is searched too.
+    # Kept OUT of the GitHub ZIP (not listed in $zipNames) so release assets stay single-copy.
+    $localPkgName = "DataGateWinBuild.v$Version"
+    $localPkg = Join-Path $OutDir $localPkgName
+    Write-Host "=== Stage local build package ($localPkgName) ===" -ForegroundColor Cyan
+    if (Test-Path $localPkg) {
+        Remove-Item -Recurse -Force $localPkg
+    }
+    New-Item -ItemType Directory -Force -Path $localPkg | Out-Null
+    & robocopy.exe $OutDir $localPkg /E /NFL /NDL /NJH /NJS /R:1 /W:1 `
+        /XD "Installer" $localPkgName `
+        /XF "DataGateWin.v*.zip" "*.pdb" | Out-Null
+    $rc = $LASTEXITCODE
+    if ($rc -ge 8) {
+        throw "robocopy local build package failed with exit $rc"
+    }
+    Require-Path (Join-Path $localPkg "DataGateWin.exe") "local build DataGateWin.exe"
+    Write-Host "  Local offline install: run Installer\DataGateWin.Installer.exe (uses $localPkgName, no GitHub)." -ForegroundColor Green
 }
 
 Write-Host "=== Create release ZIP ===" -ForegroundColor Cyan
