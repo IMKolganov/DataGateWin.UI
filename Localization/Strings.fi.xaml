@@ -224,6 +224,8 @@
     <sys:String x:Key="IpList_UpdateFailedFmt">Päivitys epäonnistui: {0}</sys:String>
     <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Päivitys epäonnistui ({0}). Käytä välimuistissa tai niputettua varavaihtoehtoa.</sys:String>
     <sys:String x:Key="Msg_EngineMissingTitle">Moottoria ei löydy</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedTitle">Päivitys vaaditaan</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedBody">Palvelin ei enää tue tätä DataGate-versiota. Päivitä sovellus.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">VPN-moottori (engine.exe) puuttuu. Asenna DataGate uudelleen sen palauttamiseksi.&#x0a;&#x0a;Lataussivu: {0}&#x0a;&#x0a;Kyllä – suorita tämän sovelluksen mukana toimitettu asennusohjelma (suositus).&#x0a;Ei – avaa lataussivu selaimessasi.&#x0a;Peruuta tämä viesti.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">VPN-moottori (engine.exe) puuttuu. Asenna DataGate uudelleen.&#x0a;&#x0a;Lataussivu: {0}&#x0a;&#x0a;Avaako lataussivu selaimessasi nyt?</sys:String>
     <sys:String x:Key="Home_Status_EngineMissing">Tyhjäkäynti - vaaditaan uudelleenasennus (moottori puuttuu)</sys:String>

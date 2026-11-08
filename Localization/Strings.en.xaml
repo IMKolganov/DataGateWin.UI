@@ -199,6 +199,8 @@
     <sys:String x:Key="Msg_UpdateErrorTitle">Update error</sys:String>
 
     <sys:String x:Key="Msg_EngineMissingTitle">Engine not found</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedTitle">Update required</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedBody">This version of DataGate is no longer supported by the server. Please update the app.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">The VPN engine (engine.exe) is missing. Reinstall DataGate to restore it.&#x0a;&#x0a;Download page: {0}&#x0a;&#x0a;Yes — run the installer bundled with this app (recommended).&#x0a;No — open the download page in your browser.&#x0a;Cancel — close this message.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">The VPN engine (engine.exe) is missing. Please reinstall DataGate.&#x0a;&#x0a;Download page: {0}&#x0a;&#x0a;Open the download page in your browser now?</sys:String>
     <sys:String x:Key="Home_Status_EngineMissing">Idle — reinstall required (engine missing)</sys:String>

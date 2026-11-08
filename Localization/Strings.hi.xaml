@@ -224,6 +224,8 @@
     <sys:String x:Key="IpList_UpdateFailedFmt">अपडेट विफल: {0}</sys:String>
     <sys:String x:Key="IpList_UpdateFailedFallbackFmt">अपडेट विफल ({0}). कैश्ड या बंडल्ड फ़ॉलबैक का उपयोग करना।</sys:String>
     <sys:String x:Key="Msg_EngineMissingTitle">इंजन नहीं मिला</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedTitle">अपडेट ज़रूरी है</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedBody">सर्वर अब DataGate के इस संस्करण का समर्थन नहीं करता। कृपया ऐप अपडेट करें।</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">वीपीएन इंजन (इंजन.exe) गायब है। इसे पुनर्स्थापित करने के लिए डेटागेट को पुनर्स्थापित करें।</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">वीपीएन इंजन (इंजन.exe) गायब है। कृपया DataGate.&#x0a;&#x0a;डाउनलोड पृष्ठ को पुनः स्थापित करें: {0}&#x0a;&#x0a;अभी अपने ब्राउज़र में डाउनलोड पृष्ठ खोलें?</sys:String>
     <sys:String x:Key="Home_Status_EngineMissing">निष्क्रिय - पुनः स्थापित करना आवश्यक (इंजन अनुपलब्ध)</sys:String>

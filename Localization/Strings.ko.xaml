@@ -224,6 +224,8 @@
     <sys:String x:Key="IpList_UpdateFailedFmt">업데이트 실패: {0}</sys:String>
     <sys:String x:Key="IpList_UpdateFailedFallbackFmt">업데이트에 실패했습니다({0}). 캐시되거나 번들로 제공되는 대체를 사용합니다.</sys:String>
     <sys:String x:Key="Msg_EngineMissingTitle">엔진을 찾을 수 없습니다</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedTitle">업데이트 필요</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedBody">이 버전의 DataGate는 더 이상 서버에서 지원되지 않습니다. 앱을 업데이트하세요.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">VPN 엔진(engine.exe)이 없습니다. 복원하려면 DataGate를 다시 설치하세요.&#x0a;&#x0a;다운로드 페이지: {0}&#x0a;&#x0a;예 — 이 앱과 함께 번들로 제공되는 설치 프로그램을 실행합니다(권장).&#x0a;아니요 — 브라우저에서 다운로드 페이지를 엽니다.&#x0a;취소 — 이 메시지를 닫습니다.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">VPN 엔진(engine.exe)이 없습니다. DataGate를 다시 설치하십시오.&#x0a;&#x0a;다운로드 페이지: {0}&#x0a;&#x0a;지금 브라우저에서 다운로드 페이지를 여시겠습니까?</sys:String>
     <sys:String x:Key="Home_Status_EngineMissing">유휴 - 재설치 필요(엔진 없음)</sys:String>

@@ -224,6 +224,8 @@
     <sys:String x:Key="IpList_UpdateFailedFmt">Ažuriranje nije uspjelo: {0}</sys:String>
     <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Ažuriranje nije uspjelo ({0}). Korištenje predmemorirane ili skupne zamjene.</sys:String>
     <sys:String x:Key="Msg_EngineMissingTitle">Motor nije pronađen</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedTitle">Potrebno ažuriranje</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedBody">Poslužitelj više ne podržava ovu verziju aplikacije DataGate. Ažurirajte aplikaciju.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">Nedostaje VPN mehanizam (engine.exe). Ponovno instalirajte DataGate da ga vratite.&#x0a;&#x0a;Stranica za preuzimanje: {0}&#x0a;&#x0a;Da — pokrenite instalacijski program u paketu s ovom aplikacijom (preporučeno).&#x0a;Ne — otvorite stranicu za preuzimanje u svom pregledniku.&#x0a;Odustani — zatvorite ovu poruku.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">Nedostaje VPN mehanizam (engine.exe). Molimo ponovno instalirajte DataGate.&#x0a;&#x0a;Stranica za preuzimanje: {0}&#x0a;&#x0a;Otvoriti sada stranicu za preuzimanje u svom pregledniku?</sys:String>
     <sys:String x:Key="Home_Status_EngineMissing">Prazan hod — potrebna ponovna instalacija (nedostaje motor)</sys:String>

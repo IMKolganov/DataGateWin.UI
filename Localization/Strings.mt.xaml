@@ -224,6 +224,8 @@
     <sys:String x:Key="IpList_UpdateFailedFmt">Aġġornament falla: {0}</sys:String>
     <sys:String x:Key="IpList_UpdateFailedFallbackFmt">L-aġġornament falla ({0}). Bl-użu cached jew bundled fallback.</sys:String>
     <sys:String x:Key="Msg_EngineMissingTitle">Magna ma nstabitx</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedTitle">Meħtieġ aġġornament</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedBody">Din il-verżjoni ta' DataGate m'għadhiex appoġġjata mis-server. Jekk jogħġbok aġġorna l-app.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">Il-magna VPN (engine.exe) hija nieqsa. Installa mill-ġdid DataGate biex tirrestawrah.&#x0a;&#x0a;Niżżel il-paġna: {0}&#x0a;&#x0a;Iva — ħaddem l-installatur miġbur ma' din l-app (rakkomandat).&#x0a;Le — iftaħ il-paġna tat-tniżżil fil-browser tiegħek.&#x0a;&#x0a;.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">Il-magna VPN (engine.exe) hija nieqsa. Jekk jogħġbok installa mill-ġdid DataGate.&#x0a;&#x0a;Niżżel il-paġna: {0}&#x0a;&#x0a;Ftaħ il-paġna tat-tniżżil fil-browser tiegħek issa?</sys:String>
     <sys:String x:Key="Home_Status_EngineMissing">Idle — installazzjoni mill-ġdid meħtieġa (magna nieqsa)</sys:String>

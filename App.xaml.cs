@@ -19,6 +19,8 @@ namespace DataGateWin;
 
 public partial class App : Application
 {
+    private static int _clientOutdatedShown;
+
     public static IConfiguration AppConfiguration { get; private set; } = null!;
     public static AuthApiClient AuthApi { get; private set; } = null!;
     public static AuthSession Session { get; private set; } = null!;
@@ -165,6 +167,17 @@ public partial class App : Application
                 throw new InvalidOperationException("Api:BaseUrl is missing.");
 
             ConfigureCrashReporting(apiSettings.BaseUrl);
+            ClientIdentity.Rejected += _ =>
+            {
+                if (Interlocked.Exchange(ref _clientOutdatedShown, 1) == 1)
+                    return;
+                Current?.Dispatcher.BeginInvoke(() =>
+                MessageBox.Show(
+                    Loc.T("Msg_ClientOutdatedBody"),
+                    Loc.T("Msg_ClientOutdatedTitle"),
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning));
+            };
             _ = CrashReporter.FlushPendingAsync(CancellationToken.None);
 
             var googleSettings = AppConfiguration.GetSection("GoogleAuth").Get<GoogleAuthSettings>()
@@ -182,7 +195,11 @@ public partial class App : Application
             var baseUri = new Uri(apiSettings.BaseUrl, UriKind.Absolute);
 
             var startupHttpTimeout = TimeSpan.FromSeconds(30);
-            AuthApi = new AuthApiClient(new HttpClient { BaseAddress = baseUri, Timeout = startupHttpTimeout });
+            AuthApi = new AuthApiClient(new HttpClient(new ClientIdentityHandler(new HttpClientHandler()))
+            {
+                BaseAddress = baseUri,
+                Timeout = startupHttpTimeout
+            });
 
             Session = new AuthSession(
                 AuthApi,
@@ -193,7 +210,7 @@ public partial class App : Application
             await Session.InitializeAsync(CancellationToken.None);
 
             AuthedApiHttp = new HttpClient(
-                new AuthenticatedHttpHandler(Session, new HttpClientHandler()))
+                new AuthenticatedHttpHandler(Session, new ClientIdentityHandler(new HttpClientHandler())))
             {
                 BaseAddress = baseUri,
                 Timeout = TimeSpan.FromMinutes(2)

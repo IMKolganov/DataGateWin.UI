@@ -224,6 +224,8 @@
     <sys:String x:Key="IpList_UpdateFailedFmt">Aktualizacja nie powiodła się: {0}</sys:String>
     <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Aktualizacja nie powiodła się ({0}). Korzystanie z buforowanej lub pakowanej wersji rezerwowej.</sys:String>
     <sys:String x:Key="Msg_EngineMissingTitle">Nie znaleziono silnika</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedTitle">Wymagana aktualizacja</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedBody">Ta wersja DataGate nie jest już obsługiwana przez serwer. Zaktualizuj aplikację.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">Brak silnika VPN (engine.exe). Zainstaluj ponownie DataGate, aby ją przywrócić.&#x0a;&#x0a;Strona pobierania: {0}&#x0a;&#x0a;Tak — uruchom instalator dołączony do tej aplikacji (zalecane).&#x0a;Nie — otwórz stronę pobierania w przeglądarce.&#x0a;Anuluj — zamknij tę wiadomość.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">Brak silnika VPN (engine.exe). Zainstaluj ponownie DataGate.&#x0a;&#x0a;Strona pobierania: {0}&#x0a;&#x0a;Otworzyć teraz stronę pobierania w przeglądarce?</sys:String>
     <sys:String x:Key="Home_Status_EngineMissing">Na biegu jałowym — wymagana ponowna instalacja (brak silnika)</sys:String>

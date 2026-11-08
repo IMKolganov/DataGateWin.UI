@@ -228,6 +228,8 @@
     <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Η ενημέρωση απέτυχε ({0}). Χρήση προσωρινής μνήμης ή ενσωματωμένης εφεδρικής λίστας.</sys:String>
 
     <sys:String x:Key="Msg_EngineMissingTitle">Η μηχανή δεν βρέθηκε</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedTitle">Απαιτείται ενημέρωση</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedBody">Αυτή η έκδοση του DataGate δεν υποστηρίζεται πλέον από τον διακομιστή. Ενημερώστε την εφαρμογή.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">Λείπει η μηχανή VPN (engine.exe). Επανεγκαταστήστε το DataGate.&#x0a;&#x0a;Σελίδα λήψης: {0}&#x0a;&#x0a;Ναι — εκτέλεση του προγράμματος εγκατάστασης δίπλα στην εφαρμογή (συνιστάται).&#x0a;Όχι — άνοιγμα της σελίδας λήψης στο πρόγραμμα περιήγησης.&#x0a;Άκυρο — κλείσιμο μηνύματος.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">Λείπει η μηχανή VPN (engine.exe). Επανεγκαταστήστε το DataGate.&#x0a;&#x0a;Σελίδα λήψης: {0}&#x0a;&#x0a;Να ανοίξει η σελίδα λήψης στο πρόγραμμα περιήγησης;</sys:String>
     <sys:String x:Key="Torrent_WarningTitle">Torrent client detected</sys:String>

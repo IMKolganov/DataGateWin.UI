@@ -224,6 +224,8 @@
     <sys:String x:Key="IpList_UpdateFailedFmt">Неуспешна актуализация: {0}</sys:String>
     <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Неуспешна актуализация ({0}). Използване на кеширан или пакетен резервен вариант.</sys:String>
     <sys:String x:Key="Msg_EngineMissingTitle">Двигателят не е намерен</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedTitle">Необходима е актуализация</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedBody">Тази версия на DataGate вече не се поддържа от сървъра. Моля, актуализирайте приложението.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">VPN машината (engine.exe) липсва. Преинсталирайте DataGate, за да го възстановите.&#x0a;&#x0a;Страница за изтегляне: {0}&#x0a;&#x0a;Да — стартирайте инсталатора, включен в това приложение (препоръчително).&#x0a;Не — отворете страницата за изтегляне във вашия браузър.&#x0a;Отказ — затворете това съобщение.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">VPN машината (engine.exe) липсва. Моля, преинсталирайте DataGate.&#x0a;&#x0a;Страница за изтегляне: {0}&#x0a;&#x0a;Отворете ли страницата за изтегляне в браузъра си сега?</sys:String>
     <sys:String x:Key="Home_Status_EngineMissing">Празен ход — изисква се преинсталиране (липсва двигател)</sys:String>

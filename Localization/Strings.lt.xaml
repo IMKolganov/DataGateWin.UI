@@ -224,6 +224,8 @@
     <sys:String x:Key="IpList_UpdateFailedFmt">Nepavyko atnaujinti: {0}</sys:String>
     <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Nepavyko atnaujinti ({0}). Naudojant talpykloje saugomą arba sugrupuotą atsarginę kopiją.</sys:String>
     <sys:String x:Key="Msg_EngineMissingTitle">Variklis nerastas</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedTitle">Reikia atnaujinti</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedBody">Serveris nebepalaiko šios DataGate versijos. Atnaujinkite programėlę.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">Trūksta VPN variklio (engine.exe). Iš naujo įdiekite DataGate, kad ją atkurtumėte.&#x0a;&#x0a;Atsisiuntimo puslapis: {0}&#x0a;&#x0a;Taip – ​​paleiskite su šia programa susietą diegimo programą (rekomenduojama).&#x0a;Ne – naršyklėje atidarykite atsisiuntimo puslapį.&#x0a;Atšaukti šį pranešimą.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">Trūksta VPN variklio (engine.exe). Iš naujo įdiekite „DataGate“.&#x0a;&#x0a;Atsisiuntimo puslapis: {0}&#x0a;&#x0a;Ar atidaryti atsisiuntimo puslapį naršyklėje dabar?</sys:String>
     <sys:String x:Key="Home_Status_EngineMissing">Tuščioji eiga – reikia iš naujo įdiegti (trūksta variklio)</sys:String>

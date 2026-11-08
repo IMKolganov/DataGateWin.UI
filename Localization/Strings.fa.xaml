@@ -224,6 +224,8 @@
     <sys:String x:Key="IpList_UpdateFailedFmt">به روز رسانی انجام نشد: {0}</sys:String>
     <sys:String x:Key="IpList_UpdateFailedFallbackFmt">به روز رسانی انجام نشد ({0}). استفاده از حافظه پنهان یا بسته‌ای بازگشتی.</sys:String>
     <sys:String x:Key="Msg_EngineMissingTitle">موتور پیدا نشد</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedTitle">به‌روزرسانی لازم است</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedBody">این نسخه از DataGate دیگر توسط سرور پشتیبانی نمی‌شود. لطفاً برنامه را به‌روزرسانی کنید.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">موتور VPN (engine.exe) وجود ندارد. برای بازیابی DataGate دوباره نصب کنید.&#x0a;&#x0a;صفحه دانلود: {0}&#x0a;&#x0a;بله — نصب کننده همراه با این برنامه را اجرا کنید (توصیه می شود).&#x0a;خیر — صفحه دانلود را در مرورگر خود باز کنید.⟦lBR⟧ این پیام را ببندید.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">موتور VPN (engine.exe) وجود ندارد. لطفاً DataGate را مجدداً نصب کنید.</sys:String>
     <sys:String x:Key="Home_Status_EngineMissing">در حالت آماده به کار - نیاز به نصب مجدد (موتور وجود ندارد)</sys:String>

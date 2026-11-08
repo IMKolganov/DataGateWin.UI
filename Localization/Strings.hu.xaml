@@ -224,6 +224,8 @@
     <sys:String x:Key="IpList_UpdateFailedFmt">A frissítés sikertelen: {0}</sys:String>
     <sys:String x:Key="IpList_UpdateFailedFallbackFmt">A frissítés nem sikerült ({0}). Gyorsítótárazott vagy kötegelt tartalék használata.</sys:String>
     <sys:String x:Key="Msg_EngineMissingTitle">Motor nem található</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedTitle">Frissítés szükséges</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedBody">A szerver már nem támogatja a DataGate ezen verzióját. Kérjük, frissítsd az alkalmazást.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">A VPN-motor (engine.exe) hiányzik. A visszaállításhoz telepítse újra a DataGate-et.&#x0a;&#x0a;Letöltési oldal: {0}&#x0a;&#x0a;Igen – futtassa az alkalmazáshoz mellékelt telepítőt (ajánlott).&#x0a;Nem – nyissa meg a letöltési oldalt a böngészőben.&#x0a;Mégse az üzenetet.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">A VPN-motor (engine.exe) hiányzik. Kérjük, telepítse újra a DataGate-et.&#x0a;&#x0a;Letöltési oldal: {0}&#x0a;&#x0a;Megnyitja most a letöltési oldalt a böngészőjében?</sys:String>
     <sys:String x:Key="Home_Status_EngineMissing">Üresjárat – újra kell telepíteni (hiányzik a motor)</sys:String>

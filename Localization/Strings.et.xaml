@@ -224,6 +224,8 @@
     <sys:String x:Key="IpList_UpdateFailedFmt">Värskendamine ebaõnnestus: {0}</sys:String>
     <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Värskendamine ebaõnnestus ({0}). Vahemällu salvestatud või komplekteeritud varu kasutamine.</sys:String>
     <sys:String x:Key="Msg_EngineMissingTitle">Mootorit ei leitud</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedTitle">Vajalik on värskendus</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedBody">Server ei toeta enam seda DataGate'i versiooni. Palun värskenda rakendust.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">VPN-i mootor (engine.exe) puudub. Selle taastamiseks installige DataGate uuesti.&#x0a;&#x0a;Laadi alla leht: {0}&#x0a;&#x0a;Jah – käivitage selle rakendusega komplektis olev installiprogramm (soovitatav).&#x0a;Ei – avage brauseris allalaadimisleht.&#x0a;Tühista sõnum.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">VPN-i mootor (engine.exe) puudub. Installige DataGate uuesti.&#x0a;&#x0a;Allalaadimisleht: {0}&#x0a;&#x0a;Kas avada brauseris allalaadimisleht kohe?</sys:String>
     <sys:String x:Key="Home_Status_EngineMissing">Tühikäik – nõutav uuesti installimine (mootor puudub)</sys:String>

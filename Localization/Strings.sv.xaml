@@ -224,6 +224,8 @@
     <sys:String x:Key="IpList_UpdateFailedFmt">Uppdatering misslyckades: {0}</sys:String>
     <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Uppdateringen misslyckades ({0}). Använder cachad eller buntad reserv.</sys:String>
     <sys:String x:Key="Msg_EngineMissingTitle">Motorn hittades inte</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedTitle">Uppdatering krävs</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedBody">Den här versionen av DataGate stöds inte längre av servern. Uppdatera appen.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">VPN-motorn (engine.exe) saknas. Installera om DataGate för att återställa den.&#x0a;&#x0a;Nedladdningssida: {0}&#x0a;&#x0a;Ja — kör installationsprogrammet som medföljer den här appen (rekommenderas).&#x0a;Nej — öppna nedladdningssidan i din webbläsare.⟦lBR⟧Cance.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">VPN-motorn (engine.exe) saknas. Vänligen installera om DataGate.&#x0a;&#x0a;Nedladdningssida: {0}&#x0a;&#x0a;Öppna nedladdningssidan i din webbläsare nu?</sys:String>
     <sys:String x:Key="Home_Status_EngineMissing">Tomgång – ominstallation krävs (motor saknas)</sys:String>

@@ -224,6 +224,8 @@
     <sys:String x:Key="IpList_UpdateFailedFmt">Opdatering mislykkedes: {0}</sys:String>
     <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Opdatering mislykkedes ({0}). Bruger cachelagret eller bundtet fallback.</sys:String>
     <sys:String x:Key="Msg_EngineMissingTitle">Motor ikke fundet</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedTitle">Opdatering påkrævet</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedBody">Denne version af DataGate understøttes ikke længere af serveren. Opdater venligst appen.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">VPN-motoren (engine.exe) mangler. Geninstaller DataGate for at gendanne den.&#x0a;&#x0a;Downloadside: {0}&#x0a;&#x0a;Ja — kør installationsprogrammet, der følger med denne app (anbefales).&#x0a;Nej — åbn downloadsiden i din browser.⟦lBR⟧Cance.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">VPN-motoren (engine.exe) mangler. Geninstaller venligst DataGate.&#x0a;&#x0a;Downloadside: {0}&#x0a;&#x0a;Åbne downloadsiden i din browser nu?</sys:String>
     <sys:String x:Key="Home_Status_EngineMissing">Inaktiv — geninstaller påkrævet (motor mangler)</sys:String>

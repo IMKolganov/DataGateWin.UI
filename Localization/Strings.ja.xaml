@@ -224,6 +224,8 @@
     <sys:String x:Key="IpList_UpdateFailedFmt">アップデートに失敗しました: {0}</sys:String>
     <sys:String x:Key="IpList_UpdateFailedFallbackFmt">アップデートに失敗しました ({0})。キャッシュされたフォールバックまたはバンドルされたフォールバックを使用する。</sys:String>
     <sys:String x:Key="Msg_EngineMissingTitle">エンジンが見つかりません</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedTitle">アップデートが必要です</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedBody">このバージョンの DataGate はサーバーでサポートされなくなりました。アプリをアップデートしてください。</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">VPN エンジン (engine.exe) がありません。 DataGate を再インストールして復元します。&#x0a;&#x0a;ダウンロード ページ: {0}&#x0a;&#x0a;はい — このアプリにバンドルされているインストーラーを実行します (推奨)。&#x0a;いいえ — ブラウザでダウンロード ページを開きます。&#x0a;キャンセル — このメッセージを閉じます。</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">VPN エンジン (engine.exe) がありません。 DataGate を再インストールしてください。&#x0a;&#x0a;ダウンロード ページ: {0}&#x0a;&#x0a;ブラウザでダウンロード ページを開きますか?</sys:String>
     <sys:String x:Key="Home_Status_EngineMissing">アイドル — 再インストールが必要 (エンジンがありません)</sys:String>

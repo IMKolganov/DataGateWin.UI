@@ -224,6 +224,8 @@
     <sys:String x:Key="IpList_UpdateFailedFmt">Aktualizácia zlyhala: {0}</sys:String>
     <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Aktualizácia zlyhala ({0}). Používanie zálohy uloženej vo vyrovnávacej pamäti alebo balíka.</sys:String>
     <sys:String x:Key="Msg_EngineMissingTitle">Motor sa nenašiel</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedTitle">Vyžaduje sa aktualizácia</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedBody">Server už nepodporuje túto verziu DataGate. Aktualizujte aplikáciu.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">Chýba modul VPN (engine.exe). Preinštalujte DataGate, aby ste ju obnovili.&#x0a;&#x0a;Stiahnutie stránky: {0}&#x0a;&#x0a;Áno – spustite inštalačný program pribalený k tejto aplikácii (odporúča sa).&#x0a;Nie – otvorte stránku sťahovania vo vašom prehliadači.⟦BR — zatvorte⟧Zrušiť.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">Chýba modul VPN (engine.exe). Prosím preinštalujte DataGate.&#x0a;&#x0a;Stránka na stiahnutie: {0}&#x0a;&#x0a;Otvoriť teraz stránku na stiahnutie vo vašom prehliadači?</sys:String>
     <sys:String x:Key="Home_Status_EngineMissing">Nečinný – vyžaduje sa preinštalovanie (chýba motor)</sys:String>

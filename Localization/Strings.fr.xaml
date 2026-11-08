@@ -228,6 +228,8 @@
     <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Échec de la mise à jour ({0}). Utilisation du cache ou d'une liste de secours intégrée.</sys:String>
 
     <sys:String x:Key="Msg_EngineMissingTitle">Moteur introuvable</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedTitle">Mise à jour requise</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedBody">Cette version de DataGate n'est plus prise en charge par le serveur. Veuillez mettre à jour l'application.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">Le moteur VPN (engine.exe) est absent. Réinstallez DataGate.&#x0a;&#x0a;Page de téléchargement : {0}&#x0a;&#x0a;Oui — lancer le programme d'installation fourni avec l'application (recommandé).&#x0a;Non — ouvrir la page de téléchargement dans le navigateur.&#x0a;Annuler — fermer ce message.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">Le moteur VPN (engine.exe) est absent. Réinstallez DataGate.&#x0a;&#x0a;Page de téléchargement : {0}&#x0a;&#x0a;Ouvrir la page de téléchargement dans le navigateur ?</sys:String>
     <sys:String x:Key="Torrent_WarningTitle">Torrent client detected</sys:String>

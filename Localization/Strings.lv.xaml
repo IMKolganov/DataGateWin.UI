@@ -224,6 +224,8 @@
     <sys:String x:Key="IpList_UpdateFailedFmt">Atjaunināšana neizdevās: {0}</sys:String>
     <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Atjaunināšana neizdevās ({0}). Izmantojot kešatmiņā saglabāto vai komplektēto atkāpšanos.</sys:String>
     <sys:String x:Key="Msg_EngineMissingTitle">Dzinējs nav atrasts</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedTitle">Nepieciešams atjauninājums</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedBody">Serveris vairs neatbalsta šo DataGate versiju. Lūdzu, atjauniniet lietotni.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">Trūkst VPN dzinēja (engine.exe). Atkārtoti instalējiet DataGate, lai to atjaunotu.&#x0a;&#x0a;Lejupielādes lapa: {0}&#x0a;&#x0a;Jā — palaidiet šīs lietotnes komplektācijā iekļauto instalēšanas programmu (ieteicams).&#x0a;Nē — atveriet lejupielādes lapu savā pārlūkprogrammā.&#x0a;Atceliet šo ziņojumu.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">Trūkst VPN dzinēja (engine.exe). Lūdzu, atkārtoti instalējiet DataGate.&#x0a;&#x0a;Lejupielādes lapa: {0}&#x0a;&#x0a;Vai atvērt pārlūkprogrammas lejupielādes lapu tūlīt?</sys:String>
     <sys:String x:Key="Home_Status_EngineMissing">Tukšgaita — nepieciešama atkārtota instalēšana (trūkst dzinēja)</sys:String>

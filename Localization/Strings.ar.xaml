@@ -224,6 +224,8 @@
     <sys:String x:Key="IpList_UpdateFailedFmt">فشل التحديث: {0}</sys:String>
     <sys:String x:Key="IpList_UpdateFailedFallbackFmt">فشل التحديث ({0}). استخدام النسخة الاحتياطية المخزنة مؤقتًا أو المجمعة.</sys:String>
     <sys:String x:Key="Msg_EngineMissingTitle">لم يتم العثور على المحرك</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedTitle">التحديث مطلوب</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedBody">لم يعد الخادم يدعم هذا الإصدار من DataGate. يرجى تحديث التطبيق.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">محرك VPN (engine.exe) مفقود. أعد تثبيت DataGate لاستعادته.&#x0a;&#x0a;صفحة التنزيل: {0}&#x0a;&#x0a;نعم - قم بتشغيل برنامج التثبيت المرفق مع هذا التطبيق (مستحسن).&#x0a;لا - افتح صفحة التنزيل في متصفحك.&#x0a;إلغاء - أغلق هذه الرسالة.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">محرك VPN (engine.exe) مفقود. يرجى إعادة تثبيت DataGate.&#x0a;&#x0a;صفحة التنزيل: {0}&#x0a;&#x0a;افتح صفحة التنزيل في متصفحك الآن؟</sys:String>
     <sys:String x:Key="Home_Status_EngineMissing">خامل - يلزم إعادة التثبيت (المحرك مفقود)</sys:String>

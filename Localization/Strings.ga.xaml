@@ -224,6 +224,8 @@
     <sys:String x:Key="IpList_UpdateFailedFmt">Theip ar an nuashonrú: {0}</sys:String>
     <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Theip ar an nuashonrú ({0}). Cúltaca taisce nó cuachta á úsáid.</sys:String>
     <sys:String x:Key="Msg_EngineMissingTitle">Inneall gan aimsiú</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedTitle">Nuashonrú ag teastáil</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedBody">Ní thacaíonn an freastalaí leis an leagan seo de DataGate a thuilleadh. Nuashonraigh an aip le do thoil.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">Tá an t-inneall VPN (engine.exe) in easnamh. Athshuiteáil DataGate chun é a aischur.&#x0a;&#x0a;Leathanach íoslódála: {0}&#x0a;&#x0a; Sea - rith an suiteálaí atá cuachta leis an aip seo (molta).</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">Tá an t-inneall VPN (engine.exe) in easnamh. Athshuiteáil DataGate le do thoil.&#x0a;&#x0a; Íoslódáil an leathanach: {0}&#x0a;&#x0a;An leathanach íoslódála a oscailt i do bhrabhsálaí anois?</sys:String>
     <sys:String x:Key="Home_Status_EngineMissing">Díomhaoin - tá gá le hathshuiteáil (inneall in easnamh)</sys:String>

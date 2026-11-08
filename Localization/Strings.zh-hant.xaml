@@ -224,6 +224,8 @@
     <sys:String x:Key="IpList_UpdateFailedFmt">更新失敗：{0}</sys:String>
     <sys:String x:Key="IpList_UpdateFailedFallbackFmt">更新失敗（{0}）。使用快取或捆綁後備。</sys:String>
     <sys:String x:Key="Msg_EngineMissingTitle">未找到引擎</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedTitle">需要更新</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedBody">伺服器已不再支援此版本的 DataGate。請更新應用程式。</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">VPN 引擎 (engine.exe) 遺失。重新安裝 DataGate 即可復原。 &#x0a;&#x0a;下載頁面：{0}&#x0a;&#x0a;是 — 執行與此應用程式捆綁的安裝程式（建議）。 &#x0a;否 — 在瀏覽器中開啟下載頁面。 &#x0a;取消 — 關閉此訊息。</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">VPN 引擎 (engine.exe) 遺失。請重新安裝DataGate。 &#x0a;&#x0a;下載頁面：{0}&#x0a;&#x0a;現在在瀏覽器中開啟下載頁面嗎？</sys:String>
     <sys:String x:Key="Home_Status_EngineMissing">空閒 — 需要重新安裝（引擎遺失）</sys:String>

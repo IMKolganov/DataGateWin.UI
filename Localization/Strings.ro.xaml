@@ -224,6 +224,8 @@
     <sys:String x:Key="IpList_UpdateFailedFmt">Actualizarea a eșuat: {0}</sys:String>
     <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Actualizarea nu a reușit ({0}). Folosind rezerva stocată în cache sau grupată.</sys:String>
     <sys:String x:Key="Msg_EngineMissingTitle">Motorul nu a fost găsit</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedTitle">Actualizare necesară</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedBody">Această versiune DataGate nu mai este acceptată de server. Actualizează aplicația.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">Motorul VPN (engine.exe) lipsește. Reinstalați DataGate pentru a-l restaura.&#x0a;&#x0a;Pagină de descărcare: {0}&#x0a;&#x0a;Da — rulați programul de instalare inclus cu această aplicație (recomandat).&#x0a;Nu — deschideți pagina de descărcare în browser.&#x0a;⟧&#x0a;.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">Motorul VPN (engine.exe) lipsește. Vă rugăm să reinstalați DataGate.&#x0a;&#x0a;Pagină de descărcare: {0}&#x0a;&#x0a;Deschideți pagina de descărcare în browser acum?</sys:String>
     <sys:String x:Key="Home_Status_EngineMissing">Inactiv — este necesară reinstalarea (lipsește motorul)</sys:String>

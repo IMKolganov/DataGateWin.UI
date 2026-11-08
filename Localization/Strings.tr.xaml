@@ -224,6 +224,8 @@
     <sys:String x:Key="IpList_UpdateFailedFmt">Güncelleme başarısız oldu: {0}</sys:String>
     <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Güncelleme başarısız oldu ({0}). Önbelleğe alınmış veya paketlenmiş geri dönüş kullanma.</sys:String>
     <sys:String x:Key="Msg_EngineMissingTitle">Motor bulunamadı</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedTitle">Güncelleme gerekli</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedBody">DataGate'in bu sürümü artık sunucu tarafından desteklenmiyor. Lütfen uygulamayı güncelleyin.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">VPN motoru (engine.exe) eksik. Geri yüklemek için DataGate'i yeniden yükleyin.&#x0a;&#x0a;İndirme sayfası: {0}&#x0a;&#x0a;Evet — bu uygulamayla birlikte gelen yükleyiciyi çalıştırın (önerilir).&#x0a;Hayır — indirme sayfasını tarayıcınızda açın.&#x0a;İptal — bu mesajı kapatın.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">VPN motoru (engine.exe) eksik. Lütfen DataGate'i yeniden yükleyin.&#x0a;&#x0a;İndirme sayfası: {0}&#x0a;&#x0a;İndirme sayfasını tarayıcınızda şimdi açmak ister misiniz?</sys:String>
     <sys:String x:Key="Home_Status_EngineMissing">Boşta — yeniden yükleme gerekli (motor eksik)</sys:String>

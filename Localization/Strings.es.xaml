@@ -224,6 +224,8 @@
     <sys:String x:Key="IpList_UpdateFailedFmt">Error en la actualización: {0}</sys:String>
     <sys:String x:Key="IpList_UpdateFailedFallbackFmt">La actualización falló ({0}). Uso de respaldo en caché o empaquetado.</sys:String>
     <sys:String x:Key="Msg_EngineMissingTitle">Motor no encontrado</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedTitle">Actualización necesaria</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedBody">El servidor ya no admite esta versión de DataGate. Actualiza la aplicación.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">Falta el motor VPN (engine.exe). Reinstale DataGate para restaurarlo.&#x0a;&#x0a;Página de descarga: {0}&#x0a;&#x0a;Sí, ejecute el instalador incluido con esta aplicación (recomendado).&#x0a;No, abra la página de descarga en su navegador.&#x0a;Cancelar: cierre este mensaje.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">Falta el motor VPN (engine.exe). Reinstale DataGate.&#x0a;&#x0a;Página de descarga: {0}&#x0a;&#x0a;¿Abrir la página de descarga en su navegador ahora?</sys:String>
     <sys:String x:Key="Home_Status_EngineMissing">Inactivo: se requiere reinstalación (falta el motor)</sys:String>

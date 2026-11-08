@@ -224,6 +224,8 @@
     <sys:String x:Key="IpList_UpdateFailedFmt">การอัปเดตล้มเหลว: {0}</sys:String>
     <sys:String x:Key="IpList_UpdateFailedFallbackFmt">การอัปเดตล้มเหลว ({0}) การใช้ทางเลือกสำรองแบบแคชหรือแบบรวมกลุ่ม</sys:String>
     <sys:String x:Key="Msg_EngineMissingTitle">ไม่พบเครื่องยนต์</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedTitle">ต้องอัปเดต</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedBody">เซิร์ฟเวอร์ไม่รองรับ DataGate เวอร์ชันนี้อีกต่อไป โปรดอัปเดตแอป</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">กลไก VPN (engine.exe) หายไป ติดตั้ง DataGate อีกครั้งเพื่อคืนค่า&#x0a;&#x0a;หน้าดาวน์โหลด: {0}&#x0a;&#x0a;ใช่ — เรียกใช้โปรแกรมติดตั้งที่มาพร้อมกับแอปนี้ (แนะนำ)&#x0a;ไม่ — เปิดหน้าดาวน์โหลดในเบราว์เซอร์ของคุณ&#x0a;Cancel — ปิดข้อความนี้</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">กลไก VPN (engine.exe) หายไป กรุณาติดตั้ง DataGate ใหม่อีกครั้ง&#x0a;&#x0a;หน้าดาวน์โหลด: {0}&#x0a;&#x0a;เปิดหน้าดาวน์โหลดในเบราว์เซอร์ของคุณตอนนี้หรือไม่?</sys:String>
     <sys:String x:Key="Home_Status_EngineMissing">ไม่ได้ใช้งาน — จำเป็นต้องติดตั้งใหม่ (เครื่องยนต์หายไป)</sys:String>

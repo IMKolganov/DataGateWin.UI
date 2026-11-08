@@ -224,6 +224,8 @@
     <sys:String x:Key="IpList_UpdateFailedFmt">Помилка оновлення: {0}</sys:String>
     <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Помилка оновлення ({0}). Використання кешованого або об’єднаного резервного варіанта.</sys:String>
     <sys:String x:Key="Msg_EngineMissingTitle">Двигун не знайдено</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedTitle">Потрібне оновлення</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedBody">Ця версія DataGate більше не підтримується сервером. Оновіть застосунок.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">Механізм VPN (engine.exe) відсутній. Перевстановіть DataGate, щоб відновити його.&#x0a;&#x0a;Сторінка завантаження: {0}&#x0a;&#x0a;Так — запустіть програму встановлення, що входить до складу цієї програми (рекомендовано).&#x0a;Ні — відкрийте сторінку завантаження у своєму браузері.&#x0a;Скасувати — закрийте це повідомлення.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">Механізм VPN (engine.exe) відсутній. Перевстановіть DataGate.&#x0a;&#x0a;Сторінка завантаження: {0}&#x0a;&#x0a;Відкрити сторінку завантаження у своєму браузері?</sys:String>
     <sys:String x:Key="Home_Status_EngineMissing">Неактивний — потрібна перевстановлення (відсутній двигун)</sys:String>

@@ -224,6 +224,8 @@
     <sys:String x:Key="IpList_UpdateFailedFmt">Pembaruan gagal: {0}</sys:String>
     <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Pembaruan gagal ({0}). Menggunakan fallback yang di-cache atau dibundel.</sys:String>
     <sys:String x:Key="Msg_EngineMissingTitle">Mesin tidak ditemukan</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedTitle">Pembaruan diperlukan</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedBody">Versi DataGate ini tidak lagi didukung oleh server. Perbarui aplikasi.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">Mesin VPN (engine.exe) tidak ada. Instal ulang DataGate untuk memulihkannya.&#x0a;&#x0a;Halaman unduhan: {0}&#x0a;&#x0a;Ya — jalankan penginstal yang disertakan dengan aplikasi ini (disarankan).&#x0a;Tidak — buka halaman unduh di browser Anda.&#x0a;Batal — tutup pesan ini.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">Mesin VPN (engine.exe) tidak ada. Silakan instal ulang DataGate.&#x0a;&#x0a;Halaman unduhan: {0}&#x0a;&#x0a;Buka halaman unduhan di browser Anda sekarang?</sys:String>
     <sys:String x:Key="Home_Status_EngineMissing">Idle — perlu diinstal ulang (mesin hilang)</sys:String>

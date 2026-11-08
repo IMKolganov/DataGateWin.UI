@@ -224,6 +224,8 @@
     <sys:String x:Key="IpList_UpdateFailedFmt">Update mislukt: {0}</sys:String>
     <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Update mislukt ({0}). Gebruik van gecachte of gebundelde fallback.</sys:String>
     <sys:String x:Key="Msg_EngineMissingTitle">Motor niet gevonden</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedTitle">Update vereist</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedBody">Deze versie van DataGate wordt niet meer ondersteund door de server. Werk de app bij.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">De VPN-engine (engine.exe) ontbreekt. Installeer DataGate opnieuw om het te herstellen.&#x0a;&#x0a;Downloadpagina: {0}&#x0a;&#x0a;Ja — voer het installatieprogramma uit dat bij deze app is geleverd (aanbevolen).&#x0a;Nee — open de downloadpagina in uw browser.&#x0a;Annuleren — sluit dit bericht.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">De VPN-engine (engine.exe) ontbreekt. Installeer DataGate opnieuw.&#x0a;&#x0a;Downloadpagina: {0}&#x0a;&#x0a;De downloadpagina nu in uw browser openen?</sys:String>
     <sys:String x:Key="Home_Status_EngineMissing">Stationair - opnieuw installeren vereist (motor ontbreekt)</sys:String>

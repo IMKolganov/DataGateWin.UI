@@ -144,6 +144,8 @@
     <sys:String x:Key="Msg_UpdateErrorBody">Доступно новое обновление, но компонент обновления не найден.&#x0a;&#x0a;Переустановите приложение или обратитесь в поддержку.</sys:String>
     <sys:String x:Key="Msg_UpdateErrorTitle">Ошибка обновления</sys:String>
     <sys:String x:Key="Msg_EngineMissingTitle">Компонент движка не найден</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedTitle">Требуется обновление</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedBody">Эта версия DataGate больше не поддерживается сервером. Обновите приложение.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">Не найден VPN-движок (engine.exe). Переустановите DataGate.&#x0a;&#x0a;Страница загрузки: {0}&#x0a;&#x0a;Да — запустить установщик рядом с приложением (рекомендуется).&#x0a;Нет — открыть страницу загрузки в браузере.&#x0a;Отмена — закрыть сообщение.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">Не найден VPN-движок (engine.exe). Переустановите DataGate.&#x0a;&#x0a;Страница загрузки: {0}&#x0a;&#x0a;Открыть страницу загрузки в браузере?</sys:String>
     <sys:String x:Key="Home_Status_EngineMissing">Не подключено — нужна переустановка (нет движка)</sys:String>

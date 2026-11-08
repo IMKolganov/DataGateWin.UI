@@ -224,6 +224,8 @@
     <sys:String x:Key="IpList_UpdateFailedFmt">Cập nhật không thành công: {0}</sys:String>
     <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Cập nhật không thành công ({0}). Sử dụng dự phòng được lưu trong bộ nhớ đệm hoặc theo gói.</sys:String>
     <sys:String x:Key="Msg_EngineMissingTitle">Không tìm thấy động cơ</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedTitle">Cần cập nhật</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedBody">Máy chủ không còn hỗ trợ phiên bản DataGate này. Vui lòng cập nhật ứng dụng.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">Công cụ VPN (engine.exe) bị thiếu. Cài đặt lại DataGate để khôi phục nó.&#x0a;&#x0a;Trang tải xuống: {0}&#x0a;&#x0a;Có — chạy trình cài đặt đi kèm với ứng dụng này (được khuyến nghị).&#x0a;Không — mở trang tải xuống trong trình duyệt của bạn.&#x0a;Hủy — đóng thông báo này.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">Công cụ VPN (engine.exe) bị thiếu. Vui lòng cài đặt lại DataGate.&#x0a;&#x0a;Trang tải xuống: {0}&#x0a;&#x0a;Mở trang tải xuống trong trình duyệt của bạn ngay bây giờ?</sys:String>
     <sys:String x:Key="Home_Status_EngineMissing">Nhàn rỗi - yêu cầu cài đặt lại (thiếu động cơ)</sys:String>

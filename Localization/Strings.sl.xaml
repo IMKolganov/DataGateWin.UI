@@ -224,6 +224,8 @@
     <sys:String x:Key="IpList_UpdateFailedFmt">Posodobitev ni uspela: {0}</sys:String>
     <sys:String x:Key="IpList_UpdateFailedFallbackFmt">Posodobitev ni uspela ({0}). Uporaba predpomnjene ali združene nadomestne možnosti.</sys:String>
     <sys:String x:Key="Msg_EngineMissingTitle">Motorja ni bilo mogoče najti</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedTitle">Potrebna je posodobitev</sys:String>
+    <sys:String x:Key="Msg_ClientOutdatedBody">Strežnik ne podpira več te različice DataGate. Posodobite aplikacijo.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyWithInstaller">Motor VPN (engine.exe) manjka. Ponovno namestite DataGate, da ga obnovite.&#x0a;&#x0a;Stran za prenos: {0}&#x0a;&#x0a;Da — zaženite namestitveni program, ki je priložen tej aplikaciji (priporočeno).&#x0a;Ne — odprite stran za prenos v brskalniku.&#x0a;Prekliči — zaprite to sporočilo.</sys:String>
     <sys:String x:Key="Msg_EngineMissingBodyNoInstaller">Motor VPN (engine.exe) manjka. Prosimo, znova namestite DataGate.&#x0a;&#x0a;Stran za prenos: {0}&#x0a;&#x0a;Želite zdaj odpreti stran za prenos v brskalniku?</sys:String>
     <sys:String x:Key="Home_Status_EngineMissing">V prostem teku — potrebna ponovna namestitev (manjka motor)</sys:String>
