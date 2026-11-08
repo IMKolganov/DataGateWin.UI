@@ -119,13 +119,14 @@ if (-not $SkipInstaller) {
     }
     New-Item -ItemType Directory -Force -Path $localPkg | Out-Null
     & robocopy.exe $OutDir $localPkg /E /NFL /NDL /NJH /NJS /R:1 /W:1 `
-        /XD "Installer" $localPkgName `
+        /XD $localPkgName `
         /XF "DataGateWin.v*.zip" "*.pdb" | Out-Null
     $rc = $LASTEXITCODE
     if ($rc -ge 8) {
         throw "robocopy local build package failed with exit $rc"
     }
     Require-Path (Join-Path $localPkg "DataGateWin.exe") "local build DataGateWin.exe"
+    Require-Path (Join-Path $localPkg "Installer\DataGateWin.Installer.exe") "local build bundled installer"
     Write-Host "  Local offline install: run Installer\DataGateWin.Installer.exe (uses $localPkgName, no GitHub)." -ForegroundColor Green
 }
 

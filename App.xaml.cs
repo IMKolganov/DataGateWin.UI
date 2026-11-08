@@ -216,7 +216,10 @@ public partial class App : Application
                 Timeout = TimeSpan.FromMinutes(2)
             };
 
-            GoogleAuth = new GoogleAuthService(new HttpClient { Timeout = TimeSpan.FromMinutes(2) });
+            GoogleAuth = new GoogleAuthService(new HttpClient(new ClientIdentityHandler(new HttpClientHandler()))
+            {
+                Timeout = TimeSpan.FromMinutes(2)
+            });
 
             var authState = new AuthStateStore();
             var token = await Session.GetValidAccessTokenAsync(CancellationToken.None);
